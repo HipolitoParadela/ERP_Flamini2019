@@ -1,0 +1,186 @@
+Proceso
+
+2 - Carga de cada item
+
+3 - Producción
+. Planificacion Inicial
+. Planificacion final
+
+
+Pestañas a ver...
+
+Las tres que estan, Una para inicial, otra para final, otra para fletes, otra para instalaciones, y cobranzas..esta
+debería ir metiendo info a seguimiento.
+
+
+-----------------
+
+PRIMERO DEBO VER UN LISTADO DE TODOS LOS PRODUCTOS A FABRICAR..
+
+EL LOTE DEBE ESTAR EN ESTADO 0, QUIERE DECIR AUN NO INICIADO,
+
+
+PASA A 1 UNA VEZ Q SE HAN CARGADO TODOS LOS PRODUCTOS
+
+EN ESE MOMENTO YA SE LE HACE VISIBLE A LOS FABRICANTES.
+
+
+LA MANERA DE AGREGARLOS SERÁ IGUAL A COMO SE AGREGAN CATEGORIAS A PROVEEDORES, UNO POR VEZ Y SE VAN LISTANDO.
+
+O PUEDE SER MEDIANTE UN FORMULARIO TIPO SEGUIMIENTO, QUE TENGA UN SELECT CON TODOS LOS PRODUCTOS, QUE PODRIAN LISTARSE
+SEGUNDO LA EMPRESA
+PREVIAMENTE INDICADA.
+
+PONE QUE PRODUCTO ES, LA CANTIDAD, LAS ESPECIFICACIONES Y LO QUE SEA... LUEGO SEGUN EL NUMERO DE CANTIDAD, REPITE ESA
+CANTIDAD DE VECES EL GUARDADO.
+
+COSA DE NO TENER QUE COPIAR A CADA RATO LAS ESPECIFICACIONES PARA UN MISMO PRODUCTO.
+
+----
+
+
+COMO VISUALIZAR ESTO, CON LOS PASO POR PASO????!!!
+
+PUEDE SER UNA PESTAÑA PARA CADA PASO...
+
+O UNA SOLA CON CADA INFO, QUE SEGUN EL ESTADO, CARGA Y MUESTRA. Y ADEMAS UNA PESTAÑA DE RESUMEN. MOSTRANDO LOS TIEMPOS,
+Y UN MODAL CON LOS TEXTOS.
+
+--
+
+UNA SOLA PUEDE ANDAR MUY BIEN,
+
+Primero identifica en que estado esta. Muestra tiempos si lo amerita.
+
+Una tabla, con la lista de productos, con la descripción, y un boton LISTO.
+
+Y debajo de todo, otro boton que tenga comentarios sobre esta etapa mas un boton, PASAR LOTE A SIGUENTE ETAPA
+
+Entonces, si es una persona, ve hasta cierta etapa, y si es la otra ve lo demas. (ver como controlar eso)
+
+
+<b>.................................................</b>
+
+
+1 - consultar dominio
+
+
+Pagina con listado de lotes
+
+En el listado, unir las dos columnas primeras, y en la segunda va lo que tiene, más 7 pestañas mas
+
+    Son las que dijo flamini, que estan en la foto.
+    Cada ficha va a tener el listado de los productos añadidos. Uno abajo de otro. 
+        Con información sobre, la fecha que ingresaron, los días que lleva en ese estado, los requerimentos, más un campo de observaciones hechas por el constructor y el boton "Finalizado"
+
+        Independientemente de todo eso, va a tener un boton "Pasar lote a etapa siguiente", guardando la fecha del momento y pasando el lote al estado siguiente.
+
+        Las fichas pueden verse si es Rol más de 4, o si el Usuario_id es el que la ficha tiene. 
+
+        Por lo tanto planificación inicial ve solo sus pasos, y una vez terminados ese trabajo queda fuera. Es decir ve lotes con estado entre 0 y 3/4, el otro ve todos los lotes, pero solo visualiza su parte.
+
+
+
+    
+        Usar el mismo modulo que el tiene nico, y modificar desde ahi. 
+
+
+
+
+
+//
+4 - SISTEMA DE SEGUIMIENTO DE PRODUCCIÓN
+
+	. Venta _ Carga de lote 
+		tbl_lote __ 	
+    Id, 
+    Cliente_id, 
+    Vendedor_id,
+    Observaciones_venta, 
+    Fecha_venta, 
+    Fecha_estimada_entrega
+
+    Descuento, 
+    Recargo, 
+    Monto_total,
+    Monto_final, 
+
+    Responsable_id_planif_inicial,
+    Eval_planif_inicial,
+
+    Responsable_id_planif_final,
+    Eval_planif_final,
+    
+    Usuario_id,
+    Ultima_edicion,
+    
+    Fecha_entrega,
+    Observaciones_entrega,
+
+    Estado,                     "AL PASAR EL LOTE AL SIGUIENTE PUESTO, NO PODRÁ EDITAR NADA MÁS, asegurese de tener listos el total de los productos antes de pasar el lote al siguiente puesto."
+    Lote_abastecido             "cuando este campo figura en 1, en las sugerencias de compra de stock, no se cuentan los productos vinculados a este pedido"
+		
+
+
+	. Seguimiento de lote
+        tbl_seguimiento igual que las que ya existen
+        
+        ADAPTAR TODO AL DE PROVEEDORES CREO, QUE TIENE PARA CARGAR ARCHIVOS
+
+	
+	. Una vez creado el lote/venta. Debe existir una tabla que vincule productos al lote.
+        tbl_vinculo_lote_producto __ 
+            Id, 
+            Lote_id, 
+            Producto_id, 
+            Observaciones, 
+            Estado, ..... 
+        una serie de campos que guarden información sobre el estado en que se encuentra, el responsable asignado, observaciones de cada estado
+            Requerimentos_step_1, 
+            Obs_step_1, 
+            Fecha_salida_step_1, 
+            .... igual hasta despacho
+
+	
+	. Una sección para ir manejando esta situación, donde cada responsable pueda ir viendo que productos tiene que ir haciendo. Separados por "en etapa previa" y "en su etapa".
+		Aca parecido a lo que tiene nico en su sistema, con contador de tiempo, datos a ingresar con fecha y observaciones.
+		Dependiendo el responsable asignado, podrá ver una parte, o la otra. Y filtrar los procesos por estado.
+
+
+5 - SISTEMA DE PRODUCTOS DE FABRICACIÓN	
+    Aca va a servir lo que tiene nico para cargar pdf y archivos.
+    
+    Va a ser necesario también, una tabla auxiliar para vincular insumos y su cantidad necesaria para producir el producto.
+    
+    tbl_pro_insumos
+        Id, 
+        Producto_id, 
+        Cantidad_necesaria, 
+        Observaciones, 
+        Ultima_actualizacion
+
+
+7- COMPRAS - Listado de compra sugerido por el sistema. 
+	En compras podria añadir una segunda pestaña, que indique compras a realizar. La cual liste los productos a comprar, esta lista se armaría segun los pedidos.
+	
+	Seria, pedido lote 1, 
+
+	Puede calcular haciendo una resta segun el stock actual, y los insumos requeridos. Por ej se necesita 40m de caño, el stock tiene 5, entonces le aparecería que debe comprar 35m de caño.
+	En los productos donde la resta de resultado positivo, quiere decir que hay stock suficiente, por lo que no sería necesario comprar. No mostraria ese producto en la lista de compras, porque esta bien en stock. 
+
+	Deberia poner un campo que avise, que la compra para ese lote ya se realizo. Un boton, "tengo los insumos". Entonces no los debería meter en el calculo de insumos que faltan.
+	
+    Este boton, tal vez lo tenga que tener la gente de compras. Y al realizar la compra, marcar "LOTE ABASTECIDO", con lo cual no va a figurar en los calculos de faltante. 
+        La gente de compras, va a ver un listado de las ventas realizadas, si considera que un lote ya cuenta con los insumos necesarios, lo marca como abastecido. 
+
+    "IMPORTANTE. Las compras sugeridas, tiene como finalidad ayudar en el calculo de la compra de insumos según la información cargada en el sistema, información que por diferentes variables 
+    pueden no reflejar el faltante de stock real. Por precaución consultar con los encargados correspondientes de planificación, antes de programar una compra."
+
+
+
+
+
+
+
+    EXTRAS IMPORTANTES
+    Modificar en stock_listado, que actualmente llama a la tabla orden_trabajo, y deberia empezar a llamar a la de ventas
