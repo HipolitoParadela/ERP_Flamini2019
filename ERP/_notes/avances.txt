@@ -1,0 +1,4 @@
+4/3/2012
+
+Vinculación de insumos de stock a un producto. 
+Para tener un listado de que insumos necesita un producto de fabricación propia y la cantidad.

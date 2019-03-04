@@ -582,6 +582,85 @@ class Fabricacion extends CI_Controller
         
     }
 
+//// FABRICACIÓN        | CARGAR O EDITAR UN INSUMO
+	public function cargar_insumo_producto()
+    {
+        $CI =& get_instance();
+		$CI->load->database();
+		
+		$token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
+
+		if(isset($this->datosObtenidos->Datos->Id))
+        {
+            $Id = $this->datosObtenidos->Datos->Id;
+        }
+        
+        $Fabricacion_id = $_GET["Fabricacion_id"];
+		
+		$data = array(
+                        
+					'Fabricacion_id' =>     $Fabricacion_id,
+					'Stock_id' => 	        $this->datosObtenidos->Datos->Stock_id,
+					'Cantidad' => 		    $this->datosObtenidos->Datos->Cantidad,
+                    'Observaciones' => 		$this->datosObtenidos->Datos->Observaciones,
+                     
+                );
+                /// 'Ultimo_editor_id' => 		$this->session->userdata('Id')
+
+        $this->load->model('App_model');
+        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_fabricacion_insumos_producto');
+                
+		if ($insert_id >=0 ) 
+		{   
+            echo json_encode(array("Id" => $insert_id));         
+		} 
+		else 
+		{
+            echo json_encode(array("Id" => 0));
+        }
+    }
+
+//// FABRICACIÓN        | OBTENER LISTADO DE INSUMOS VINCULADOS
+    public function obtener_listado_insumos()
+    {
+            
+        //Esto siempre va es para instanciar la base de datos
+        $CI =& get_instance();
+        $CI->load->database();
+        
+        //Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+        //$estado = $_GET["estado"];
+        $Fabricacion_id = $_GET["Fabricacion_id"];
+
+        $this->db->select('	tbl_fabricacion_insumos_producto.*,
+                            tbl_stock.Nombre_item');
+
+        $this->db->from('tbl_fabricacion_insumos_producto');
+
+        $this->db->join('tbl_stock', 'tbl_stock.Id = tbl_fabricacion_insumos_producto.Stock_id','left');
+
+        $this->db->where('tbl_fabricacion_insumos_producto.Visible', 1);
+        $this->db->where('tbl_fabricacion_insumos_producto.Fabricacion_id', $Fabricacion_id);
+
+        $this->db->order_by("tbl_stock.Nombre_item", "asc");
+
+        $query = $this->db->get();
+        $result = $query->result_array();
+
+        echo json_encode($result);
+        
+    }
 
 ///// fin documento
 }

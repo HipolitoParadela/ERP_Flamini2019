@@ -3006,6 +3006,8 @@ new Vue({
         this.getListadoArchivos();
         this.getListadoCategoriasProductos();
         this.getListadoVentas();
+        this.getListadoStock();
+        this.getListadoInsumos();
     },
 
     data: {
@@ -3035,6 +3037,10 @@ new Vue({
         filtro_empresa: '0',
         filtro_cliente: '0',
         filtro_estado: '0',
+
+        insumoDatos: {'Stock_id':0, 'Cantidad':0, 'Observaciones':'',},
+        listaInsumos: [],
+        listaStock: []
     },
 
     methods:
@@ -3228,10 +3234,61 @@ new Vue({
             this.archivoData = {}
         },
 
-        ////////////////////////////-----------------
+        
+        //// INSUMOS FABRICACIÓN  | CREAR O EDITAR 
+        cargarInsumo : function () {
+            var url = base_url + 'fabricacion/cargar_insumo_producto?Fabricacion_id='+Get_Id; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Datos: this.insumoDatos
+            }).then(response => {
+
+                toastr.success('Proceso realizado correctamente', 'Compras')
+
+                this.insumoDatos.Id = response.data.Id;
+                this.texto_boton = "Actualizar"
+                this.getListadoInsumos()
+
+
+            }).catch(error => {
+                alert("mal");
+                console.log(error.response.data)
+            });
+        },
+
+        //// INSUMOS FABRICACIÓN  | LISTADO DE INSUMOS 
+        getListadoInsumos: function () {
+            var url = base_url + 'fabricacion/obtener_listado_insumos/?Fabricacion_id=' + Get_Id; // url donde voy a mandar los datos
+            axios.post(url, {
+                token: token, 
+            }).then(response => {
+                this.listaInsumos = response.data
+            });
+        },
+
+        //// INSUMOS FABRICACIÓN  | LISTADO COMPLETO DE STOCK
+        getListadoStock: function () {
+            var url = base_url + 'stock/obtener_listado_de_stock?categoria=0'; // url donde voy a mandar los datos
+            axios.post(url, {
+                token: token, 
+            }).then(response => {
+                this.listaStock = response.data
+            });
+        },
+
+        ///  INSUMOS FABRICACIÓN  | EDITAR
+        editarFormularioInsumo: function (dato) {
+            this.insumoDatos = dato;
+        },
+
+        ////  INSUMOS FABRICACIÓN  | LIMPIAR FORMULARIO 
+        limpiarFormularioInsumo: function () {
+            this.insumoDatos = {}
+        },
 
         
-        
+        ////////////////////////////-----------------
     },
 
     ////// ACCIONES COMPUTADAS     

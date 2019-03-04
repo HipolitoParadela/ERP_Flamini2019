@@ -49,6 +49,9 @@ include "menusidebar.php";
 									<li class="nav-item">
 										<a class="nav-link" v-bind:class="{ active: mostrar == 3 }" href="#" v-on:click="mostrar = 3">Ventas de este producto</a>
 									</li>
+                                    <li class="nav-item">
+										<a class="nav-link" v-bind:class="{ active: mostrar == 4 }" href="#" v-on:click="mostrar = 4">Insumos requeridos p/ fabricación</a>
+									</li>
 							    </ul>
                                            
                                 <!-- SECCION DATOS EDITABLES DEL cliente -->
@@ -145,12 +148,12 @@ include "menusidebar.php";
                                     </div>   
                                 </div>                                        
                                 
-                                <!-- SECCION CATEGORIA DE PRODUCTOS QUE OFRECE -->
+                                <!-- SECCION VENTAS DE ESTE PRODUCTO -->
                                 <div class="row" v-show = "mostrar == '3'">              
                                     <div class="col-lg-12">
                                         <div class="card">
                                             <div class="card-header">
-                                                <strong>Ordenes de trabajo vinculadas a {{productoDatos.Nombre_producto}}</strong>
+                                                <strong>Ventas de {{productoDatos.Nombre_producto}}</strong>
                                             </div>
                                             <div class="card-body"> 
                                                 <div class="bootstrap-data-table-panel col-lg-12">
@@ -196,6 +199,54 @@ include "menusidebar.php";
                                         </DIV>
                                     </DIV>
                                 </div><!-- -->
+
+                                <!-- SECCION INSUMOS REQUERIDOS PARA ESTE PRODUCTO -->
+                                <div class="row" v-show="mostrar == '4'">              
+                                    <div class="col-lg-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Listado de insumos requeridos para la fabricación de este producto</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <p align="right">
+                                                    <a href="#modalInsumos" data-toggle="modal" title="Nuevo item" class="btn btn-success" v-on:click="limpiarFormularioInsumo()">
+                                                        <i class="ti-plus"></i> Añadir insumo
+                                                    </a>
+                                                </p>
+                                            </div>  
+                                            <div class="card-body"> 
+                                                <div class="bootstrap-data-table-panel col-lg-12">
+                                                    <div class="table-responsive">
+                                                        <table id="table2excel" class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Insumo</th>
+                                                                    <th>Cantidad</th>
+                                                                    <th>Observaciones</th>
+                                                                    <th>Ult. actualización</th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr v-for="insumo in listaInsumos">
+                                                                    <td><b>{{insumo.Nombre_item}}</b></td>
+                                                                    <td><h3>{{insumo.Cantidad}}</h3></td>
+                                                                    <td>{{insumo.Observaciones}}</td>
+                                                                    <td>{{formatoFecha_hora(insumo.Ultima_actualizacion)}}</td>
+                                                                    <td>
+                                                                        <a href="#modalInsumos" data-toggle="modal" v-on:click="editarFormularioInsumo(insumo)">
+                                                                            <i class="fa fa-edit"></i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>   
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -243,6 +294,49 @@ include "menusidebar.php";
                                             <button type="submit" class="btn btn-success" :disabled="preloader == 1">{{texto_boton}}</button>
                                         </div>
                                 </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal -->
+
+            <!-- Modal INSUMOS-->
+            <div class="modal fade" id="modalInsumos" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+                <div class="modal-dialog  modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{texto_boton}} información sobre insumo</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>  
+                        <div class="modal-body">                        
+                            <div class="horizontal-form">
+                                <form class="form-horizontal" action="post" v-on:submit.prevent="cargarInsumo()"> <!--   -->
+                                    <div class="form-group" v-if="insumoDatos.Cantidad == null">
+                                        <label class="control-label">Insumo del stock</label>
+                                        <select class="form-control" v-model="insumoDatos.Stock_id">
+                                            <option value="0">Elegir un insumo</option>
+                                            <option v-for="stock in listaStock" v-bind:value="stock.Id">{{stock.Nombre_item}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label  class=" form-control-label">Cantidad necesaria</label>
+                                        <input type="number" class="form-control" placeholder="" v-model="insumoDatos.Cantidad">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Observaciones</label>
+                                        <textarea class="form-control" rows="5" placeholder="" v-model="insumoDatos.Observaciones"></textarea>
+                                    </div>                   
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-success">{{texto_boton}}</button>
+                                    </div>
+                                </form>
+                                <!-- <pre>{{insumoDatos}}</pre> -->
                             </div>
                         </div>
                         <div class="modal-footer">
