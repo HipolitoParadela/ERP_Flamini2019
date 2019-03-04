@@ -156,7 +156,7 @@ new Vue({
             listaVentas: [],
             filtro_vendedor: '0',
             filtro_cliente: '0',
-            filtro_estado: '0',
+            filtro_estado: '1',
             ventaDatos : {},
 
         // Compras
@@ -1184,7 +1184,7 @@ new Vue({
 
         //// VENTAS |  MOSTRAR LISTADO DE ORDENES
         getListadoVentas: function (Usuario_id, Empresa_id, Cliente_id, Estado) {
-            var url = base_url + 'ventas/obtener_listado_ventas?Empresa_id=' + Empresa_id + '&Vendedor_id=' + Usuario_id + '&Cliente_id=' + Cliente_id + '&Estado=' + 1; // url donde voy a mandar los datos
+            var url = base_url + 'ventas/obtener_listado_ventas?Empresa_id=' + Empresa_id + '&Vendedor_id=' + Usuario_id + '&Cliente_id=' + Cliente_id + '&Estado=' + Estado; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -1211,7 +1211,7 @@ new Vue({
                 this.ventaDatos.Id = response.data.Id;   
                 this.texto_boton = "Actualizar"
 
-                this.getListadoVentas(0,0,0,0);
+                this.getListadoVentas(0,0,0,1);
 
             }).catch(error => {
                 alert("mal");

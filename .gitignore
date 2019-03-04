@@ -1,1 +1,2 @@
-ERP/application/config/
+ERP/application/config/config.php
+ERP/application/config/database.php

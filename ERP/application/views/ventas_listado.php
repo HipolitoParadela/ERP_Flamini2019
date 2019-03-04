@@ -49,8 +49,8 @@ include "menusidebar.php";
                                         </div>
                                         <div class="rs-select2--light">
                                             <select class="form-control form-control" v-model="filtro_estado" v-on:change="getListadoVentas(filtro_vendedor, filtro_empresa ,filtro_cliente,filtro_estado)">
-                                                <option selected="selected" v-bind:value="1">En fabricación</option>
-                                                <option selected="selected" v-bind:value="10">Despachadas</option>
+                                                <option selected="selected" v-bind:value="1">Ventas en proceso</option>
+                                                <option selected="selected" v-bind:value="10">Ventas cerradas</option>
                                             </select>
                                             <div class="dropDownSelect2"></div>
                                         </div>
