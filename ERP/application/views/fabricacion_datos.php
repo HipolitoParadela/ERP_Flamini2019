@@ -317,7 +317,7 @@ include "menusidebar.php";
                         <div class="modal-body">                        
                             <div class="horizontal-form">
                                 <form class="form-horizontal" action="post" v-on:submit.prevent="cargarInsumo()"> <!--   -->
-                                    <div class="form-group" v-if="insumoDatos.Cantidad == null">
+                                    <div class="form-group" v-if="insumoDatos.Id == null">
                                         <label class="control-label">Insumo del stock</label>
                                         <select class="form-control" v-model="insumoDatos.Stock_id">
                                             <option value="0">Elegir un insumo</option>

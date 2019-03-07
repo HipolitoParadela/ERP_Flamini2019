@@ -86,7 +86,7 @@ include "menusidebar.php";
                                         <tbody>
                                             <tr class="tr-shadow" v-for="venta in listaVentas">
                                                 <td>
-                                                    <a v-bind:href="'datos/?Id='+ventaDatos.Id" class="btn btn-dark btn-outline m-b-10 m-l-5">
+                                                    <a v-bind:href="'ventas/datos/?Id='+venta.Id" class="btn btn-dark btn-outline m-b-10 m-l-5">
                                                         {{venta.Identificador_venta}}
                                                     </a>
                                                 </td>

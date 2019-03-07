@@ -187,7 +187,7 @@ class ventas extends CI_Controller
 		{   
             
             if($Id == null) {   $descripcion_seguimiento = "Inicio de fabricación";    }
-            else {   $descripcion_seguimiento = "<b>Se actualizaron los datos en la ficha de esta venta.</b>";
+            else {   $descripcion_seguimiento = "Se actualizaron los datos en la ficha de esta venta.";
    }
             
             $data = array(
@@ -251,21 +251,21 @@ class ventas extends CI_Controller
         if ($insert_id >=0 ) 
         {   
             
-            if($estado == 2)  {  $descripcion_seguimiento = "<b>Avanzó el lote a la estación de Proceso de Materiales.</b>";  }
-            if($estado == 3)  {  $descripcion_seguimiento = "<b>Avanzó el lote a la estación de Soldadura.</b>";  }
-            if($estado == 4)  {  $descripcion_seguimiento = "<b>Avanzó el lote a la estación de Pintura.</b>";  }
-            if($estado == 5)  {  $descripcion_seguimiento = "<b>Avanzó el lote a la estación de Rotulación.</b>";  }
-            if($estado == 6)  {  $descripcion_seguimiento = "<b>Avanzó el lote a la estación de Empaque.</b>";  }
-            if($estado == 7)  {  $descripcion_seguimiento = "<b>Finalizó el proceso de producción de este lote. Continúa en Logística.</b>";  }
-            if($estado == 8)  {  $descripcion_seguimiento = "<b>Logística finalizada.</b>";  }
-            if($estado == 9)  {  $descripcion_seguimiento = "<b>Instalación finalizada.</b>";  }
-            if($estado == 10) {  $descripcion_seguimiento = "<b>Cobranza finalizada.</b>";  }
+            if($estado == 2)  {  $descripcion_seguimiento = "Avanzó el lote a la estación de Proceso de Materiales."; $Categoria = 2; }
+            if($estado == 3)  {  $descripcion_seguimiento = "Avanzó el lote a la estación de Soldadura."; $Categoria = 2; }
+            if($estado == 4)  {  $descripcion_seguimiento = "Avanzó el lote a la estación de Pintura."; $Categoria = 2; }
+            if($estado == 5)  {  $descripcion_seguimiento = "Avanzó el lote a la estación de Rotulación."; $Categoria = 2; }
+            if($estado == 6)  {  $descripcion_seguimiento = "Avanzó el lote a la estación de Empaque."; $Categoria = 2; }
+            if($estado == 7)  {  $descripcion_seguimiento = "Finalizó el proceso de producción de este lote. Continúa en Logística."; $Categoria = 2; }
+            if($estado == 8)  {  $descripcion_seguimiento = "Logística finalizada.";  $Categoria = 3;}
+            if($estado == 9)  {  $descripcion_seguimiento = "Instalación finalizada.";  $Categoria = 4;}
+            if($estado == 10) {  $descripcion_seguimiento = "Cobranza finalizada.";  $Categoria = 5;}
 
             
             $data = array(
 
             'Venta_id' =>       $insert_id,
-            'Categoria_seguimiento' => 2,
+            'Categoria_seguimiento' =>  $Categoria,
             'Descripcion' =>    $descripcion_seguimiento,
             'Usuario_id' =>    $this->session->userdata('Id'),
             'Visible' =>        1

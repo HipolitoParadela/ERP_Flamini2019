@@ -7,13 +7,19 @@ class Fabricacion extends CI_Controller
 //// FABRICACIÓN        | VISTA | LISTADO
     public function index()
     {
-        if ($this->session->userdata('Login') != true) {
+        if ($this->session->userdata('Login') != true) 
+        {
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
-        } else {
-
-            if ($this->session->userdata('Rol_acceso') > 1) {
+        } 
+        else 
+        {   
+            /// ID 3, ES EL DISEÑADOR GRÁFICO
+            if ($this->session->userdata('Rol_acceso') > 4 || $this->session->userdata('Id') == 3) 
+            {
                 $this->load->view('fabricacion_listado');
-            } else {
+            } 
+            else 
+            {
                 header("Location: " . base_url() . "login"); /// enviar a pagina de error
             }
 
@@ -27,9 +33,8 @@ class Fabricacion extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
-            //if (plan_contratado() > 1) {}
-
-            if ($this->session->userdata('Rol_acceso') > 1) 
+            /// ID 3, ES EL DISEÑADOR GRÁFICO
+            if ($this->session->userdata('Rol_acceso') > 4 || $this->session->userdata('Id') == 3) 
             {
                 $this->load->view('fabricacion_datos');
                 

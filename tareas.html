@@ -11,19 +11,6 @@ PARA MOSTRAR A LOS RESPONSABLES, ESTOS VAN A TENER OTRA PAGINA, DONDE SOLE LES M
 1 - DOMINIO imuargentina.com.ar
 
 
-5 - SISTEMA DE PRODUCTOS DE FABRICACIÓN	
-    Aca va a servir lo que tiene nico para cargar pdf y archivos.
-    
-    Va a ser necesario también, una tabla auxiliar para vincular insumos y su cantidad necesaria para producir el producto.
-    
-    tbl_pro_insumos
-        Id, 
-        Producto_id, 
-        Cantidad_necesaria, 
-        Observaciones, 
-        Ultima_actualizacion
-
-
 7- COMPRAS - Listado de compra sugerido por el sistema. 
 	En compras podria añadir una segunda pestaña, que indique compras a realizar. La cual liste los productos a comprar, esta lista se armaría segun los pedidos.
 	
@@ -39,3 +26,24 @@ PARA MOSTRAR A LOS RESPONSABLES, ESTOS VAN A TENER OTRA PAGINA, DONDE SOLE LES M
 
     "IMPORTANTE. Las compras sugeridas, tiene como finalidad ayudar en el calculo de la compra de insumos según la información cargada en el sistema, información que por diferentes variables 
     pueden no reflejar el faltante de stock real. Por precaución consultar con los encargados correspondientes de planificación, antes de programar una compra."
+
+
+Listado de productos sugeridos para comprar
+
+    Venta 1
+        array de todos los productos que pidio
+            array de cada producto
+            debería unificar todos los productos que el array va largando
+
+                ME VA A QUEDAR UN ARRAY de cada producto, con su Id, y su cantidad. (la cantidad puede variar segun el producto)
+
+
+                ---- para hacer esto, debería usar dos array, uno con cada uno de los productos.. y otro con los Id, agrupados. 
+                entonces hago un foreach con los agrupados, para que recorran el array que tiene todos y los valla sumando. Y cargandole al array agrupado las cantidades. 
+
+
+            lo siguiente es agrupar los productos por el Id y sumar las cantidades. 
+
+            al final me debería dar un listado de cada producto único con la cantidad total necesaria. Sin repetir ninguno. 
+
+            posteriormente, podría buscar la cantidad actual de ese insumo y calcular cuanto hace falta. 

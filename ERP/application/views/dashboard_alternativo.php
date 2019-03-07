@@ -24,7 +24,8 @@ include "menusidebar.php";
                                 </div>
                             </div>
                         </div>
-                        <div class="row m-t-25">
+                        Sección en construcción. Puede navegar en el sistema desde la barra izquierda. Tenga en cuenta que dependiendo del rol en la empresa, podrá acceder solo a las funciones que tenga permiso.
+                        <!--<div class="row m-t-25">
                         
                             <div class="col-sm-6 col-lg-3">
                                 <div class="overview-item overview-item--c1">
@@ -234,7 +235,7 @@ include "menusidebar.php";
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="row">
+                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="au-card recent-report">
                                     <div class="au-card-inner">
@@ -545,10 +546,10 @@ include "menusidebar.php";
                                                 </form>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>-->
                                 </div>
                             </div>
-                        </div> -->
+                        </div> 
                         
 
    <?php
