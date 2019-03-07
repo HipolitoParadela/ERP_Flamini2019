@@ -9,12 +9,12 @@ class Dashboard extends CI_Controller
         if ($this->session->userdata('Login') != true) {
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
-            if ($this->session->userdata('Rol_acceso') > 4) 
+            if ($this->session->userdata('Rol_acceso') > 3) 
             {
                 $this->load->view('dashboard');
 
             }
-            if ($this->session->userdata('Rol_acceso') < 4) 
+            elseif ($this->session->userdata('Rol_acceso') < 4) 
             {
                 $this->load->view('dashboard_alternativo');
 
