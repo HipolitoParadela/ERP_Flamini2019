@@ -163,6 +163,10 @@ include "menusidebar.php";
                                         </select>
                                     </div>
                                     <div class="form-group">
+                                       <label  class=" form-control-label">Cantidad inicial</em></label> 
+                                       <input type="number" class="form-control" placeholder="" v-model="stockDato.Cant_actual"> <!-- :disabled="stockDato.Id" -->
+                                    </div>
+                                    <div class="form-group">
                                        <label  class=" form-control-label">Cantidad ideal</label> 
                                        <input type="number" class="form-control" placeholder="" v-model="stockDato.Cant_ideal">
                                     </div>
@@ -181,7 +185,7 @@ include "menusidebar.php";
 				</div>
 			</div>
             <!-- end modal stock -->
-            <!-- Modal Usuarios Fotos-->
+            <!-- Modal Stock Fotos-->
             <div class="modal fade" id="modalFotoItem" tabindex="-1" role="dialog" aria-labelledby="modalCategoriasCartaTitle" aria-hidden="true">
                 <div class="modal-dialog  modal-lg" role="document">
                     <div class="modal-content">

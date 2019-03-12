@@ -162,8 +162,8 @@ include "menusidebar.php";
                                             <input type="password" class="form-control" placeholder="" v-model="usuario.Pass" required>
                                     </div>                                    
                                     <div class="form-group">
-                                            <label  class=" form-control-label">Telefono</label>
-                                            <input type="text" class="form-control" placeholder="" v-model="usuario.Telefono">
+                                        <label  class=" form-control-label">Telefono <em>Sin guiones ni espacios</em></label>
+                                        <input type="text" class="form-control" placeholder="" v-model="usuario.Telefono">
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label">Email</label>

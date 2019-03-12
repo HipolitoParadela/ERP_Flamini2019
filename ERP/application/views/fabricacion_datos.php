@@ -65,8 +65,15 @@ include "menusidebar.php";
                                                 <div class="horizontal-form">
                                                     <form class="form-horizontal" action="post" v-on:submit.prevent="actualizarProducto()"> 
                                                         <div class="form-group">
-                                                                    <label  class=" form-control-label">Nombre</label> 
-                                                                    <input type="text" class="form-control" placeholder="" v-model="productoDatos.Nombre_producto" required>
+                                                            <label  class=" form-control-label">Nombre</label> 
+                                                            <input type="text" class="form-control" placeholder="" v-model="productoDatos.Nombre_producto" required>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">Empresa</label>
+                                                            <select class="form-control" v-model="productoDatos.Empresa_id" required>
+                                                                <option value="0">...</option>
+                                                                <option v-for="empresas in listaEmpresas" v-bind:value="empresas.Id">{{empresas.Nombre_empresa}}</option>
+                                                            </select>
                                                         </div>
                                                         <div class="form-group">
                                                                         <label class="control-label">Categoría</label>

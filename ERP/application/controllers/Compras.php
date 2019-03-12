@@ -11,7 +11,7 @@ class compras extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
 
-            if ($this->session->userdata('Rol_acceso') > 1) {
+            if ($this->session->userdata('Rol_acceso') > 3) {
                 $this->load->view('compras_listado');
             } else {
                 header("Location: " . base_url() . "login"); /// enviar a pagina de error
@@ -27,9 +27,9 @@ class compras extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
-            //if (plan_contratado() > 1) {}
+            //if (plan_contratado() > 3) {}
 
-            if ($this->session->userdata('Rol_acceso') > 1) 
+            if ($this->session->userdata('Rol_acceso') > 3) 
             {
                 $this->load->view('compras_datos');
                 

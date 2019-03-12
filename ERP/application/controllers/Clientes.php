@@ -11,9 +11,12 @@ class clientes extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
 
-            if ($this->session->userdata('Rol_acceso') > 1) {
+            if ($this->session->userdata('Rol_acceso') > 1)
+            { 
                 $this->load->view('clientes_listado');
-            } else {
+            } 
+            else 
+            {
                 header("Location: " . base_url() . "login"); /// enviar a pagina de error
             }
 

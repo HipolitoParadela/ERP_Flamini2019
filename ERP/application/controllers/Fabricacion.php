@@ -307,7 +307,8 @@ class Fabricacion extends CI_Controller
 		
 		$data = array(
                         
-					'Codigo_interno' => 		        $this->datosObtenidos->Data->Codigo_interno,
+                    'Codigo_interno' => 		        $this->datosObtenidos->Data->Codigo_interno,
+                    'Empresa_id' => 		            $this->datosObtenidos->Data->Empresa_id,
 					'Categoria_fabricacion_id' => 	    $this->datosObtenidos->Data->Categoria_fabricacion_id,
 					'Nombre_producto' => 		        $this->datosObtenidos->Data->Nombre_producto,
                     'Descripcion_publica_corta' => 		$this->datosObtenidos->Data->Descripcion_publica_corta,

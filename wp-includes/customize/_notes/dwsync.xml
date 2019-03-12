@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dwsync>
+<file name="class-wp-customize-background-image-control.php" server="c1481017.ferozo.com/public_html/" local="131789442960000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-background-image-setting.php" server="c1481017.ferozo.com/public_html/" local="130901844850000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-background-position-control.php" server="c1481017.ferozo.com/public_html/" local="131565570600000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-code-editor-control.php" server="c1481017.ferozo.com/public_html/" local="131565570600000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-color-control.php" server="c1481017.ferozo.com/public_html/" local="131681058200000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-cropped-image-control.php" server="c1481017.ferozo.com/public_html/" local="131455897040000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-custom-css-setting.php" server="c1481017.ferozo.com/public_html/" local="131789442960000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-filter-setting.php" server="c1481017.ferozo.com/public_html/" local="131455897040000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-header-image-setting.php" server="c1481017.ferozo.com/public_html/" local="131565570600000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-header-image-control.php" server="c1481017.ferozo.com/public_html/" local="131920052880000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-image-control.php" server="c1481017.ferozo.com/public_html/" local="131565570600000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-date-time-control.php" server="c1481017.ferozo.com/public_html/" local="131913986890000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-nav-menu-auto-add-control.php" server="c1481017.ferozo.com/public_html/" local="131516437690000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-media-control.php" server="c1481017.ferozo.com/public_html/" local="131565570600000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-nav-menu-control.php" server="c1481017.ferozo.com/public_html/" local="131611826100000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-nav-menu-item-control.php" server="c1481017.ferozo.com/public_html/" local="131652602740000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-nav-menu-item-setting.php" server="c1481017.ferozo.com/public_html/" local="131789442960000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-nav-menu-location-control.php" server="c1481017.ferozo.com/public_html/" local="131558837890000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-nav-menu-locations-control.php" server="c1481017.ferozo.com/public_html/" local="131913983300000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-nav-menu-name-control.php" server="c1481017.ferozo.com/public_html/" local="131516437690000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-nav-menu-section.php" server="c1481017.ferozo.com/public_html/" local="131565570600000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-nav-menu-setting.php" server="c1481017.ferozo.com/public_html/" local="131789442960000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-nav-menus-panel.php" server="c1481017.ferozo.com/public_html/" local="131789442960000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-new-menu-control.php" server="c1481017.ferozo.com/public_html/" local="131894896750000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-new-menu-section.php" server="c1481017.ferozo.com/public_html/" local="131894896750000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-partial.php" server="c1481017.ferozo.com/public_html/" local="131565570600000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-selective-refresh.php" server="c1481017.ferozo.com/public_html/" local="131664800110000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-sidebar-section.php" server="c1481017.ferozo.com/public_html/" local="131565570600000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-site-icon-control.php" server="c1481017.ferozo.com/public_html/" local="131455897040000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-theme-control.php" server="c1481017.ferozo.com/public_html/" local="131789442960000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-themes-panel.php" server="c1481017.ferozo.com/public_html/" local="131518296540000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-themes-section.php" server="c1481017.ferozo.com/public_html/" local="131801061840000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-customize-upload-control.php" server="c1481017.ferozo.com/public_html/" local="131565570600000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-widget-area-customize-control.php" server="c1481017.ferozo.com/public_html/" local="131455897040000000" remote="131967272400000000" Dst="0" />
+<file name="class-wp-widget-form-customize-control.php" server="c1481017.ferozo.com/public_html/" local="131914865890000000" remote="131967272400000000" Dst="0" />
+</dwsync>

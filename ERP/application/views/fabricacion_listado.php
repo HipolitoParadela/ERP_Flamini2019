@@ -121,6 +121,13 @@ include "menusidebar.php";
                                        <input type="text" class="form-control" placeholder="" v-model="productoDatos.Nombre_producto" required>
                                     </div>
                                     <div class="form-group">
+                                        <label class="control-label">Empresa</label>
+                                        <select class="form-control" v-model="productoDatos.Empresa_id" required>
+                                            <option value="0">...</option>
+                                            <option v-for="empresas in listaEmpresas" v-bind:value="empresas.Id">{{empresas.Nombre_empresa}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
                                         <label class="control-label">Categoría</label>
                                         <select class="form-control" v-model="productoDatos.Categoria_fabricacion_id" required>
                                             <option value="0">...</option>

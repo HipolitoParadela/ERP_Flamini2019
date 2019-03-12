@@ -44,6 +44,7 @@ new Vue({
         if (pathname == carpeta + 'fabricacion') {
             this.getListadoCategoriasProductos();
             this.getListadoProductos(0);
+            this.getListadoEmpresas();
         }
 
         if (pathname == carpeta + 'ventas'){
@@ -3008,6 +3009,7 @@ new Vue({
         this.getListadoVentas();
         this.getListadoStock();
         this.getListadoInsumos();
+        this.getListadoEmpresas();
     },
 
     data: {
@@ -3040,11 +3042,22 @@ new Vue({
 
         insumoDatos: {'Stock_id':0, 'Cantidad':0, 'Observaciones':'',},
         listaInsumos: [],
-        listaStock: []
+        listaStock: [],
+        listaEmpresas: [],
     },
 
     methods:
-    {
+    {   
+        //// MOSTRAR LISTADO DE EMPRESAS  
+        getListadoEmpresas: function () {
+            var url = base_url + 'usuarios/obtener_empresas'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token
+            }).then(response => {
+                this.listaEmpresas = response.data
+            });
+        },
 
         //// MOSTRAR LISTADO
         getListadoArchivos: function () {

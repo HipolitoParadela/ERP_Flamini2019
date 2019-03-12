@@ -1,0 +1,10 @@
+Version 4.2.1
+Tweaks - Improved sanitization of theme options
+
+Version 4.2.0
+Feature - Added minified versions of JS scripts along with development versions
+Feature - Moved portfolio navigations to the core
+Feature - Added styles for the WordPress visual editor
+
+Version 1.0.0
+Release of Core Lite!
