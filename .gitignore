@@ -1,2 +1,4 @@
-ERP/application/config/config.php
-ERP/application/config/database.php
+
+ERP/.htaccess
+ERP/.htaccess
+ERP/js/config.js
