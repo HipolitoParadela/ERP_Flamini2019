@@ -13,8 +13,7 @@ class Fabricacion extends CI_Controller
         } 
         else 
         {   
-            /// ID 3, ES EL DISEÑADOR GRÁFICO
-            if ($this->session->userdata('Rol_acceso') > 4 || $this->session->userdata('Id') == 3) 
+            if ($this->session->userdata('Rol_acceso') > 0) // visible para todos
             {
                 $this->load->view('fabricacion_listado');
             } 
@@ -33,10 +32,27 @@ class Fabricacion extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
-            /// ID 3, ES EL DISEÑADOR GRÁFICO
-            if ($this->session->userdata('Rol_acceso') > 4 || $this->session->userdata('Id') == 3) 
+            if ($this->session->userdata('Rol_acceso') > 0)  // visible para todos
             {
                 $this->load->view('fabricacion_datos');
+                
+            } else {
+                header("Location: " . base_url() . "login"); /// enviar a pagina de error
+            }
+
+        }
+    }
+
+//// FABRICACIÓN        | VISTA | DATOS
+    public function stockfabricados()
+    {
+        if ($this->session->userdata('Login') != true) {
+            header("Location: " . base_url() . "login"); /// enviar a pagina de error
+        } else {
+            ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
+            if ($this->session->userdata('Rol_acceso') > 0)  // visible para todos
+            {
+                $this->load->view('fabricacion_productos_stock');
                 
             } else {
                 header("Location: " . base_url() . "login"); /// enviar a pagina de error
@@ -62,19 +78,26 @@ class Fabricacion extends CI_Controller
 
         //$estado = $_GET["estado"];
         $categoria = $_GET["categoria"];
+        $empresa = $_GET["empresa"];
 
 		$this->db->select('	tbl_fabricacion.*,
-                            tbl_fabricacion_categorias.Nombre_categoria');
+                            tbl_fabricacion_categorias.Nombre_categoria,
+                            tbl_empresas.Nombre_empresa');
 
         $this->db->from('tbl_fabricacion');
 
         $this->db->join('tbl_fabricacion_categorias', 'tbl_fabricacion_categorias.Id = tbl_fabricacion.Categoria_fabricacion_id','left');
+        $this->db->join('tbl_empresas', 'tbl_empresas.Id = tbl_fabricacion.Empresa_id','left');
 
         $this->db->where('tbl_fabricacion.Visible', 1);
 
         if($categoria > 0)
         {
             $this->db->where('tbl_fabricacion.Categoria_fabricacion_id', $categoria);
+        }
+        if($empresa > 0)
+        {
+            $this->db->where('tbl_fabricacion.Empresa_id', $empresa);
         }
 
 		$this->db->order_by("tbl_fabricacion.Nombre_producto", "asc");
@@ -310,7 +333,8 @@ class Fabricacion extends CI_Controller
                     'Codigo_interno' => 		        $this->datosObtenidos->Data->Codigo_interno,
                     'Empresa_id' => 		            $this->datosObtenidos->Data->Empresa_id,
 					'Categoria_fabricacion_id' => 	    $this->datosObtenidos->Data->Categoria_fabricacion_id,
-					'Nombre_producto' => 		        $this->datosObtenidos->Data->Nombre_producto,
+                    'Nombre_producto' => 		        $this->datosObtenidos->Data->Nombre_producto,
+                    'Precio_USD' => 		            $this->datosObtenidos->Data->Precio_USD,
                     'Descripcion_publica_corta' => 		$this->datosObtenidos->Data->Descripcion_publica_corta,
                     'Descripcion_publica_larga' => 		$this->datosObtenidos->Data->Descripcion_publica_larga,
                     'Descripcion_tecnica_privada' => 	$this->datosObtenidos->Data->Descripcion_tecnica_privada
@@ -666,6 +690,59 @@ class Fabricacion extends CI_Controller
 
         echo json_encode($result);
         
+    }
+
+//// PRODUCTOS VENDIDOS 	| ANULAR PRODUCTO
+    public function reasignar_producto()
+    {
+        $CI = &get_instance();
+        $CI->load->database();
+
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
+
+        $Id = null;
+        if (isset($this->datosObtenidos->Datos->Id)) {
+            $Id = $this->datosObtenidos->Datos->Id;
+        }
+        
+        $data = array(
+            'Venta_id' =>   $this->datosObtenidos->Datos->Venta_id,
+        );
+        
+
+        $this->load->model('App_model');
+        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
+
+        if ($insert_id >= 0) 
+        {
+        //// si cargo bien esto, toma el id de la orden y la carga en la tbl_ordentrabajo_seguimietno
+            if ($insert_id >=0 ) 
+            {   
+                
+                $data = array(
+
+                    'Venta_id' =>      $this->datosObtenidos->Datos->Venta_id,
+                    'Categoria_seguimiento' =>  2,
+                    'Descripcion' =>   'Producto añadido desde stock de reserva: '.$this->datosObtenidos->Datos->Nombre_producto,
+                    'Usuario_id' =>    $this->session->userdata('Id'),
+                    'Visible' =>       1
+                );
+
+                $this->load->model('App_model');
+                $insert_id_seguimiento = $this->App_model->insertar($data, null, 'tbl_ventas_seguimiento');
+                    
+                echo json_encode(array("Id" => $insert_id, "Seguimiento_id" => $insert_id_seguimiento));
+            }
+        } 
+        else 
+        {
+            echo json_encode(array("Id" => 0));
+        }
     }
 
 ///// fin documento

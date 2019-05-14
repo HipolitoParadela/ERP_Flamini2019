@@ -33,4 +33,21 @@ class Funcionescomunes extends CI_Controller
         $insert_id = $this->App_model->eliminar($Id, $tabla);
                 
     }
+
+    //// DATOS USUARIO JS | VISTA | PRODUCCION
+    public function config()
+    {
+        if ($this->session->userdata('Login') != true) {
+            header("Location: " . base_url() . "login"); /// enviar a pagina de error
+        } 
+        else 
+        {
+            $Datos = array( 'Rol_acceso' => $this->session->userdata('Rol_acceso'),
+                            'Usuario_id' => $this->session->userdata('Id'));
+
+            $this->load->view('config', $Datos);
+        }
+    }
+
+////////////////////////////////
 }

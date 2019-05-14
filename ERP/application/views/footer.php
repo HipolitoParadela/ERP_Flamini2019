@@ -14,7 +14,7 @@
 
     </div>
  <!--config -->
-    <script src="<?php echo base_url(); ?>js/config.js"></script>   
+    <script src="<?php echo base_url(); ?>funcionescomunes/config"></script>   
 <!-- VUE JS-->    
     <script src="<?php echo base_url(); ?>js/vue.min.js"></script>
     <script src="<?php echo base_url(); ?>js/axios.js"></script>

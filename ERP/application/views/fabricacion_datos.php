@@ -76,27 +76,31 @@ include "menusidebar.php";
                                                             </select>
                                                         </div>
                                                         <div class="form-group">
-                                                                        <label class="control-label">Categoría</label>
-                                                                        <select class="form-control" v-model="productoDatos.Categoria_fabricacion_id" required>
-                                                                            <option value="0">...</option>
-                                                                            <option v-for="categoria in listaCategorias" v-bind:value="categoria.Id">{{categoria.Nombre_categoria}}</option>
-                                                                        </select>
+                                                            <label class="control-label">Categoría</label>
+                                                            <select class="form-control" v-model="productoDatos.Categoria_fabricacion_id" required>
+                                                                <option value="0">...</option>
+                                                                <option v-for="categoria in listaCategorias" v-bind:value="categoria.Id">{{categoria.Nombre_categoria}}</option>
+                                                            </select>
                                                         </div>
                                                         <div class="form-group">
-                                                                        <label class=" form-control-label">Código interno</label>
-                                                                        <input type="text" class="form-control" placeholder="" v-model="productoDatos.Codigo_interno">
+                                                            <label class=" form-control-label">Código interno</label>
+                                                            <input type="text" class="form-control" placeholder="" v-model="productoDatos.Codigo_interno">
                                                         </div>
                                                         <div class="form-group">
-                                                                        <label  class=" form-control-label">Descripción Pública Corta</label>
-                                                                        <textarea class="form-control" rows="5" placeholder="" v-model="productoDatos.Descripcion_publica_corta"></textarea>
+                                                            <label class=" form-control-label">Precio en Dolares</label>
+                                                            <input type="number" class="form-control" placeholder="" v-model="productoDatos.Precio_USD">
                                                         </div>
                                                         <div class="form-group">
-                                                                        <label  class=" form-control-label">Descripción Pública Larga (HTML)</label>
-                                                                        <textarea class="form-control" rows="5" placeholder="" v-model="productoDatos.Descripcion_publica_larga"></textarea>
+                                                            <label  class=" form-control-label">Descripción Pública Corta</label>
+                                                            <textarea class="form-control" rows="5" placeholder="" v-model="productoDatos.Descripcion_publica_corta"></textarea>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label  class=" form-control-label">Descripción Pública Larga (HTML)</label>
+                                                            <textarea class="form-control" rows="5" placeholder="" v-model="productoDatos.Descripcion_publica_larga"></textarea>
                                                         </div>                                    
                                                         <div class="form-group">
-                                                                        <label class="control-label">Descripción privada</label>
-                                                                        <textarea class="form-control" rows="5" placeholder="" v-model="productoDatos.Descripcion_tecnica_privada"></textarea>
+                                                            <label class="control-label">Descripción privada</label>
+                                                            <textarea class="form-control" rows="5" placeholder="" v-model="productoDatos.Descripcion_tecnica_privada"></textarea>
                                                         </div>
                                                         <hr>
                                                         <button type="submit" class="btn btn-success">Actualizar datos</button> 

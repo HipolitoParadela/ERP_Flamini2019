@@ -1,3 +1,84 @@
+/// *********************************************************************************************/////
+//// FILTROS
+/// *******************************************
+
+/// FECHA TIME STAMP
+Vue.filter('FechaTimestamp', function (fecha) {
+    fecha = fecha.split('T');
+
+    //var fecha_dia = fecha[0].replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
+    var fecha_dia = fecha[0].replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
+
+    var fecha_hora = fecha[1].split(':');
+    fecha_hora = fecha_hora[0] + ':' + fecha_hora[1];
+
+    //return fecha_dia + ' ' + fecha_hora + 'hs '
+    return fecha_dia
+})
+
+
+/// FECHA TIME STAMP
+Vue.filter('Fecha', function (fecha) {
+    
+    if(fecha != null){
+        return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
+    }
+    else{
+        return "Sin definir";
+    }
+
+})
+
+/// FORMATO DINERO
+Vue.filter('Moneda', function (numero) {
+    /// PARA QUE FUNCIONE DEBE TOMAR EL NUMERO COMO UN STRING
+    //si no lo es, lo convierte
+
+    if (numero > 0 || numero != null) {
+        //if (numero % 1 == 0) {
+        numero = numero.toString();
+        //}
+
+        // Variable que contendra el resultado final
+        var resultado = "";
+        var nuevoNumero;
+
+        // Si el numero empieza por el valor "-" (numero negativo)
+        if (numero[0] == "-") {
+            // Cogemos el numero eliminando los posibles puntos que tenga, y sin
+            // el signo negativo
+            nuevoNumero = numero.replace(/\./g, '').substring(1);
+        } else {
+            // Cogemos el numero eliminando los posibles puntos que tenga
+            nuevoNumero = numero.replace(/\./g, '');
+        }
+
+        // Si tiene decimales, se los quitamos al numero
+        if (numero.indexOf(",") >= 0)
+            nuevoNumero = nuevoNumero.substring(0, nuevoNumero.indexOf(","));
+
+        // Ponemos un punto cada 3 caracteres
+        for (var j, i = nuevoNumero.length - 1, j = 0; i >= 0; i-- , j++)
+            resultado = nuevoNumero.charAt(i) + ((j > 0) && (j % 3 == 0) ? "." : "") + resultado;
+
+        // Si tiene decimales, se lo añadimos al numero una vez forateado con 
+        // los separadores de miles
+        if (numero.indexOf(",") >= 0)
+            resultado += numero.substring(numero.indexOf(","));
+
+        if (numero[0] == "-") {
+            // Devolvemos el valor añadiendo al inicio el signo negativo
+            return "-" + resultado;
+        } else {
+            return resultado;
+        }
+    }
+    else {
+        return 0
+    }
+})
+
+
 /// ELEMENTOS COMUNES PARA LA WEB
 new Vue({
     el: '#app',
@@ -42,15 +123,18 @@ new Vue({
         }
 
         if (pathname == carpeta + 'fabricacion') {
+            this.valorDolar();
+            this.consultaDolarBCRA();
             this.getListadoCategoriasProductos();
-            this.getListadoProductos(0);
+            this.getListadoProductos(0,0);
             this.getListadoEmpresas();
+            
         }
 
         if (pathname == carpeta + 'ventas'){
             this.getListadoVentas(0,0,0,1);
             this.getListadoUsuarios(1);
-            this.getListadoProductos(0);
+            this.getListadoProductos(0,0);
             this.getListadoClientes();
             this.getListadoEmpresas();
         }
@@ -152,6 +236,8 @@ new Vue({
             productoDatos: {},
 
             productoFoto: { 'Id': '', 'Nombre': '', 'Imagen': '' },
+            valorDolarHoy: '',
+            valorDolarBCRA: '',
 
         // Ventas
             listaVentas: [],
@@ -169,6 +255,53 @@ new Vue({
     methods:
     {
 
+        //// DOLAR COTIZACIÓN
+        consultaDolarBCRA: function () {
+            /* var url = 'http://api.estadisticasbcra.com/usd'; // url donde voy a mandar los datos
+
+            axios.get(url,  { 
+                headers: {
+                    Authorization: 'BEARER eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1ODUxMTIwNjEsInR5cGUiOiJleHRlcm5hbCIsInVzZXIiOiJocGFyYWRlbGFAbGl2ZS5jb20uYXIifQ.oTHobNAOb3FUN5XekYbaqNK6JC4lI2jULGVdkSpf5wYo2whcWVDv8z98s_EZTQfVnsKxEJym94v7VOscgItoBQ'
+                }
+                }).then(response => {
+                this.valorDolarBCRA = response.data;
+                console.log("valor dolar: ")
+                console.log(response.data)
+
+            }).catch(error => {
+                alert("mal");
+                console.log(error.response.data)
+
+            }); */
+        },
+
+        //// DOLAR COTIZACIÓN BCRA
+        valorDolar: function () {
+            var url = 'http://ws.geeklab.com.ar/dolar/get-dolar-json.php'; // url donde voy a mandar los datos
+
+            axios.post(url).then(response => {
+                this.valorDolarHoy = response.data;
+
+            }).catch(error => {
+                alert("mal");
+                console.log(error.response.data)
+
+            });
+        },
+
+        //// DOLAR CAMBIO DOLAR A PESO
+        cambioDolar_peso: function(monto){
+            
+            if (monto == null) 
+            { return null }
+            else 
+            { 
+                var calculo = parseInt(monto) * this.valorDolarHoy.libre
+                return calculo.toFixed(2)
+            }
+        },
+
+        
         //// MOSTRAR LISTADO DE Usuarios  
         getListadoUsuarios: function (estado) {
             var url = base_url + 'usuarios/obtener_Usuarios/?estado=' + estado + '&empresa=' + this.filtro_empresa + '&puesto=' + this.filtro_puesto; // url donde voy a mandar los datos
@@ -1078,8 +1211,8 @@ new Vue({
         },
 
         //// FABRICACION |  MOSTRAR LISTADO DE CATEGORIAS
-        getListadoProductos: function (categoria) {
-            var url = base_url + 'fabricacion/obtener_listado_de_productos?categoria=' + categoria; // url donde voy a mandar los datos
+        getListadoProductos: function (categoria, empresa) {
+            var url = base_url + 'fabricacion/obtener_listado_de_productos?categoria=' + categoria +'&empresa='+empresa; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -1102,7 +1235,7 @@ new Vue({
                 this.productoDatos.Id = response.data.Id;
                 this.texto_boton = "Actualizar"
 
-                this.getListadoProductos(0);
+                this.getListadoProductos(0,0);
 
             }).catch(error => {
                 alert("mal");
@@ -1141,7 +1274,7 @@ new Vue({
 
                     ////DEBO HACER FUNCIONAR BIEN ESTO PARA QUE SE ACTUALICE LA FOTO QUE CARGO EN EL MOMENTO, SI NO PARECE Q NO SE CARGARA NADA
                     this.productoFoto.Imagen = response.data.Imagen;
-                    this.getListadoProductos(0);
+                    this.getListadoProductos(0,0);
                     toastr.success('Proceso realizado correctamente', 'Fabricación')
 
                     this.preloader = 0;
@@ -1171,7 +1304,7 @@ new Vue({
 
                     toastr.success('Proceso realizado correctamente', 'Productos')
 
-                    this.getListadoProductos(0);
+                    this.getListadoProductos(0,0);
 
                 }).catch(error => {
                     alert("mal");
@@ -1432,6 +1565,8 @@ new Vue({
         this.obtener_cantVentas();
         this.obtener_cantCompras();
         this.obtener_cantProductosPropios();
+        this.valorDolar();
+        this.noticiasGoogle();
 
 
         //setInterval(() => { this.getTimeline(0, null); }, 60000); //// funcion para actualizar automaticamente cada 1minuto
@@ -1447,6 +1582,8 @@ new Vue({
         listaCompras: [],
         listaVentas: [],
         cantProductosPropios: '0',
+        valorDolarHoy: '',
+        listaNoticias:{}
     },
 
     methods:
@@ -1595,6 +1732,36 @@ new Vue({
 
             });
         },
+
+        //// VENTAS |  MOSTRAR LISTADO DE VENTAS
+        valorDolar: function () {
+            var url = 'http://ws.geeklab.com.ar/dolar/get-dolar-json.php'; // url donde voy a mandar los datos
+
+            axios.post(url).then(response => {
+                this.valorDolarHoy = response.data
+            }).catch(error => {
+                alert("mal");
+                console.log(error.response.data)
+
+            });
+        },
+
+        //// NOTICIAS DE INTERES
+        noticiasGoogle: function () {
+            var url = 'https://newsapi.org/v2/top-headlines?' + 'country=ar&' + 'apiKey=469fb6edbe7243b2ac2544b5058e30f8';
+
+            axios.get(url).then(response => {
+                this.listaNoticias = response.data
+                //console.log(response.data)
+            }).catch(error => {
+                alert("mal");
+                console.log(error.response.data)
+
+            });
+        },
+
+
+        
         //////
     }
 });
@@ -2624,27 +2791,41 @@ new Vue({
 
 
 ///         --------------------------------------------------------------------   ////
-//// Elemento para el manejo de ORDENES por Id
+//// Elemento para el manejo de VENTAS por Id
 new Vue({
     el: '#ventas',
 
     created: function () {
-        this.getDatosventas();
-        this.getListadoUsuarios(1);
-        this.getListadoClientes();
-        this.getListadoSeguimiento(0, 2);
-        this.getListaUsados();
-        this.getListadoEmpresas();
-        this.getListadoProductos(0);
-        this.getListadoProductosVendidos();
-        
+        if (pathname == carpeta + 'ventas/produccion') 
+        {
+            this.Set_valores_usuario();
+            this.getListadoProductosEstado_1();
+            this.getListadoProductosEstado_2();
+            this.getListadoProductosEstado_3();
+            this.getListadoProductosEstado_4();
+            this.getListadoProductosEstado_5();
+            this.getListadoProductosEstado_6();
+        }
+        else
+        {
+            this.getDatosventas();
+            this.getListadoUsuarios(1);
+            this.getListadoClientes();
+            this.getListadoSeguimiento(0, 2);
+            this.getListaUsados();
+            this.getListadoEmpresas();
+            this.getListadoProductos(0,0);
+            this.getListadoProductosVendidos();
+            this.getListadoVentas(0,0,0,1);
+        }
     },
 
     data: {
-        mostrar: "2",
+        mostrar: "1",
         ventaDatos: {},
 
-        Acceso: '',
+        Rol_acceso: '',
+        Usuario_id: '',
         
         listaSeguimiento: [],
         texto_boton: "Cargar",
@@ -2662,16 +2843,41 @@ new Vue({
         preloader: '0',
 
         cookies: [],
+        
+        filtro_empresa: '0',
 
         listaProductos: [],
         productoData: {'Cantidad': 1,},
 
         listaProductosVendidos : [],
-        productoPasoData: {'Estado':'', 'Producto_id':''},
+        productoPasoData: {'Estado':'', 'Producto_id':'', 'Comentarios': 'Sin comentarios'},
+
+        productoAnulado: {},
+        infoModal: {'Requerimentos':'', 'Observaciones':''},
+        listaVentas: [],
+        productoAsignado: {'Id':'', 'Venta_id':''},
+        precioVentaTotal: 0,
+
+        listaEtapa_1: [],
+        listaEtapa_2: [],
+        listaEtapa_3: [],
+        listaEtapa_4: [],
+        listaEtapa_5: [],
+        listaEtapa_6: [],
     },
 
     methods:
     {   
+        //// DATOS SOBRE EL ARCHIVO SELECCIONADO EN CASO QUE QUIERA CARGAR ALGUNA ARCHIVO
+        Set_valores_usuario() {
+            this.Rol_acceso = Rol_acceso
+            this.Usuario_id = Usuario_id
+
+            console.log(Rol_acceso);
+            console.log(Usuario_id);
+            
+        },
+        
         //// MOSTRAR LISTADO DE Usuarios  
         getListadoUsuarios: function (estado) {
             var url = base_url + 'usuarios/obtener_Usuarios/?estado=' + estado + '&empresa=' + this.filtro_empresa + '&puesto=' + this.filtro_puesto; // url donde voy a mandar los datos
@@ -2836,8 +3042,8 @@ new Vue({
         },
 
         //// FABRICACION |  MOSTRAR LISTADO DE CATEGORIAS
-        getListadoProductos: function (categoria) {
-            var url = base_url + 'fabricacion/obtener_listado_de_productos?categoria=' + categoria; // url donde voy a mandar los datos
+        getListadoProductos: function (categoria,empresa) {
+            var url = base_url + 'fabricacion/obtener_listado_de_productos?categoria=' + categoria+'&empresa='+empresa; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -2845,7 +3051,6 @@ new Vue({
                 this.listaProductos = response.data
             });
         },
-
 
         //// OPERACIONES CON FECHAS
         
@@ -2882,7 +3087,7 @@ new Vue({
             /// debe devolver mensajes completos
             diff = diff / (1000 * 60 * 60 * 24)
 
-            if(diff < 0) 
+            /* if(diff < 0) 
             {
                 diff = diff * parseInt(-1)
                 return diff + ' días de atrazo'
@@ -2890,7 +3095,9 @@ new Vue({
             else 
             {
                 return diff + ' días'
-            }
+            } */
+
+            return diff
         },
 
         //// VENTAS | CARGAR PRODUCTO A LA VENTA
@@ -2915,14 +3122,10 @@ new Vue({
             });
         },
 
-        /// EDITAR UN SEGUIMIENTO
-       /*  editarFormularioSeguimiento: function (dato) {
-            this.productoData = dato;
-        }, */
-
         //// LIMPIAR FORMULARIO SEGUIMIENTO
         limpiarFormularioProductos: function () {
-            this.productoData = {}
+            this.productoData = {};
+            this.texto_boton = "Cargar"
         },
 
 
@@ -2934,12 +3137,28 @@ new Vue({
                 token: token
             }).then(response => {
                 this.listaProductosVendidos = response.data
+                //console.log(this.listaProductosVendidos.length)
+
+                /// Realizar suma del costo de todos los productos vendidos
+                this.precioVentaTotal = 0;
+                for (let index = 0; index < this.listaProductosVendidos.length; index++) 
+                {
+                    console.log(this.listaProductosVendidos[index].Precio_USD)
+
+                    var precioVenta = this.listaProductosVendidos[index].Precio_USD;
+                   
+                    if(precioVenta == null) { precioVenta = 0 }
+                    
+                    this.precioVentaTotal = this.precioVentaTotal + parseInt(precioVenta);
+                }
             });
         },
+
 
         /// PASO A PASO PRODUCTO | Abrir modal
         editarPasoProducto: function (Producto_id, Estado) {
             this.productoPasoData.Estado = Estado;
+            this.productoPasoData.Comentarios = 'Sin comentarios';
             this.productoPasoData.Producto_id = Producto_id;
         },
 
@@ -2955,7 +3174,20 @@ new Vue({
                 toastr.success('Proceso realizado correctamente', 'Ventas')
                 this.texto_boton = "Actualizar"
 
-                this.getListadoProductosVendidos();
+                
+                if (pathname == carpeta + 'ventas/produccion') 
+                {
+                    this.getListadoProductosEstado_1()
+                    this.getListadoProductosEstado_2()
+                    this.getListadoProductosEstado_3()
+                    this.getListadoProductosEstado_4()
+                    this.getListadoProductosEstado_5()
+                    this.getListadoProductosEstado_6()
+                }
+                else
+                {
+                    this.getListadoProductosVendidos();
+                }
 
             }).catch(error => {
                 console.log(error.response.data)
@@ -2978,7 +3210,7 @@ new Vue({
                     this.texto_boton = "Actualizar"
 
                     this.getDatosventas();
-                    //this.getListadoSeguimiento(0, 4);
+                   
 
                 }).catch(error => {
                     console.log(error.response.data)
@@ -2986,7 +3218,185 @@ new Vue({
             }
         },
 
+        /// EDITAR UN PRODUCTO AGREGADO
+        editarFormularioProductos: function (dato) {
+            this.productoData = dato;
+        },
+
+        /// EDITAR UN PRODUCTO AGREGADO
+        editarAnularProducto: function (dato) {
+            this.productoAnulado = dato;
+        },
+
+        //// VENTAS | CAMBIAR ESTADO DE LA VENTA
+        anularProducto: function () {
+            var url = base_url + 'ventas/anular_producto'; // url donde voy a mandar los datos
+
+            var opcion = confirm("¿Esta seguro que quiere anular este producto?");
+            if (opcion == true) 
+            {
+                axios.post(url, {
+                    token: token,
+                    Datos: this.productoAnulado
+                }).then(response => {
+
+                    toastr.success('Proceso realizado correctamente', 'Ventas')
+                    this.texto_boton = "Actualizar"
+
+                    this.getListadoProductosVendidos();
+
+                }).catch(error => {
+                    console.log(error.response.data)
+                });
+            }
+        },
+
+        //// VENTAS  | Eliminar
+        desactivarProductoVenta : function (Id) {
+            var url = base_url + 'ventas/eliminar_producto'; // url donde voy a mandar los datos
+
+            var opcion = confirm("¿Esta seguro de eliminar a este producto?");
+            if (opcion == true) {
+                axios.post(url, {
+                    token: token,
+                    Id: Id
+                }).then(response => {
+
+                    toastr.success('Proceso realizado correctamente', 'Proveedores')
+
+                    this.getListadoProductosVendidos(0);
+
+                }).catch(error => {
+                    alert("mal");
+                    console.log(error)
+
+                });
+            }
+        },
+
+        /// INFO PARA MODAL 
+        infoEtapa: function (requerimentos, observaciones) {
+            this.infoModal.Requerimentos = requerimentos;
+            this.infoModal.Observaciones = observaciones;
+        },
         
+        //// VENTAS |  MOSTRAR LISTADO DE VENTAS
+        getListadoVentas: function (Usuario_id, Empresa_id, Cliente_id, Estado) {
+            var url = base_url + 'ventas/obtener_listado_ventas?Empresa_id=' + Empresa_id + '&Vendedor_id=' + Usuario_id + '&Cliente_id=' + Cliente_id + '&Estado=' + Estado; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token
+            }).then(response => {
+                this.listaVentas  = response.data
+            }).catch(error => {
+                    alert("mal");
+                    console.log(error.response.data)
+
+                });
+        },
+
+        /// EDITAR MODAL ASIGNAR PRODUCTO VENTA
+        editAsignarProductoVenta: function (Id, Nombre_producto) {
+            this.productoAsignado.Id = Id;
+            this.productoAsignado.Nombre_producto = Nombre_producto;
+        },
+
+        //// VENTAS | ASIGNAR UNPRODUCTO A UNA VENTA
+        reasignar_producto: function () {
+            var url = base_url + 'fabricacion/reasignar_producto'; // url donde voy a mandar los datos
+
+            var opcion = confirm("¿Esta seguro que quiere reasignar este producto?");
+            if (opcion == true) 
+            {
+                axios.post(url, {
+                    token: token,
+                    Datos: this.productoAsignado
+                }).then(response => {
+
+                    toastr.success('Proceso realizado correctamente', 'Ventas')
+                    this.texto_boton = "Actualizar"
+
+                    this.getListadoProductosVendidos();
+
+                }).catch(error => {
+                    console.log(error.response.data)
+                });
+            }
+        },
+
+        //// PRODUCCION  | MOSTRAR LISTADO Estado 1
+        getListadoProductosEstado_1: function () {
+            var url = base_url + 'ventas/obtener_productos_a_fabricar'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Estado: 2
+            }).then(response => {
+                this.listaEtapa_1 = response.data
+            });
+        },
+        
+        //// PRODUCCION  | MOSTRAR LISTADO Estado 1
+        getListadoProductosEstado_2: function () {
+            var url = base_url + 'ventas/obtener_productos_a_fabricar'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Estado: 3
+            }).then(response => {
+                this.listaEtapa_2 = response.data
+            });
+        },
+
+        //// PRODUCCION  | MOSTRAR LISTADO Estado 1
+        getListadoProductosEstado_3: function () {
+            var url = base_url + 'ventas/obtener_productos_a_fabricar'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Estado: 4
+            }).then(response => {
+                this.listaEtapa_3 = response.data
+            });
+        },
+
+        //// PRODUCCION  | MOSTRAR LISTADO Estado 1
+        getListadoProductosEstado_4: function () {
+            var url = base_url + 'ventas/obtener_productos_a_fabricar'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Estado: 5
+            }).then(response => {
+                this.listaEtapa_4 = response.data
+            });
+        },
+
+        //// PRODUCCION  | MOSTRAR LISTADO Estado 1
+        getListadoProductosEstado_5: function () {
+            var url = base_url + 'ventas/obtener_productos_a_fabricar'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Estado: 6
+            }).then(response => {
+                this.listaEtapa_5 = response.data
+            });
+        },
+
+        //// PRODUCCION  | MOSTRAR LISTADO Estado 1
+        getListadoProductosEstado_6: function () {
+            var url = base_url + 'ventas/obtener_productos_a_fabricar'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Estado: 7
+            }).then(response => {
+                this.listaEtapa_6 = response.data
+            });
+        },
+
+
     },
 
     ////// ACCIONES COMPUTADAS     
@@ -3003,13 +3413,16 @@ new Vue({
     el: '#fabricacion',
 
     created: function () {
-        this.getDatosId();
-        this.getListadoArchivos();
-        this.getListadoCategoriasProductos();
-        this.getListadoVentas();
-        this.getListadoStock();
-        this.getListadoInsumos();
-        this.getListadoEmpresas();
+        
+            this.getDatosId();
+            this.getListadoArchivos();
+            this.getListadoCategoriasProductos();
+            this.getListadoVentas();
+            this.getListadoStock();
+            this.getListadoInsumos();
+            this.getListadoEmpresas();
+        
+        
     },
 
     data: {
@@ -3112,11 +3525,11 @@ new Vue({
             }).then(response => {
                 this.listaVentas = response.data
 
-                console.log(response.data)
+                /* console.log(response.data) */
                 
             }).catch(error => {
                 alert("mal")
-                console.log(error.response.data)
+                /* console.log(error.response.data) */
 
             });
 

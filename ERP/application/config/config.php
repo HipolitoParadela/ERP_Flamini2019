@@ -23,7 +23,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
+<<<<<<< HEAD
 $config['base_url'] = 'http://imuargentina.com.ar/ERP/';
+=======
+$config['base_url'] = 'http://localhost/ERP_Flamini2019/ERP_Flamini2019/ERP/';
+>>>>>>> 37d655e942506f4efffb5d6681cdc736ff227e2d
 
 /*
 |--------------------------------------------------------------------------

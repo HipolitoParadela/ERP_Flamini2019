@@ -25,8 +25,15 @@ include "menusidebar.php";
 
                                 <div class="table-data__tool">
                                     <div class="table-data__tool-left">
+                                    <div class="rs-select2--light">
+                                            <select class="form-control-sm form-control" v-model="filtro_empresa" v-on:change="getListadoProductos(filtro_categoria, filtro_empresa)">
+                                                <option selected="selected" v-bind:value="0">Todas las empresas</option>
+                                                <option v-for="empresaSeleccionada in listaEmpresas" v-bind:value="empresaSeleccionada.Id">{{empresaSeleccionada.Nombre_empresa}}</option>
+                                            </select>
+                                            <div class="dropDownSelect2"></div> 
+                                        </div>
                                         <div class="rs-select2--light">
-                                            <select class="form-control-sm form-control" v-model="filtro_categoria" v-on:change="getListadoProductos(filtro_categoria)">
+                                            <select class="form-control-sm form-control" v-model="filtro_categoria" v-on:change="getListadoProductos(filtro_categoria, filtro_empresa)">
                                                 <option selected="selected" v-bind:value="0">Todas las categorías</option>
                                                 <option v-for="categoriaSeleccionada in listaCategorias" v-bind:value="categoriaSeleccionada.Id">{{categoriaSeleccionada.Nombre_categoria}}</option>
                                             </select>
@@ -46,14 +53,17 @@ include "menusidebar.php";
                                     </div>
                                 </div>
                                 <div class="table-responsive table-responsive-data2">
+                                
                                     <table class="table table-data2">
                                         <thead>
                                             <tr>
                                                 <th></th>
                                                 <th>Nombre</th>
                                                 <th>Código interno</th>
-                                                <th>Categoría </th>
-                                                <th>Descripción</th>
+                                                <th>Precio USD</th>
+                                                <th>Precio Pesos *</th>
+                                                <th>Categoría </th><!-- 
+                                                <th>Descripción</th> -->
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -73,8 +83,10 @@ include "menusidebar.php";
                                                     </a>
                                                 </td>
                                                 <td>{{producto.Codigo_interno}}</td>
+                                                <td class="text-right"><h4>{{producto.Precio_USD}} USD</h4></td> 
+                                                <td class="text-right"><h4>${{cambioDolar_peso(producto.Precio_USD)}}</h4></td>
                                                 <td><span class="block-email">{{producto.Nombre_categoria}}</span></td>
-                                                <td>{{producto.Descripcion_publica_corta}}</td>
+                                                <!-- <td>{{producto.Descripcion_publica_corta}}</td>  -->
                                                 <td>
                                                     <div class="table-data-feature">
                                                         
@@ -84,10 +96,14 @@ include "menusidebar.php";
                                                         <button class="item"  v-on:click="editarFormularioProducto(producto)" data-toggle="modal" data-target="#productomodal" data-placement="top" title="Edición rápida">
                                                             <i class="zmdi zmdi-edit"></i>
                                                         </button>
-                                                        
-                                                        <button v-on:click="desactivarProducto(producto.Id)" class="item" data-toggle="tooltip" data-placement="top" title="Eliminar">
-                                                            <i class="zmdi zmdi-delete"></i>
-                                                        </button>
+                                                        <?php 
+                                                            if($this->session->userdata('Rol_acceso') > 4) 
+                                                            {
+                                                                echo '<button v-on:click="desactivarProducto(producto.Id)" class="item" data-toggle="tooltip" data-placement="top" title="Eliminar">
+                                                                        <i class="zmdi zmdi-delete"></i>
+                                                                    </button>'; 
+                                                            }
+                                                        ?>
                                                         
                                                     </div>
                                                 </td>
@@ -96,6 +112,7 @@ include "menusidebar.php";
                                             
                                         </tbody>
                                     </table>
+                                    <h6 align="right"><em>* Precio en pesos calculado según valor del dolar en este momento tomado de web de terceros. Ante la duda corroborar de otra fuente.</em></h6>
                                 </div>
                                 <!-- END DATA TABLE -->
                             </div>
@@ -137,6 +154,10 @@ include "menusidebar.php";
                                     <div class="form-group">
                                         <label class=" form-control-label">Código interno</label>
                                         <input type="text" class="form-control" placeholder="" v-model="productoDatos.Codigo_interno">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class=" form-control-label">Precio en Dolares</label>
+                                        <input type="number" class="form-control" placeholder="" v-model="productoDatos.Precio_USD">
                                     </div>
                                     <div class="form-group">
                                         <label  class=" form-control-label">Descripción Pública Corta</label>

@@ -75,23 +75,25 @@ include "menusidebar.php";
                                                     <form class="form-horizontal" action="post" v-on:submit.prevent="crearCliente()"> 
                                                         <div class="row">
                                                             <div class="col-sm-6">
-                                                                <h4>Datos cliente</h4>
-                                                                <hr>
                                                                 <div class="form-group">
                                                                     <label  class=" form-control-label">Nombre</label> 
                                                                     <input type="text" class="form-control" placeholder="" v-model="clienteDatos.Nombre_cliente" required>
                                                                 </div>
                                                                 <div class="form-group">
-                                                                        <label class=" form-control-label">Producto/Servicio que brinda</label>
-                                                                        <textarea class="form-control" rows="5" v-model="clienteDatos.Producto_servicio"></textarea>
+                                                                        <label class=" form-control-label">Producto/Servicio que le ofrecemos</label>
+                                                                        <textarea class="form-control" rows="3" v-model="clienteDatos.Producto_servicio"></textarea>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label  class=" form-control-label">CUIT/CUIL</label> 
                                                                     <input type="text" class="form-control" placeholder="" v-model="clienteDatos.CUIT_CUIL" required>
                                                                 </div>
                                                                 <div class="form-group">
-                                                                        <label class=" form-control-label">Telefono</label>
-                                                                        <input type="text" class="form-control" placeholder="" v-model="clienteDatos.Telefono" required>
+                                                                    <label class=" form-control-label">Teléfono whatsapp - numero entero de corrido</label>
+                                                                    <input type="text" class="form-control" placeholder="" v-model="clienteDatos.Telefono">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class=" form-control-label">Teléfono Fijo</label>
+                                                                    <input type="text" class="form-control" placeholder="" v-model="clienteDatos.Telefono_fijo">
                                                                 </div>
                                                                 <div class="form-group">
                                                                         <label  class=" form-control-label">Dirección</label>
@@ -116,7 +118,7 @@ include "menusidebar.php";
                                                                         <input type="email" class="form-control" placeholder="" v-model="clienteDatos.Email">
                                                                 </div>
                                                                 <div class="form-group">
-                                                                        <label class="control-label">Web</label>
+                                                                        <label class="control-label">Web - Sin "http://"</label>
                                                                         <input type="text" class="form-control" placeholder="" v-model="clienteDatos.Web">
                                                                 </div>
                                                                 <div class="form-group">

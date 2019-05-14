@@ -61,9 +61,9 @@ include "menusidebar.php";
                                                     </a>
                                                 </td>
                                                 <td>{{cliente.CUIT_CUIL}}</td>
-                                                <td>{{cliente.Telefono}}</td>
+                                                <td>{{cliente.Telefono_fijo}}</td>
                                                 <td><span class="block-email">{{cliente.Email}}</span></td>
-                                                <td>{{cliente.Web}}</td>
+                                                <td><a v-bind:href="'http://'+cliente.Web" target="_blank">{{cliente.Web}}</a></td>
                                                 <td>{{cliente.Nombre_persona_contacto}}</td>
                                                 <td>
                                                     <div class="table-data-feature">
@@ -74,10 +74,15 @@ include "menusidebar.php";
                                                         <button class="item"  v-on:click="editarFormularioCliente(cliente)" data-toggle="modal" data-target="#clientemodal" data-placement="top" title="Edición rápida">
                                                             <i class="zmdi zmdi-edit"></i>
                                                         </button>
-                                                        
-                                                        <button v-on:click="desactivarcliente(cliente.Id)" class="item" data-toggle="tooltip" data-placement="top" title="Eliminar">
-                                                            <i class="zmdi zmdi-delete"></i>
-                                                        </button>
+                                                        <?php 
+                                                            if($this->session->userdata('Rol_acceso') > 4) 
+                                                            {
+                                                                echo '
+                                                                <button v-on:click="desactivarCliente(cliente.Id)" class="item" data-toggle="tooltip" data-placement="top" title="Eliminar">
+                                                                    <i class="zmdi zmdi-delete"></i>
+                                                                </button>'; 
+                                                            }
+                                                        ?>
                                                         
                                                     </div>
                                                 </td>
@@ -119,8 +124,12 @@ include "menusidebar.php";
                                         <textarea class="form-control" rows="5" v-model="clienteDatos.Producto_servicio"></textarea>
                                     </div>
                                     <div class="form-group">
-                                        <label class=" form-control-label">Telefono</label>
-                                        <input type="text" class="form-control" placeholder="" v-model="clienteDatos.Telefono" required>
+                                        <label class=" form-control-label">Teléfono whatsapp - numero entero de corrido</label>
+                                        <input type="text" class="form-control" placeholder="" v-model="clienteDatos.Telefono">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class=" form-control-label">Teléfono Fijo</label>
+                                        <input type="text" class="form-control" placeholder="" v-model="clienteDatos.Telefono_fijo">
                                     </div>
                                     <div class="form-group">
                                         <label  class=" form-control-label">Dirección</label>
@@ -143,7 +152,7 @@ include "menusidebar.php";
                                          <input type="email" class="form-control" placeholder="" v-model="clienteDatos.Email">
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label">Web</label>
+                                        <label class="control-label">Web - Sin "http://"</label>
                                          <input type="text" class="form-control" placeholder="" v-model="clienteDatos.Web">
                                     </div>
                                     <div class="form-group">

@@ -13,7 +13,7 @@
                         </li>
                         <li>
                             <a href="<?= base_url();?>stock">
-                                <i class="fas fa-list-alt"></i>Stock
+                                <i class="fas fa-list-alt"></i>Insumos producción
                             </a>
                         </li>
                         <li>
@@ -29,6 +29,11 @@
                         <li>
                             <a href="<?= base_url();?>fabricacion">
                                 <i class="fas fa-barcode"></i>Productos propios
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= base_url();?>fabricacion/stockfabricados/?Id=1">
+                                <i class="fas fa-retweet"></i>Stock de reserva
                             </a>
                         </li>
                         <li>
@@ -77,7 +82,7 @@
                         </li>
                         <li>
                             <a href="<?= base_url();?>stock">
-                                <i class="fas fa-list-alt"></i>Stock</a>
+                                <i class="fas fa-list-alt"></i>Insumos producción</a>
                         </li>
                         <li>
                             <a href="<?= base_url();?>clientes">
@@ -96,6 +101,11 @@
                         <li>
                             <a href="<?= base_url();?>fabricacion">
                                 <i class="fas fa-barcode"></i>Productos propios
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= base_url();?>fabricacion/stockfabricados/?Id=1">
+                                <i class="fas fa-retweet"></i>Stock de reserva
                             </a>
                         </li>
                         <li>

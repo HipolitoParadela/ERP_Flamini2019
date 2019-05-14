@@ -77,9 +77,15 @@ $db['default'] = array(
 	'dsn'	=> '',
 	'dbport' => '3306',
 	'hostname' => 'localhost',
+<<<<<<< HEAD
 	'username' => 'c1481017_erp',
 	'password' => 'foVOwa06se',
 	'database' => 'c1481017_erp',
+=======
+	'username' => 'root',
+	'password' => '',
+	'database' => 'ERO_Flamini2019',
+>>>>>>> 37d655e942506f4efffb5d6681cdc736ff227e2d
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

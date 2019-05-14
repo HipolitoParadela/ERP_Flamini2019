@@ -1,3 +1,11 @@
+20/3/2019
+
+API REST del Dolar
+Api rest de google noticias https://newsapi.org/account
+    AMBOS COLOCADOS EN EL DASHBOARD
+
+___________________
+
 11/3/2019
 
 Se le agregá el campo Empresa_id a la tabla de productos propios más el codigo para identificarlos por empresa.

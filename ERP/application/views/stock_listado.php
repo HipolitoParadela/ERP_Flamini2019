@@ -18,7 +18,7 @@ include "menusidebar.php";
                         <div class="row">
                             <div class="col-md-12">
                                 <!-- DATA TABLE -->
-                                <h3 class="title-5 m-b-35">Control de stock</h3>
+                                <h3 class="title-5 m-b-35">Listado de stock de insumos para producción</h3>
                                
                                 <div class="table-data__tool">
                                     <div class="table-data__tool-left">
@@ -107,7 +107,7 @@ include "menusidebar.php";
                                                 </td>-->
                                                 <td>
                                                     <button v-on:click="editarStockProducto(stock)" class="btn btn-info" data-toggle="modal" data-target="#egresoModal" data-placement="top" title="Reportar egreso"> 
-                                                        <i class="fa fa-wrench "></i>
+                                                        <i class="fa fa-chevron-circle-down"></i>
                                                     </button>
                                                 </td>
                                                 <td>{{stock.Fecha_hora}}</td>

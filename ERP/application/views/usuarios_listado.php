@@ -112,10 +112,15 @@ include "menusidebar.php";
                                                         <button class="item"  v-on:click="editarFormulariousuario(usuario)" data-toggle="modal" data-target="#usuariomodal" data-placement="top" title="Edición rápida">
                                                             <i class="zmdi zmdi-edit"></i>
                                                         </button>
-                                                        
-                                                        <button v-on:click="desactivarUsuario(usuario.Id)" class="item" data-toggle="tooltip" data-placement="top" title="Eliminar">
-                                                            <i class="zmdi zmdi-delete"></i>
-                                                        </button>
+                                                        <?php 
+                                                            if($this->session->userdata('Rol_acceso') > 4) 
+                                                            {
+                                                                echo '
+                                                                <button v-on:click="desactivarUsuario(usuario.Id)" class="item" data-toggle="tooltip" data-placement="top" title="Eliminar">
+                                                                    <i class="zmdi zmdi-delete"></i>
+                                                                </button>'; 
+                                                            }
+                                                        ?>
                                                        <!--<button class="item" data-toggle="tooltip" data-placement="top" title="More">
                                                             <i class="zmdi zmdi-more"></i>
                                                         </button>-->

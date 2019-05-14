@@ -129,10 +129,15 @@ include "menusidebar.php";
                                                         <button v-show="filtro_estado < 10" class="item" v-on:click="editarFormularioVenta(venta)" data-toggle="modal" data-target="#ventaModal" data-placement="top" title="Edición rápida">
                                                             <i class="zmdi zmdi-edit"></i>
                                                         </button>
-                                                        
-                                                        <button v-show="filtro_estado < 10" v-on:click="desactivarVenta(venta.Id)" class="item" data-toggle="tooltip" data-placement="top" title="Eliminar">
-                                                            <i class="zmdi zmdi-delete"></i>
-                                                        </button>
+                                                        <?php 
+                                                            if($this->session->userdata('Rol_acceso') > 4) 
+                                                            {
+                                                                echo '
+                                                                <button v-show="filtro_estado < 10" v-on:click="desactivarVenta(venta.Id)" class="item" data-toggle="tooltip" data-placement="top" title="Eliminar">
+                                                                    <i class="zmdi zmdi-delete"></i>
+                                                                </button>'; 
+                                                            }
+                                                        ?>
                                                         
                                                     </div>
                                                 </td>
@@ -239,7 +244,7 @@ include "menusidebar.php";
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label class=" form-control-label">Información sobre logística</label>
+                                        <label class=" form-control-label">Información sobre Instalaciones</label>
                                         <textarea class="form-control" rows="5" v-model="ventaDatos.Info_instalaciones"></textarea>
                                     </div>
                                     <div class="form-group">

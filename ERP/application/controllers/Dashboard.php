@@ -48,11 +48,10 @@ class Dashboard extends CI_Controller
             exit("No coinciden los token");
         }
 
-        /// DATOS DE COMANDAS
         $this->db->select('Id');
         $this->db->from('tbl_stock');
         //$this->db->where("DATE_FORMAT(fecha,'%Y-%m')", $Mes);
-        //$this->db->where('Activo', 1);
+        $this->db->where('Visible', 1);
         $query = $this->db->get();
         $total = $query->num_rows();
 

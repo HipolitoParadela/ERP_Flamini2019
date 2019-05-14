@@ -54,6 +54,7 @@ class ventas extends CI_Controller
 
                     $this->db->where('tbl_ventas.Id', $Id);
                     $this->db->where('tbl_ventas.Visible', 1);
+                    
 
                     $query = $this->db->get();
                     $result = $query->result_array();
@@ -71,6 +72,25 @@ class ventas extends CI_Controller
 
         }
     }
+
+//// VENTAS       | VISTA | PRODUCCION
+    public function produccion()
+    {
+        if ($this->session->userdata('Login') != true) {
+            header("Location: " . base_url() . "login"); /// enviar a pagina de error
+        } else {
+
+            if ($this->session->userdata('Rol_acceso') > 1) 
+            {
+                $this->load->view('ventas_produccion');
+            } 
+            else 
+            {
+                header("Location: " . base_url() . "login"); /// enviar a pagina de error
+            }
+
+        }
+}
 
 //// VENTAS 	  | OBTENER TODAS
 	public function obtener_listado_ventas()
@@ -647,10 +667,16 @@ class ventas extends CI_Controller
             $Cantidad = $this->datosObtenidos->Datos->Cantidad;
         }
 
+        $Tipo_produccion = 1;
+        if (isset($this->datosObtenidos->Datos->Tipo_produccion)) {
+            $Tipo_produccion = $this->datosObtenidos->Datos->Tipo_produccion;
+        }
+
         $data = array(
 
             'Venta_id' =>               $Venta_id,
             'Producto_id' =>            $this->datosObtenidos->Datos->Producto_id,
+            'Tipo_produccion' =>        $Tipo_produccion,
             'Observaciones' =>          $this->datosObtenidos->Datos->Observaciones,
             'S_1_Requerimientos' =>     $this->datosObtenidos->Datos->S_1_Requerimientos,
             'S_2_Requerimientos' =>     $this->datosObtenidos->Datos->S_2_Requerimientos,
@@ -666,10 +692,18 @@ class ventas extends CI_Controller
 
         $this->load->model('App_model');
         
-        for ($i=0; $i < $Cantidad; $i++) 
-        {  
+        if($Cantidad != null)
+        {
+            for ($i=0; $i < $Cantidad; $i++) 
+            {  
+                $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
+            }
+        }
+        else
+        {
             $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
         }
+        
             
         if ($insert_id >= 0) {
             echo json_encode(array("Id" => $insert_id));
@@ -698,7 +732,8 @@ class ventas extends CI_Controller
 
         $this->db->select(' tbl_ventas_productos.*,
                             tbl_fabricacion.Nombre_producto,
-                            tbl_fabricacion.Imagen');
+                            tbl_fabricacion.Imagen,
+                            tbl_fabricacion.Precio_USD');
         
         $this->db->from('tbl_ventas_productos');
 
@@ -714,7 +749,7 @@ class ventas extends CI_Controller
 
     }
 
-//// SEGUIMIENTOS 	| CARGAR O EDITAR
+//// PRODUCTOS VENDIDOS 	| CAMBIAR ESTADO PRODUCTO
     public function cambiarEstadoProducto()
     {
         $CI = &get_instance();
@@ -800,5 +835,148 @@ class ventas extends CI_Controller
             echo json_encode(array("Id" => 0));
         }
     }
+
+//// PRODUCTOS VENDIDOS 	| ANULAR PRODUCTO
+    public function anular_producto()
+    {
+        $CI = &get_instance();
+        $CI->load->database();
+
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
+
+        $Id = null;
+        if (isset($this->datosObtenidos->Datos->Id)) {
+            $Id = $this->datosObtenidos->Datos->Id;
+        }
+        
+        $data = array(
+            'Venta_id' =>   1,
+        );
+        
+
+        $this->load->model('App_model');
+        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
+
+        if ($insert_id >= 0) 
+        {
+           //// si cargo bien esto, toma el id de la orden y la carga en la tbl_ordentrabajo_seguimietno
+            if ($insert_id >=0 ) 
+            {   
+                
+                $data = array(
+
+                    'Venta_id' =>      $this->datosObtenidos->Datos->Venta_id,
+                    'Categoria_seguimiento' =>  2,
+                    'Descripcion' =>   'Producto Anulado: '.$this->datosObtenidos->Datos->Nombre_producto .' - '.$this->datosObtenidos->Datos->Comentarios_anulacion,
+                    'Usuario_id' =>    $this->session->userdata('Id'),
+                    'Visible' =>       1
+                );
+
+                $this->load->model('App_model');
+                $insert_id_seguimiento = $this->App_model->insertar($data, null, 'tbl_ventas_seguimiento');
+                    
+                echo json_encode(array("Id" => $insert_id, "Seguimiento_id" => $insert_id_seguimiento));
+            }
+        } 
+        else 
+        {
+            echo json_encode(array("Id" => 0));
+        }
+    }
+
+//// VENTAS 	    | DESACTIVAR / ELIMINAR
+    public function eliminar_producto()
+    {
+        $CI =& get_instance();
+        $CI->load->database();
+        
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
+        
+        $Id = $this->datosObtenidos->Id;
+
+        $data = array(
+                        
+                'Visible' => 0,
+                );
+
+        $this->load->model('App_model');
+        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
+                
+        if ($insert_id >=0 ) 
+        {   
+            echo json_encode(array("Id" => $insert_id));         
+        } 
+        else 
+        {
+            echo json_encode(array("Id" => 0));
+        }
+    }
+
+
+//// PRODUCCION 	| Obtener listados
+    public function obtener_productos_a_fabricar()
+    {
+
+        //Esto siempre va es para instanciar la base de datos
+        $CI = &get_instance();
+        $CI->load->database();
+        
+        //Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+        $Estado = $this->datosObtenidos->Estado;
+
+        $this->db->select(' tbl_ventas_productos.*,
+                            tbl_fabricacion.Nombre_producto,
+                            tbl_fabricacion.Imagen,
+                            tbl_ventas.Identificador_venta,
+                            tbl_ventas.Fecha_venta,
+                            tbl_ventas.Responsable_id_planif_inicial,
+                            tbl_ventas.Responsable_id_planif_final,
+                            tbl_ventas.Fecha_estimada_entrega,
+                            tbl_clientes.Nombre_cliente'); 
+        
+        $this->db->from('tbl_ventas_productos');  
+
+        $this->db->join('tbl_fabricacion',  'tbl_fabricacion.Id   = tbl_ventas_productos.Producto_id', 'left');
+        $this->db->join('tbl_ventas',  'tbl_ventas.Id   = tbl_ventas_productos.Venta_id', 'left');
+        $this->db->join('tbl_clientes',  'tbl_clientes.Id   = tbl_ventas.Cliente_id', 'left');
+
+        $this->db->where('tbl_ventas_productos.Estado <', $Estado);
+        $this->db->where('tbl_ventas_productos.Visible', 1);
+        
+        /// ACA VIENE EL FILTRO, SOLO VA A BUSCAR EN LAS VENTAS DONDE EL USUARIO LOGUEADO HAYA SIDO ELEGIDO.
+        if ($this->session->userdata('Rol_acceso') < 4)
+        {
+            $this->db->group_start(); // Open bracket
+                $this->db->where('tbl_ventas.Responsable_id_planif_final',      $this->session->userdata('Id'));
+                $this->db->or_where('tbl_ventas.Responsable_id_planif_inicial', $this->session->userdata('Id'));
+            $this->db->group_end(); // Close bracket    
+        }
+
+        $this->db->order_by('tbl_ventas.Fecha_estimada_entrega', 'asc');
+        
+        $query = $this->db->get();
+        $result = $query->result_array();
+
+        echo json_encode($result);
+
+    }
+
+    
 ///// fin documento
 }

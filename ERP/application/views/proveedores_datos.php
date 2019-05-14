@@ -99,8 +99,12 @@ include "menusidebar.php";
                                                                         <textarea class="form-control" rows="5" v-model="proveedoresDatos.Producto_servicio"></textarea>
                                                                 </div>
                                                                 <div class="form-group">
-                                                                        <label class=" form-control-label">Telefono</label>
-                                                                        <input type="text" class="form-control" placeholder="" v-model="proveedoresDatos.Telefono" required>
+                                                                    <label class=" form-control-label">Teléfono whatsapp - numero entero de corrido</label>
+                                                                    <input type="text" class="form-control" placeholder="" v-model="proveedoresDatos.Telefono">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class=" form-control-label">Teléfono Fijo</label>
+                                                                    <input type="text" class="form-control" placeholder="" v-model="proveedoresDatos.Telefono_fijo">
                                                                 </div>
                                                                 <div class="form-group">
                                                                         <label  class=" form-control-label">Dirección</label>
@@ -125,7 +129,7 @@ include "menusidebar.php";
                                                                         <input type="email" class="form-control" placeholder="" v-model="proveedoresDatos.Email">
                                                                 </div>
                                                                 <div class="form-group">
-                                                                        <label class="control-label">Web</label>
+                                                                        <label class="control-label">Web - Sin "http://"</label>
                                                                         <input type="text" class="form-control" placeholder="" v-model="proveedoresDatos.Web">
                                                                 </div>
                                                                 <div class="form-group">
