@@ -548,7 +548,7 @@ include "menusidebar.php";
                 <div class="modal-body">
                     <div class="horizontal-form">
                         <form class="form-horizontal" action="post" v-on:submit.prevent="cambiarEstadoProducto()">
-                            <!--   -->
+                            <!--  
                             <pre>{{productoPasoData}}</pre> -->
                             <div class="form-group">
                                 <label class=" form-control-label">Fecha del movimiento</label>

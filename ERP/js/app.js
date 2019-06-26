@@ -2873,8 +2873,8 @@ new Vue({
             this.Rol_acceso = Rol_acceso
             this.Usuario_id = Usuario_id
 
-            console.log(Rol_acceso);
-            console.log(Usuario_id);
+            /* console.log(Rol_acceso);
+            console.log(Usuario_id); */
             
         },
         
@@ -2915,7 +2915,7 @@ new Vue({
         getDatosventas: function () {
             var url = base_url + 'ventas/obtener_datos_venta/?Id=' + Get_Id;  //// averiguar como tomar el Id que viene por URL aca
     
-            console.log(document.cookie)
+            /* console.log(document.cookie) */
 
             axios.post(url, {
                 token: token
@@ -3143,7 +3143,7 @@ new Vue({
                 this.precioVentaTotal = 0;
                 for (let index = 0; index < this.listaProductosVendidos.length; index++) 
                 {
-                    console.log(this.listaProductosVendidos[index].Precio_USD)
+                    /* console.log(this.listaProductosVendidos[index].Precio_USD) */
 
                     var precioVenta = this.listaProductosVendidos[index].Precio_USD;
                    

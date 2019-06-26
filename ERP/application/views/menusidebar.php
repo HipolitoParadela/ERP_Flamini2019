@@ -46,6 +46,11 @@
                                 <i class="fa fa-tags"></i>Ventas
                             </a>
                         </li>
+                        <li>
+                            <a href="<?= base_url();?>ventas/produccion">
+                            <i class="fas fa-cog"></i></i>Producción
+                            </a>
+                        </li>
                         <!--<li class="has-sub">
                             <a class="js-arrow" href="#">
                                 <i class="fas fa-archive"></i>Curriculums</a>
@@ -111,6 +116,11 @@
                         <li>
                             <a href="<?= base_url();?>compras">
                                 <i class="fas fa-shopping-cart"></i>Compras
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= base_url();?>ventas/produccion">
+                            <i class="fas fa-cog"></i></i>Producción
                             </a>
                         </li>
                         <!--<li class="has-sub">
