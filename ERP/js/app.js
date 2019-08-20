@@ -3396,7 +3396,29 @@ new Vue({
             });
         },
 
+        //// SUMAR PRODUCTOS   
+        sumarProductos: function (items) {
 
+            /// SUMAR LOS ENTREGADOS
+            var Total = 0;
+            if(items.length > 0)
+            {
+                for (var i = 0; i < items.length; i++) {
+                    var item = 0;
+    
+                    if (isFinite(items[i].Precio_venta_producto)) {
+                        item = parseInt(items[i].Precio_venta_producto);
+                    }
+    
+                    Total = Total + item;
+                }
+                return Total
+            }
+            else{
+                return 0
+            }
+            
+        },
     },
 
     ////// ACCIONES COMPUTADAS     

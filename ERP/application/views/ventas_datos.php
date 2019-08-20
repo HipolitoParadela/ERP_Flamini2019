@@ -56,10 +56,26 @@ include "menusidebar.php";
                                 </div>
                                 <div class="card">
                                     <div class="card-header">
-                                        <h4>Precio de venta del lote</h4>
+                                        <h4>Valores de la venta</h4>
                                     </div>
-                                    <div class="card-body">
-                                        <h2 align="center">{{precioVentaTotal}} USD</h2>
+                                    <div class="card-body text-center">
+                                        <!-- <h1>
+                                            ${{sumarProductos(listaProductosVendidos) + ventaDatos.Valor_instalacion  + ventaDatos.Valor_logistica  | Moneda}}
+                                        </h1>
+                                         <em>Total</em>
+                                         <hr> -->
+                                         <h2>
+                                            ${{sumarProductos(listaProductosVendidos) | Moneda}}
+                                        </h2>
+                                         <em>Valor de productos</em>
+                                         <h2>
+                                            ${{ventaDatos.Valor_logistica | Moneda}}  
+                                        </h2>
+                                         <em>Valor de logística</em>
+                                         <h2>
+                                            ${{ventaDatos.Valor_instalacion | Moneda}}
+                                        </h2>
+                                         <em>Valor de instalación</em>
                                     </div>
                                 </div> 
                             </div>
@@ -387,6 +403,7 @@ include "menusidebar.php";
                                                                         <thead>
                                                                             <tr>
                                                                                 <th>Producto</th>
+                                                                                <th>P. Venta</th>
                                                                                 <td></td>
                                                                                 <th>Stock</th>
                                                                                 <th>Proceso materiales</th>
@@ -401,6 +418,9 @@ include "menusidebar.php";
                                                                             <tr v-for="productoFabricado in listaProductosVendidos">
                                                                                 <td>
                                                                                     <h4> {{productoFabricado.Nombre_producto}}</h4>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <h4> ${{productoFabricado.Precio_venta_producto | Moneda}}</h4>
                                                                                 </td>
                                                                                 <td>
                                                                                     <span v-if="productoFabricado.Tipo_produccion == 1" class="text-secondary"><i class="fa fa-circle"></i></span>
@@ -477,7 +497,7 @@ include "menusidebar.php";
                                                                                         <button class="item" v-on:click="editarFormularioProductos(productoFabricado)" data-toggle="modal" data-target="#modalProductos" data-placement="top" title="Editar">
                                                                                             <i class="zmdi zmdi-edit"></i>
                                                                                         </button>
-                                                                                        <button class="item" v-on:click="editarAnularProducto(productoFabricado)" data-toggle="modal" data-target="#modalAnularProducto" data-placement="top" title="Editar">
+                                                                                        <button class="item" v-on:click="editarAnularProducto(productoFabricado)" data-toggle="modal" data-target="#modalAnularProducto" data-placement="top" title="Anular">
                                                                                             <i class="fa fa-ban"></i>
                                                                                         </button>
                                                                                         <?php 
@@ -876,7 +896,8 @@ include "menusidebar.php";
                 <div class="modal-dialog  modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Añadir producto a esta venta</h5>
+                            <h5 v-if="productoData.Id == null" class="modal-title">Añadir producto a esta venta</h5>
+                            <h3 v-if="productoData.Id > 0" class="modal-title"> {{productoData.Nombre_producto}}</h3>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -886,17 +907,22 @@ include "menusidebar.php";
                             <div class="horizontal-form">
                                 <form class="form-horizontal" action="post" v-on:submit.prevent="agregarProducto()"> <!--   -->
                                     
-                                    <div class="form-group">
+                                    <div class="form-group" v-if="productoData.Id == null">
                                         <label class="control-label">Producto a fabricar</label>
-                                        <select class="form-control" v-model="productoData.Producto_id" required :disabled="productoData.Id > 0">
-                                                <option value="0">Seleccionar producto</option>
+                                        <input list="productos" class="form-control" v-model="productoData.Producto_id" required :disabled="productoData.Id > 0">
+                                        <datalist id="productos">
                                                 <option v-for="producto in listaProductos" v-bind:value="producto.Id">{{producto.Nombre_producto}}</option>
-                                        </select>
+                                        </datalist>
                                     </div>
                                     <div class="form-group" v-if="productoData.Id == null">
                                         <label  class=" form-control-label">Cantidad de unidades de este producto</label> 
                                         <input type="number" class="form-control" v-model="productoData.Cantidad" required>
                                     </div>
+                                    <div class="form-group" v-if="productoData.Id == null">
+                                        <label  class=" form-control-label">Precio cobrado por unidad de este producto</label> 
+                                        <input type="number" class="form-control" v-model="productoData.Precio_venta_producto" required>
+                                    </div>
+                                    
                                     <div class="form-group" v-if="productoData.Id > 0">
                                         <label  class=" form-control-label">Tipo de producción</label> 
                                         <select class="form-control" v-model="productoData.Tipo_produccion">
@@ -1033,7 +1059,7 @@ include "menusidebar.php";
                 </div>
             </div>
             <!-- /.modal -->
-            <!-- Modal ANULAR PRODUCTO-->
+            <!-- Modal observaciones-->
             <div class="modal fade" id="modalDatosEtapa" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
                 <div class="modal-dialog  modal-lg" role="document">
                     <div class="modal-content">

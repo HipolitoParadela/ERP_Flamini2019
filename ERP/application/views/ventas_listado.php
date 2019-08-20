@@ -192,14 +192,14 @@ include "menusidebar.php";
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label">Responsable panificacion inicial</label>
+                                        <label class="control-label">Responsable producción parte 1</label>
                                         <select class="form-control" v-model="ventaDatos.Responsable_id_planif_inicial" required>
                                             <option value="0">Seleccionar persona</option>
                                             <option v-for="persona in listaUsuarios" v-bind:value="persona.Id">{{persona.Nombre}}</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label">Responsable panificacion final</label>
+                                        <label class="control-label">Responsable producción parte 2</label>
                                         <select class="form-control" v-model="ventaDatos.Responsable_id_planif_final" required>
                                             <option value="0">Seleccionar persona</option>
                                             <option v-for="persona in listaUsuarios" v-bind:value="persona.Id">{{persona.Nombre}}</option>
@@ -212,7 +212,7 @@ include "menusidebar.php";
                                             <option value="1">Dar prioridad</option>
                                         </select>
                                     </div>
-                                    
+                                    <hr>
                                     <div class="form-group">
                                        <label  class=" form-control-label">Fecha de venta</label> 
                                        <input type="date" class="form-control" v-model="ventaDatos.Fecha_venta" required>
@@ -221,6 +221,7 @@ include "menusidebar.php";
                                        <label  class=" form-control-label">Fecha estimada para finalizar fabricación</label> 
                                        <input type="date" class="form-control" v-model="ventaDatos.Fecha_estimada_entrega" required>
                                     </div>
+                                    
                                     <div class="form-group">
                                         <label class=" form-control-label">Observaciones sobre la venta</label>
                                         <textarea class="form-control" rows="5" v-model="ventaDatos.Observaciones_venta"></textarea>
@@ -233,6 +234,10 @@ include "menusidebar.php";
                                         </select>
                                     </div>
                                     <div class="form-group">
+                                        <label  class=" form-control-label">Costo por logística</label> 
+                                        <input type="int" class="form-control" v-model="ventaDatos.Valor_logistica" required>
+                                    </div>
+                                    <div class="form-group">
                                         <label class=" form-control-label">Información sobre logística</label>
                                         <textarea class="form-control" rows="5" v-model="ventaDatos.Info_logistica"></textarea>
                                     </div>
@@ -242,6 +247,10 @@ include "menusidebar.php";
                                             <option value="0">Seleccionar persona</option>
                                             <option v-for="persona in listaUsuarios" v-bind:value="persona.Id">{{persona.Nombre}}</option>
                                         </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label  class=" form-control-label">Costo por instalación</label> 
+                                        <input type="int" class="form-control" v-model="ventaDatos.Valor_instalacion" required>
                                     </div>
                                     <div class="form-group">
                                         <label class=" form-control-label">Información sobre Instalaciones</label>

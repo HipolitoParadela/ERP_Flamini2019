@@ -51,7 +51,7 @@ include "menusidebar.php";
                                                     <div class="round-img">
                                                         <a href="#modalclientesFoto" data-toggle="modal" v-on:click="editarFormularioClienteFoto(cliente)">
                                                             <img v-if="cliente.Imagen != null"  v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+cliente.Imagen" width="60px">
-                                                            <img v-else src="http://pxresto.com/pxresto/uploads/imagenes/addimagen.jpg" width="50px" alt="">
+                                                            <img v-else src="<?php echo base_url(); ?>uploads/addimagen.jpg" width="50px" alt="">
                                                         </a>
                                                     </div>
                                                 </td>
@@ -191,7 +191,7 @@ include "menusidebar.php";
                         <div class="modal-body">
                             <p align="center">
                                 <img v-if="clienteFoto.Imagen != null" class="avatar_grande" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+clienteFoto.Imagen" alt="">
-                                <img v-else class="avatar_grande" src="<?php echo base_url(); ?>uploads/imagenes/addimagen.jpg" alt="">
+                                <img v-else class="avatar_grande" src="<?php echo base_url(); ?>uploads/addimagen.jpg" alt="">
                             </p>
                             <hr>
                             <div class="horizontal-form">

@@ -73,7 +73,7 @@ include "menusidebar.php";
                                                     <div class="round-img">
                                                         <a href="#modalproductosFoto" data-toggle="modal" v-on:click="editarFormularioProductoFoto(producto)">
                                                             <img v-if="producto.Imagen != null"  v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+producto.Imagen" width="60px">
-                                                            <img v-else src="http://pxresto.com/pxresto/uploads/imagenes/addimagen.jpg" width="50px" alt="">
+                                                            <img v-else src="<?php echo base_url(); ?>uploads/addimagen.jpg" width="50px" alt="">
                                                         </a>
                                                     </div>
                                                 </td>

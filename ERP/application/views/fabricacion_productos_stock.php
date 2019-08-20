@@ -317,7 +317,7 @@ include "menusidebar.php";
                 </div>
             </div>
             <!-- /.modal -->
-            <!-- Modal AÑADIR PRODUCTOS-->
+            <!-- Modal ASIGNAR PRODUCTO A VENTA-->
             <div class="modal fade" id="modalAsignacion" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
                 <div class="modal-dialog  modal-lg" role="document">
                     <div class="modal-content">

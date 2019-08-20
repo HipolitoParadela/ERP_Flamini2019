@@ -51,7 +51,7 @@ include "menusidebar.php";
                                                     <div class="round-img">
                                                         <a href="#modalproveedorsFoto" data-toggle="modal" v-on:click="editarFormularioProveedorFoto(proveedor)">
                                                             <img v-if="proveedor.Imagen != null"  v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+proveedor.Imagen" width="60px">
-                                                            <img v-else src="http://pxresto.com/pxresto/uploads/imagenes/addimagen.jpg" width="50px" alt="">
+                                                            <img v-else src="<?php echo base_url(); ?>uploads/addimagen.jpg" width="50px" alt="">
                                                         </a>
                                                     </div>
                                                 </td>
@@ -195,7 +195,7 @@ include "menusidebar.php";
                         <div class="modal-body">
                             <p align="center">
                                 <img v-if="proveedorFoto.Imagen != null" class="avatar_grande" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+proveedorFoto.Imagen" alt="">
-                                <img v-else class="avatar_grande" src="http://pxresto.com/pxresto/uploads/imagenes/addimagen.jpg" alt="">
+                                <img v-else class="avatar_grande" src="<?php echo base_url(); ?>uploads/addimagen.jpg" alt="">
                             </p>
                             <hr>
                             <div class="horizontal-form">

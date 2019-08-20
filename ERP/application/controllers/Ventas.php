@@ -193,6 +193,9 @@ class ventas extends CI_Controller
                     'Info_instalaciones' => 	    $this->datosObtenidos->Data->Info_instalaciones,
                     'Info_cobranza' => 	            $this->datosObtenidos->Data->Info_cobranza,
 
+                    'Valor_logistica' => 	            $this->datosObtenidos->Data->Valor_logistica,
+                    'Valor_instalacion' => 	            $this->datosObtenidos->Data->Valor_instalacion,
+
                     'Prioritario'                => $this->datosObtenidos->Data->Prioritario,
                     'Observaciones_venta'=>         $this->datosObtenidos->Data->Observaciones_venta,
 					'Usuario_id' => 	            $this->session->userdata('Id'),
@@ -676,6 +679,7 @@ class ventas extends CI_Controller
 
             'Venta_id' =>               $Venta_id,
             'Producto_id' =>            $this->datosObtenidos->Datos->Producto_id,
+            'Precio_venta_producto' =>  $this->datosObtenidos->Datos->Precio_venta_producto,
             'Tipo_produccion' =>        $Tipo_produccion,
             'Observaciones' =>          $this->datosObtenidos->Datos->Observaciones,
             'S_1_Requerimientos' =>     $this->datosObtenidos->Datos->S_1_Requerimientos,
@@ -738,7 +742,7 @@ class ventas extends CI_Controller
         $this->db->from('tbl_ventas_productos');
 
         $this->db->join('tbl_fabricacion',  'tbl_fabricacion.Id   = tbl_ventas_productos.Producto_id', 'left');
-
+        
         $this->db->where('tbl_ventas_productos.Venta_id', $Id);
         $this->db->where('tbl_ventas_productos.Visible', 1);
         
