@@ -111,7 +111,7 @@ new Vue({
         if (pathname == carpeta + 'stock') {
             this.getListadoCategorias();
             this.getListadoStock(0);
-            this.getListadoVentas(0,0,0,1);
+            this.getListadoVentas(0,0,0,1,0);
         }
 
         if (pathname == carpeta + 'clientes') {
@@ -132,16 +132,18 @@ new Vue({
         }
 
         if (pathname == carpeta + 'ventas'){
-            this.getListadoVentas(0,0,0,1);
+            this.getListadoVentas(0,0,0,1,0);
             this.getListadoUsuarios(1);
             this.getListadoProductos(0,0);
             this.getListadoClientes();
             this.getListadoEmpresas();
+            this.getListadoPlanificaciones();
         }
 
         if (pathname == carpeta + 'compras') {
-            this.getListadoCompras();
+            this.getListadoCompras(0);
             this.getListadoProveedores();
+            this.getListadoPlanificaciones();
         }
     },
 
@@ -241,10 +243,13 @@ new Vue({
 
         // Ventas
             listaVentas: [],
+            listaPlanificaciones: [],
             filtro_vendedor: '0',
             filtro_cliente: '0',
             filtro_estado: '1',
             ventaDatos : {},
+            planificacionDatos : {},
+            filtro_planificacion: '0',
 
         // Compras
             listaCompras: [],
@@ -1317,8 +1322,8 @@ new Vue({
 
 
         //// VENTAS |  MOSTRAR LISTADO DE ORDENES
-        getListadoVentas: function (Usuario_id, Empresa_id, Cliente_id, Estado) {
-            var url = base_url + 'ventas/obtener_listado_ventas?Empresa_id=' + Empresa_id + '&Vendedor_id=' + Usuario_id + '&Cliente_id=' + Cliente_id + '&Estado=' + Estado; // url donde voy a mandar los datos
+        getListadoVentas: function (Usuario_id, Empresa_id, Cliente_id, Estado, Planificacion_id) {
+            var url = base_url + 'ventas/obtener_listado_ventas?Empresa_id=' + Empresa_id + '&Vendedor_id=' + Usuario_id + '&Cliente_id=' + Cliente_id + '&Estado=' + Estado + '&Planificacion_id=' + Planificacion_id; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -1345,7 +1350,7 @@ new Vue({
                 this.ventaDatos.Id = response.data.Id;   
                 this.texto_boton = "Actualizar"
 
-                this.getListadoVentas(0,0,0,1);
+                this.getListadoVentas(0,0,0,1,0);
 
             }).catch(error => {
                 alert("mal");
@@ -1379,7 +1384,7 @@ new Vue({
 
                     toastr.success('Proceso realizado correctamente', 'Ordens')
 
-                    this.getListadoVentas(this.filtro_vendedor, this.filtro_empresa, this.filtro_cliente, this.filtro_estado);
+                    this.getListadoVentas(this.filtro_vendedor, this.filtro_empresa, this.filtro_cliente, this.filtro_estado, this.filtro_planificacion);
 
                 }).catch(error => {
                     alert("mal");
@@ -1412,9 +1417,60 @@ new Vue({
 
 
 
+        //// PLANIFICACIONES |  MOSTRAR LISTADO DE ORDENES
+        getListadoPlanificaciones: function () {
+            var url = base_url + 'ventas/obtener_listado_planificaciones'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token
+            }).then(response => {
+                this.listaPlanificaciones  = response.data
+            }).catch(error => {
+                    alert("mal");
+                    console.log(error.response.data)
+
+                });
+        },
+
+        //// PLANIFICACIONES | CREAR O EDITAR ITEM
+        crearPlanificacion: function () {
+            var url = base_url + 'ventas/cargar_planificacion'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Data: this.planificacionDatos
+            }).then(response => {
+
+                toastr.success('Proceso realizado correctamente', 'Ventas')
+
+                this.planificacionDatos.Id = response.data.Id;   
+                this.texto_boton = "Actualizar"
+
+                this.getListadoPlanificaciones();
+
+            }).catch(error => {
+                alert("mal");
+                console.log(error.response.data)
+            });
+        },
+
+        //// PLANIFICACIONES |  LIMPIAR EL FORMULARIO DE CREAR
+        limpiarFormularioPlanificacion() {
+            this.planificacionDatos = {}
+            this.texto_boton = "Cargar";
+        },
+
+        //// PLANIFICACIONES |  Carga el formulario para editar
+        editarFormularioPlanificacion(item) {
+            this.planificacionDatos = item;
+            this.texto_boton = "Actualizar";
+        },
+
+
+
         //// COMPRAS  | MOSTRAR LISTADO
-        getListadoCompras: function (estado) {
-            var url = base_url + 'compras/obtener_compras'; // url donde voy a mandar los datos
+        getListadoCompras: function (Planificacion_id) {
+            var url = base_url + 'compras/obtener_compras?Planificacion_id='+Planificacion_id; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -1450,7 +1506,7 @@ new Vue({
                 this.compraDatos.Id = response.data.Id;
                 this.texto_boton = "Actualizar"
 
-                this.getListadoCompras();
+                this.getListadoCompras(0);
 
             }).catch(error => {
                 alert("mal");
@@ -1472,7 +1528,7 @@ new Vue({
 
                     toastr.success('Proceso realizado correctamente', 'Compras')
 
-                    this.getListadoCompras();
+                    this.getListadoCompras(0);
 
                 }).catch(error => {
                     alert("mal");
@@ -1499,7 +1555,7 @@ new Vue({
 
                     ////DEBO HACER FUNCIONAR BIEN ESTO PARA QUE SE ACTUALICE LA FOTO QUE CARGO EN EL MOMENTO, SI NO PARECE Q NO SE CARGARA NADA
                     this.compraFoto.Imagen = response.data.Imagen;
-                    this.getListadoCompras();
+                    this.getListadoCompras(0);
                     toastr.success('Proceso realizado correctamente', 'Compras')
 
                     this.preloader = 0;
@@ -1560,7 +1616,7 @@ new Vue({
         this.obtener_cantidad_de_items_stoqueados();
         this.obtenerCantidadUsuarios();
         this.getListadoMovimientos();
-        this.getListadoCompras();
+        this.getListadoCompras(0);
         this.getListadoVentas();
         this.obtener_cantVentas();
         this.obtener_cantCompras();
@@ -2353,7 +2409,7 @@ new Vue({
     created: function () {
         this.getDatosCliente();
         this.getListadoSeguimiento();
-        this.getListadoVentas(0, 0, Get_Id, 10);
+        this.getListadoVentas(0, 0, Get_Id, 10, 0);
 
     },
 
@@ -2446,8 +2502,8 @@ new Vue({
         },
 
         //// VENTAS |  MOSTRAR LISTADO DE ORDENES
-        getListadoVentas: function (Vendedor_id, Empresa_id, Cliente_id, Estado) {
-            var url = base_url + 'ventas/obtener_listado_ventas?Empresa_id=' + Empresa_id + '&Vendedor_id=' + Vendedor_id + '&Cliente_id=' + Cliente_id + '&Estado=' + Estado; // url donde voy a mandar los datos
+        getListadoVentas: function (Vendedor_id, Empresa_id, Cliente_id, Estado, Planificacion_id) {
+            var url = base_url + 'ventas/obtener_listado_ventas?Empresa_id=' + Empresa_id + '&Vendedor_id=' + Vendedor_id + '&Cliente_id=' + Cliente_id + '&Estado=' + Estado + '&Planificacion_id=' + Planificacion_id; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -2816,7 +2872,8 @@ new Vue({
             this.getListadoEmpresas();
             this.getListadoProductos(0,0);
             this.getListadoProductosVendidos();
-            this.getListadoVentas(0,0,0,1);
+            this.getListadoVentas(0,0,0,1,0);
+            this.getListadoPlanificaciones();
         }
     },
 
@@ -2864,6 +2921,8 @@ new Vue({
         listaEtapa_4: [],
         listaEtapa_5: [],
         listaEtapa_6: [],
+
+        listaPlanificaciones: [],
     },
 
     methods:
@@ -3281,8 +3340,8 @@ new Vue({
         },
         
         //// VENTAS |  MOSTRAR LISTADO DE VENTAS
-        getListadoVentas: function (Usuario_id, Empresa_id, Cliente_id, Estado) {
-            var url = base_url + 'ventas/obtener_listado_ventas?Empresa_id=' + Empresa_id + '&Vendedor_id=' + Usuario_id + '&Cliente_id=' + Cliente_id + '&Estado=' + Estado; // url donde voy a mandar los datos
+        getListadoVentas: function (Usuario_id, Empresa_id, Cliente_id, Estado, Planificacion_id) {
+            var url = base_url + 'ventas/obtener_listado_ventas?Empresa_id=' + Empresa_id + '&Vendedor_id=' + Usuario_id + '&Cliente_id=' + Cliente_id + '&Estado=' + Estado + '&Planificacion_id=' + Planificacion_id; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -3418,6 +3477,21 @@ new Vue({
                 return 0
             }
             
+        },
+
+        //// PLANIFICACIONES |  MOSTRAR LISTADO DE ORDENES
+        getListadoPlanificaciones: function () {
+            var url = base_url + 'ventas/obtener_listado_planificaciones'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token
+            }).then(response => {
+                this.listaPlanificaciones  = response.data
+            }).catch(error => {
+                    alert("mal");
+                    console.log(error.response.data)
+
+                });
         },
     },
 
@@ -3756,6 +3830,7 @@ new Vue({
         this.getDatoscompra();
         this.getListaComprados();
         this.getListadoProveedores();
+        this.getListadoPlanificaciones();
 
     },
 
@@ -3771,6 +3846,8 @@ new Vue({
 
         cantMovimientoStock: [],
         descripcionMovimiento: [],
+
+        listaPlanificaciones: [],
     },
 
     methods:
@@ -3874,9 +3951,19 @@ new Vue({
             });
         },
 
-        //// FORMATO FECHA
-        formatoFecha: function (fecha) {
-            return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
+        //// PLANIFICACIONES |  MOSTRAR LISTADO DE ORDENES
+        getListadoPlanificaciones: function () {
+            var url = base_url + 'ventas/obtener_listado_planificaciones'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token
+            }).then(response => {
+                this.listaPlanificaciones  = response.data
+            }).catch(error => {
+                    alert("mal");
+                    console.log(error.response.data)
+
+                });
         },
     },
 

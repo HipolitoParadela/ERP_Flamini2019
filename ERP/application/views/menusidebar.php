@@ -43,7 +43,7 @@
                         </li>
                         <li>
                             <a href="<?= base_url();?>ventas">
-                                <i class="fa fa-tags"></i>Ventas
+                                <i class="fa fa-tags"></i>Planificaciones | Ventas
                             </a>
                         </li>
                         <li>
@@ -100,7 +100,7 @@
                         </li>
                         <li>
                             <a href="<?= base_url();?>ventas">
-                            <i class="fa fa-tags"></i>Ventas
+                            <i class="fa fa-tags"></i>Planificaciones | Ventas
                             </a>
                         </li>
                         <li>

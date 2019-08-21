@@ -108,24 +108,28 @@ class ventas extends CI_Controller
         }
         
         ///Filtros
-        $Empresa_id = $_GET["Empresa_id"];
-        $Vendedor_id  = $_GET["Vendedor_id"];
-        $Cliente_id  = $_GET["Cliente_id"]; 
+        $Empresa_id         = $_GET["Empresa_id"];
+        $Vendedor_id        = $_GET["Vendedor_id"];
+        $Cliente_id         = $_GET["Cliente_id"];
+        $Planificacion_id   = $_GET["Planificacion_id"]; 
 
         $this->db->select(' tbl_ventas.*,
                             tbl_usuarios.Nombre as Nombre_vendedor,
                             tbl_empresas.Nombre_empresa,
-                            tbl_clientes.Nombre_cliente');
+                            tbl_clientes.Nombre_cliente,
+                            tbl_planificaciones.Nombre_planificacion');
         
         $this->db->from('tbl_ventas');
 
         $this->db->join('tbl_clientes',   'tbl_clientes.Id    = tbl_ventas.Cliente_id', 'left');
         $this->db->join('tbl_usuarios',   'tbl_usuarios.Id    = tbl_ventas.Vendedor_id', 'left');
         $this->db->join('tbl_empresas',   'tbl_empresas.Id    = tbl_ventas.Empresa_id', 'left');
+        $this->db->join('tbl_planificaciones',   'tbl_planificaciones.Id    = tbl_ventas.Planificacion_id', 'left');
 
         if($Vendedor_id > 0)    { $this->db->where('tbl_ventas.Vendedor_id', $Vendedor_id); }
         if($Cliente_id > 0)     { $this->db->where('tbl_ventas.Cliente_id', $Cliente_id); }
         if($Empresa_id > 0)     { $this->db->where('tbl_ventas.Empresa_id', $Empresa_id); }
+        if($Planificacion_id > 0)     { $this->db->where('tbl_ventas.Planificacion_id', $Planificacion_id); }
 
         $this->db->where('tbl_ventas.Visible', 1);
         
@@ -177,6 +181,7 @@ class ventas extends CI_Controller
         $data = array(
                         
                     'Identificador_venta' => 	    $this->datosObtenidos->Data->Identificador_venta,
+                    'Planificacion_id' => 			    $this->datosObtenidos->Data->Planificacion_id,
                     'Cliente_id' => 			    $this->datosObtenidos->Data->Cliente_id,
                     "Empresa_id" =>                 $this->datosObtenidos->Data->Empresa_id,
 					'Vendedor_id' => 			    $this->datosObtenidos->Data->Vendedor_id,
@@ -524,6 +529,74 @@ class ventas extends CI_Controller
 		echo json_encode(array('status' => $status, 'Url_archivo' => $nombre_archivo));
     }
 
+//// PLANIFICACIONES 	| OBTENER Listado
+    public function obtener_listado_planificaciones()
+    {
+
+        //Esto siempre va es para instanciar la base de datos
+        $CI = &get_instance();
+        $CI->load->database();
+        
+        //Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+        $this->db->select('*');
+        
+        $this->db->from('tbl_planificaciones');
+
+        $this->db->where('Visible', 1);
+
+        $this->db->order_by('Id', 'desc');
+        $query = $this->db->get();
+        $result = $query->result_array();
+
+        echo json_encode($result);
+
+    }
+
+
+//// PLANIFICACIONES 	| CARGAR O EDITAR
+    public function cargar_planificacion()
+    {
+        $CI = &get_instance();
+        $CI->load->database();
+
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
+
+        $Id = null;
+        if (isset($this->datosObtenidos->Data->Id)) {
+            $Id = $this->datosObtenidos->Data->Id;
+        }
+
+        $data = array(
+
+            'Nombre_planificacion'  => $this->datosObtenidos->Data->Nombre_planificacion,
+            'Fecha_inicio'          => $this->datosObtenidos->Data->Fecha_inicio,
+            'Fecha_fin'             => $this->datosObtenidos->Data->Fecha_fin,
+            'Descripcion'           => $this->datosObtenidos->Data->Descripcion,
+            'Usuario_id'            => $this->session->userdata('Id'),
+            'Visible'               => 1
+
+        );
+
+        $this->load->model('App_model');
+        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_planificaciones');
+
+        if ($insert_id >= 0) {
+            echo json_encode(array("Id" => $insert_id));
+        } else {
+            echo json_encode(array("Id" => 0));
+        }
+    }
 
 //// VENTAS 	    | LISTADO DASHBOARD
 	public function obtener_listado_ventas_dashboard()

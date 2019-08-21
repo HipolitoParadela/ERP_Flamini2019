@@ -46,15 +46,26 @@ class compras extends CI_Controller
         //Esto siempre va es para instanciar la base de datos
         $CI =& get_instance();
         $CI->load->database();
-		$token = @$CI->db->token;
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
+
+        $Planificacion_id   = $_GET["Planificacion_id"];
 
         $this->db->select(' tbl_compras.*,
                             tbl_proveedores.Nombre_proveedor,
-                            tbl_usuarios.Nombre');
+                            tbl_usuarios.Nombre,
+                            tbl_planificaciones.Nombre_planificacion');
         $this->db->from('tbl_compras');
         
         $this->db->join('tbl_proveedores', 'tbl_proveedores.Id = tbl_compras.Proveedor_id', 'left');
         $this->db->join('tbl_usuarios', 'tbl_usuarios.Id = tbl_compras.Usuario_id', 'left');
+        $this->db->join('tbl_planificaciones', 'tbl_planificaciones.Id = tbl_compras.Planificacion_id', 'left');
+
+        if($Planificacion_id > 0)     { $this->db->where('tbl_compras.Planificacion_id', $Planificacion_id); }
 
         $this->db->where('tbl_compras.Visible',1);
 		$this->db->order_by("tbl_compras.Fecha_compra", "desc");
@@ -74,16 +85,24 @@ class compras extends CI_Controller
         $CI =& get_instance();
         $CI->load->database();
         $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
         
         $Proveedor_id = $_GET["Id"];
 
         $this->db->select(' tbl_compras.*,
                             tbl_proveedores.Nombre_proveedor,
-                            tbl_usuarios.Nombre');
+                            tbl_usuarios.Nombre,
+                            tbl_planificaciones.Nombre_planificacion');
         $this->db->from('tbl_compras');
         
         $this->db->join('tbl_proveedores', 'tbl_proveedores.Id = tbl_compras.Proveedor_id', 'left');
         $this->db->join('tbl_usuarios', 'tbl_usuarios.Id = tbl_compras.Usuario_id', 'left');
+        $this->db->join('tbl_planificaciones', 'tbl_planificaciones.Id = tbl_compras.Planificacion_id', 'left');
+        
 
         $this->db->where('tbl_compras.Visible',1);
         $this->db->where('tbl_compras.Proveedor_id', $Proveedor_id);
@@ -213,7 +232,8 @@ class compras extends CI_Controller
 
 		$data = array(
                         
-					'Proveedor_id' => 			$this->datosObtenidos->Datos->Proveedor_id,
+                    'Proveedor_id' => 			$this->datosObtenidos->Datos->Proveedor_id,
+                    'Planificacion_id' => 		$this->datosObtenidos->Datos->Planificacion_id,
 					'Fecha_compra' => 			$this->datosObtenidos->Datos->Fecha_compra,
 					'Factura_identificador' => 	$this->datosObtenidos->Datos->Factura_identificador,
                     'Valor' => 			        $this->datosObtenidos->Datos->Valor,

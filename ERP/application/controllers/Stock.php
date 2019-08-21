@@ -297,11 +297,13 @@ class Stock extends CI_Controller
                 );
 
                 $this->load->model('App_model');
-                $insert_id = $this->App_model->insertar($data, $Stock_id, 'tbl_stock');
+                $insert_id_2 = $this->App_model->insertar($data, $Stock_id, 'tbl_stock');
 
                 if ($insert_id_2 >= 0) {
                     echo json_encode(array("Id" => $insert_id));
-                } else {
+                } 
+                else 
+                {
                     echo json_encode(array("Id" => 0));
                 }
         } 
@@ -762,7 +764,7 @@ class Stock extends CI_Controller
         );
 
         $this->load->model('App_model');
-        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_stock_vinculo_proveedor');
+        $insert_id = $this->App_model->insertar($data, $Stock_id, 'tbl_stock_vinculo_proveedor');
 
                 
         if ($insert_id >=0 ) 
