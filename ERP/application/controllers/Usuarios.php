@@ -548,5 +548,136 @@ class Usuarios extends CI_Controller
         return $result;
     }
 
+//// SEGUIMIENTOS 	| OBTENER Listado
+    public function obtener_seguimientos()
+    {
+
+        //Esto siempre va es para instanciar la base de datos
+        $CI = &get_instance();
+        $CI->load->database();
+        
+        //Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+        $Id = $_GET["Id"];
+
+        $this->db->select(' tbl_usuarios_seguimiento.*,
+                            tbl_usuarios.Nombre,
+                            tbl_rrhh.Nombre as Nombre_rrhh');
+        
+        $this->db->from('tbl_usuarios_seguimiento');
+        $this->db->join('tbl_usuarios', 'tbl_usuarios.Id = tbl_usuarios_seguimiento.Usuario_id', 'left');
+        $this->db->join('tbl_usuarios as tbl_rrhh', 'tbl_rrhh.Id = tbl_usuarios_seguimiento.Usuario_rrhh_id', 'left');
+
+        $this->db->where('tbl_usuarios_seguimiento.Usuario_id', $Id);
+        $this->db->where('tbl_usuarios_seguimiento.Visible', 1);
+
+        $this->db->order_by('tbl_usuarios_seguimiento.Id', 'desc');
+        $query = $this->db->get();
+        $result = $query->result_array();
+
+        echo json_encode($result);
+
+    }
+
+//// SEGUIMIENTOS 	| CARGAR O EDITAR FORMACION
+    public function cargar_seguimiento()
+    {
+        $CI = &get_instance();
+        $CI->load->database();
+
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+        $Id = null;
+        if(isset($this->datosObtenidos->Datos->Id))
+        {
+            $Id = $this->datosObtenidos->Datos->Id;
+        }
+
+        $data = array(
+
+            'Usuario_id' =>         $this->datosObtenidos->Usuario_id,
+            'Fecha' =>              $this->datosObtenidos->Datos->Fecha,
+            'Descripcion' =>        $this->datosObtenidos->Datos->Descripcion,
+            'Calificacion' =>       $this->datosObtenidos->Datos->Calificacion,
+            'Usuario_rrhh_id' =>    $this->session->userdata('Id'),
+            'Visible' =>            1
+
+        );
+
+        $this->load->model('App_model');
+        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_usuarios_seguimiento');
+
+        if ($insert_id >= 0) {
+            echo json_encode(array("Id" => $insert_id));
+        } else {
+            echo json_encode(array("Id" => 'Error'));
+        }
+    }
+
+//// SEGUIMIENTOS 	| SUBIR FOTO 
+    public function subirFotoSeguimiento()
+    {
+        $status = "";
+        $msg = "";
+        $file_element_name = 'Archivo';
+        
+        if ($status != "error")
+        {
+            $config['upload_path'] = './uploads/imagenes';
+            $config['allowed_types'] = 'jpg|jpeg|doc|docx|xlsx|pdf';
+            $config['max_size'] = 0;
+            $config['encrypt_name'] = TRUE;
+
+            $this->load->library('upload', $config);
+
+            if (!$this->upload->do_upload($file_element_name))
+            {
+                $status = 'error';
+                $msg = $this->upload->display_errors('', '');
+            }
+            else
+            {
+                /// coloco el dato en la base de datos
+                    $Id = $_GET["Id"];
+                    
+                    $data = $this->upload->data();
+                    
+                    $file_info = $this->upload->data();
+                    $nombre_archivo = $file_info['file_name'];
+                    
+                    $data = array(    
+                        'Url_archivo' =>		$nombre_archivo,
+                    );
+
+                    $this->load->model('App_model');
+                    $insert_id = $this->App_model->insertar($data, $Id, 'tbl_usuarios_seguimiento');
+                    
+                    // $file_id = $this->files_model->insert_file($data['file_name'], $_POST['title']);
+                    if($insert_id > 0)
+                    {
+                        $status = 1;
+                        $msg = "File successfully uploaded";
+                    }
+                    else
+                    {
+                        unlink($data['full_path']);
+                        $status = 0;
+                        $msg = "Something went wrong when saving the file, please try again.";
+                    }
+            }
+            @unlink($_FILES[$file_element_name]);
+        }
+        echo json_encode(array('status' => $status, 'Url_archivo' => $nombre_archivo));
+    }
+
 ///// fin documento
 }

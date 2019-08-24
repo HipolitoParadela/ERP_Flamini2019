@@ -19,7 +19,6 @@ include "menusidebar.php";
 
 
 
-
                     <!-- SECCION FICHA cliente -->
                     <div class="col-lg-12">
                         <ul class="nav nav-tabs">
@@ -72,30 +71,26 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_1 in listaEtapa_1"> 
-                                                                
+                                                            <tr v-for="producto_1 in listaEtapa_1">
+
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
-                                                                    <div v-if="producto_1.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 2">
-                                                                        <a v-if="producto_1.Estado == 1" href="#modalPasoapaso" data-toggle="modal" 
-                                                                        class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" 
-                                                                        v-on:click="editarPasoProducto(producto_1.Id, 2)"
-                                                                        v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_1.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_1.Fecha_estimada_entrega) < 7}]"
-                                                                        >
+                                                                    <div v-if="Usuario_id == 3 || producto_1.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 2">
+                                                                        <a v-if="producto_1.Estado == 1" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_1.Id, 2)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_1.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_1.Fecha_estimada_entrega) < 7}]">
                                                                             <i class="ti-plus"></i> LISTO >>
                                                                         </a>
                                                                     </div>
                                                                     <span v-if="producto_1.Estado > 1"> {{producto_1.S_1_Fecha_finalizado | Fecha}}</span>
                                                                     <span v-if="producto_1.Estado < 1"> En etapa previa</span>
                                                                 </td>
-                                                                <td v-if="diferenciasEntre_fechas(null, producto_1.Fecha_estimada_entrega) < 0"> 
+                                                                <td v-if="diferenciasEntre_fechas(null, producto_1.Fecha_estimada_entrega) < 0">
                                                                     {{ diferenciasEntre_fechas(null, producto_1.Fecha_estimada_entrega) * (-1) }} días de atrazo
                                                                 </td>
                                                                 <td v-else> {{ diferenciasEntre_fechas(null, producto_1.Fecha_estimada_entrega) }} días</td>
                                                                 <td>
-                                                                    <span v-if="producto_1.Tipo_produccion == 1" class="text-secondary">  <i class="fa fa-circle"></i></span>
-                                                                    <span v-if="producto_1.Tipo_produccion == 2" class="text-warning">  <i class="fa fa-circle"></i></span>
-                                                                    <span v-if="producto_1.Tipo_produccion == 3" class="text-info">     <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_1.Tipo_produccion == 1" class="text-secondary"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_1.Tipo_produccion == 2" class="text-warning"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_1.Tipo_produccion == 3" class="text-info"> <i class="fa fa-circle"></i></span>
                                                                 </td>
                                                                 <td>
                                                                     <h4> {{producto_1.Nombre_producto}}</h4>
@@ -105,7 +100,7 @@ include "menusidebar.php";
                                                                 <td> {{producto_1.S_1_Requerimientos}} </td>
                                                                 <td> {{producto_1.Fecha_venta | Fecha}} </td>
                                                                 <td> {{producto_1.S_1_Fecha_finalizado | Fecha}} </td>
-                                                                <td> {{diferenciasEntre_fechas(producto_1.Fecha_venta, producto_1.S_1_Fecha_finalizado)}} días  </td>
+                                                                <td> {{diferenciasEntre_fechas(producto_1.Fecha_venta, producto_1.S_1_Fecha_finalizado)}} días </td>
                                                                 <td> {{producto_1.S_1_Observaciones}} </td>
                                                             </tr>
                                                         </tbody>
@@ -151,32 +146,28 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_2 in listaEtapa_2"> 
-                                                                
+                                                            <tr v-for="producto_2 in listaEtapa_2">
+
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
-                                                                    <div v-if="producto_2.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 2">
-                                                                    <a v-if="producto_2.Estado == 2" href="#modalPasoapaso" data-toggle="modal" 
-                                                                        class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" 
-                                                                        v-on:click="editarPasoProducto(producto_2.Id, 3)"
-                                                                        v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_2.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_2.Fecha_estimada_entrega) < 7}]"
-                                                                        >
+                                                                    <div v-if="producto_2.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 2 || Usuario_id == '3'">
+                                                                        <a v-if="producto_2.Estado == 2" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_2.Id, 3)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_2.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_2.Fecha_estimada_entrega) < 7}]">
                                                                             <i class="ti-plus"></i> LISTO >>
-                                                                    </a>
+                                                                        </a>
                                                                     </div>
                                                                     <span v-if="producto_2.Estado > 2"> {{producto_2.S_2_Fecha_finalizado | Fecha}}</span>
                                                                     <span v-if="producto_2.Estado < 2"> En etapa previa</span>
-                                                                    
+
                                                                 </td>
 
-                                                                <td v-if="diferenciasEntre_fechas(null, producto_2.Fecha_estimada_entrega) < 0"> 
+                                                                <td v-if="diferenciasEntre_fechas(null, producto_2.Fecha_estimada_entrega) < 0">
                                                                     {{ diferenciasEntre_fechas(null, producto_2.Fecha_estimada_entrega) * (-1) }} días de atrazo
                                                                 </td>
                                                                 <td v-else> {{ diferenciasEntre_fechas(null, producto_2.Fecha_estimada_entrega) }} días</td>
                                                                 <td>
-                                                                    <span v-if="producto_2.Tipo_produccion == 1" class="text-secondary">  <i class="fa fa-circle"></i></span>
-                                                                    <span v-if="producto_2.Tipo_produccion == 2" class="text-warning">  <i class="fa fa-circle"></i></span>
-                                                                    <span v-if="producto_2.Tipo_produccion == 3" class="text-info">     <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_2.Tipo_produccion == 1" class="text-secondary"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_2.Tipo_produccion == 2" class="text-warning"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_2.Tipo_produccion == 3" class="text-info"> <i class="fa fa-circle"></i></span>
                                                                 </td>
                                                                 <td>
                                                                     <h4> {{producto_2.Nombre_producto}}</h4>
@@ -186,7 +177,7 @@ include "menusidebar.php";
                                                                 <td> {{producto_2.S_2_Requerimientos}} </td>
                                                                 <td> {{producto_2.S_1_Fecha_finalizado | Fecha}} </td>
                                                                 <td> {{producto_2.S_2_Fecha_finalizado | Fecha}} </td>
-                                                                <td> {{diferenciasEntre_fechas(producto_2.S_1_Fecha_finalizado, producto_2.S_2_Fecha_finalizado)}} días  </td>
+                                                                <td> {{diferenciasEntre_fechas(producto_2.S_1_Fecha_finalizado, producto_2.S_2_Fecha_finalizado)}} días </td>
                                                                 <td> {{producto_2.S_2_Observaciones}} </td>
                                                             </tr>
                                                         </tbody>
@@ -232,32 +223,28 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_3 in listaEtapa_3"> 
-                                                                
+                                                            <tr v-for="producto_3 in listaEtapa_3">
+
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
-                                                                    <div v-if="producto_3.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 2">
-                                                                        <a v-if="producto_3.Estado == 3" href="#modalPasoapaso" data-toggle="modal" 
-                                                                            class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" 
-                                                                            v-on:click="editarPasoProducto(producto_3.Id, 4)"
-                                                                            v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 7}]"
-                                                                            >
-                                                                                <i class="ti-plus"></i> LISTO >>
+                                                                    <div v-if="producto_3.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 2 || Usuario_id == '3'">
+                                                                        <a v-if="producto_3.Estado == 3" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_3.Id, 4)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 7}]">
+                                                                            <i class="ti-plus"></i> LISTO >>
                                                                         </a>
                                                                     </div>
                                                                     <span v-if="producto_3.Estado > 3"> {{producto_3.S_3_Fecha_finalizado | Fecha}}</span>
                                                                     <span v-if="producto_3.Estado < 3"> En etapa previa</span>
-                                                                    
+
                                                                 </td>
 
-                                                                <td v-if="diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 0"> 
+                                                                <td v-if="diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 0">
                                                                     {{ diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) * (-1) }} días de atrazo
                                                                 </td>
                                                                 <td v-else> {{ diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) }} días</td>
                                                                 <td>
-                                                                    <span v-if="producto_3.Tipo_produccion == 1" class="text-secondary">  <i class="fa fa-circle"></i></span>
-                                                                    <span v-if="producto_3.Tipo_produccion == 2" class="text-warning">  <i class="fa fa-circle"></i></span>
-                                                                    <span v-if="producto_3.Tipo_produccion == 3" class="text-info">     <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_3.Tipo_produccion == 1" class="text-secondary"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_3.Tipo_produccion == 2" class="text-warning"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_3.Tipo_produccion == 3" class="text-info"> <i class="fa fa-circle"></i></span>
                                                                 </td>
                                                                 <td>
                                                                     <h4> {{producto_3.Nombre_producto}}</h4>
@@ -267,7 +254,7 @@ include "menusidebar.php";
                                                                 <td> {{producto_3.S_3_Requerimientos}} </td>
                                                                 <td> {{producto_3.S_2_Fecha_finalizado | Fecha}} </td>
                                                                 <td> {{producto_3.S_3_Fecha_finalizado | Fecha}} </td>
-                                                                <td> {{diferenciasEntre_fechas(producto_3.S_2_Fecha_finalizado, producto_3.S_3_Fecha_finalizado)}} días  </td>
+                                                                <td> {{diferenciasEntre_fechas(producto_3.S_2_Fecha_finalizado, producto_3.S_3_Fecha_finalizado)}} días </td>
                                                                 <td> {{producto_3.S_3_Observaciones}} </td>
                                                             </tr>
                                                         </tbody>
@@ -313,32 +300,28 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_4 in listaEtapa_4"> 
-                                                                
+                                                            <tr v-for="producto_4 in listaEtapa_4">
+
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
-                                                                    <div v-if="producto_4.Responsable_id_planif_final == Usuario_id || Rol_acceso > 2">
-                                                                        <a v-if="producto_4.Estado == 4" href="#modalPasoapaso" data-toggle="modal" 
-                                                                            class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" 
-                                                                            v-on:click="editarPasoProducto(producto_4.Id, 5)"
-                                                                            v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_4.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_4.Fecha_estimada_entrega) < 7}]"
-                                                                            >
-                                                                                <i class="ti-plus"></i> LISTO >>
+                                                                    <div v-if="producto_4.Responsable_id_planif_final == Usuario_id || Rol_acceso > 2 || Usuario_id == '3'">
+                                                                        <a v-if="producto_4.Estado == 4" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_4.Id, 5)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_4.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_4.Fecha_estimada_entrega) < 7}]">
+                                                                            <i class="ti-plus"></i> LISTO >>
                                                                         </a>
                                                                     </div>
                                                                     <span v-if="producto_4.Estado > 4"> {{producto_4.S_4_Fecha_finalizado | Fecha}}</span>
                                                                     <span v-if="producto_4.Estado < 4"> En etapa previa</span>
-                                                                    
+
                                                                 </td>
 
-                                                                <td v-if="diferenciasEntre_fechas(null, producto_4.Fecha_estimada_entrega) < 0"> 
+                                                                <td v-if="diferenciasEntre_fechas(null, producto_4.Fecha_estimada_entrega) < 0">
                                                                     {{ diferenciasEntre_fechas(null, producto_4.Fecha_estimada_entrega) * (-1) }} días de atrazo
                                                                 </td>
                                                                 <td v-else> {{ diferenciasEntre_fechas(null, producto_4.Fecha_estimada_entrega) }} días</td>
                                                                 <td>
-                                                                    <span v-if="producto_4.Tipo_produccion == 1" class="text-secondary">  <i class="fa fa-circle"></i></span>
-                                                                    <span v-if="producto_4.Tipo_produccion == 2" class="text-warning">  <i class="fa fa-circle"></i></span>
-                                                                    <span v-if="producto_4.Tipo_produccion == 3" class="text-info">     <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_4.Tipo_produccion == 1" class="text-secondary"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_4.Tipo_produccion == 2" class="text-warning"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_4.Tipo_produccion == 3" class="text-info"> <i class="fa fa-circle"></i></span>
                                                                 </td>
                                                                 <td>
                                                                     <h4> {{producto_4.Nombre_producto}}</h4>
@@ -348,7 +331,7 @@ include "menusidebar.php";
                                                                 <td> {{producto_4.S_4_Requerimientos}} </td>
                                                                 <td> {{producto_4.S_3_Fecha_finalizado | Fecha}} </td>
                                                                 <td> {{producto_4.S_4_Fecha_finalizado | Fecha}} </td>
-                                                                <td> {{diferenciasEntre_fechas(producto_4.S_3_Fecha_finalizado, producto_4.S_4_Fecha_finalizado)}} días  </td>
+                                                                <td> {{diferenciasEntre_fechas(producto_4.S_3_Fecha_finalizado, producto_4.S_4_Fecha_finalizado)}} días </td>
                                                                 <td> {{producto_4.S_4_Observaciones}} </td>
                                                             </tr>
                                                         </tbody>
@@ -394,32 +377,28 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_5 in listaEtapa_5"> 
-                                                                
+                                                            <tr v-for="producto_5 in listaEtapa_5">
+
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
-                                                                    <div v-if="producto_5.Responsable_id_planif_final == Usuario_id || Rol_acceso > 2">
-                                                                        <a v-if="producto_5.Estado == 5" href="#modalPasoapaso" data-toggle="modal" 
-                                                                            class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" 
-                                                                            v-on:click="editarPasoProducto(producto_5.Id, 6)"
-                                                                            v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_5.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_5.Fecha_estimada_entrega) < 7}]"
-                                                                            >
-                                                                                <i class="ti-plus"></i> LISTO >>
+                                                                    <div v-if="producto_5.Responsable_id_planif_final == Usuario_id || Rol_acceso > 2 || Usuario_id == '3'">
+                                                                        <a v-if="producto_5.Estado == 5" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_5.Id, 6)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_5.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_5.Fecha_estimada_entrega) < 7}]">
+                                                                            <i class="ti-plus"></i> LISTO >>
                                                                         </a>
                                                                     </div>
                                                                     <span v-if="producto_5.Estado > 5"> {{producto_5.S_5_Fecha_finalizado | Fecha}}</span>
                                                                     <span v-if="producto_5.Estado < 5"> En etapa previa</span>
-                                                                    
+
                                                                 </td>
 
-                                                                <td v-if="diferenciasEntre_fechas(null, producto_5.Fecha_estimada_entrega) < 0"> 
+                                                                <td v-if="diferenciasEntre_fechas(null, producto_5.Fecha_estimada_entrega) < 0">
                                                                     {{ diferenciasEntre_fechas(null, producto_5.Fecha_estimada_entrega) * (-1) }} días de atrazo
                                                                 </td>
                                                                 <td v-else> {{ diferenciasEntre_fechas(null, producto_5.Fecha_estimada_entrega) }} días</td>
                                                                 <td>
-                                                                    <span v-if="producto_5.Tipo_produccion == 1" class="text-secondary">  <i class="fa fa-circle"></i></span>
-                                                                    <span v-if="producto_5.Tipo_produccion == 2" class="text-warning">  <i class="fa fa-circle"></i></span>
-                                                                    <span v-if="producto_5.Tipo_produccion == 3" class="text-info">     <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_5.Tipo_produccion == 1" class="text-secondary"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_5.Tipo_produccion == 2" class="text-warning"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_5.Tipo_produccion == 3" class="text-info"> <i class="fa fa-circle"></i></span>
                                                                 </td>
                                                                 <td>
                                                                     <h4> {{producto_5.Nombre_producto}}</h4>
@@ -429,7 +408,7 @@ include "menusidebar.php";
                                                                 <td> {{producto_5.S_5_Requerimientos}} </td>
                                                                 <td> {{producto_5.S_4_Fecha_finalizado | Fecha}} </td>
                                                                 <td> {{producto_5.S_5_Fecha_finalizado | Fecha}} </td>
-                                                                <td> {{diferenciasEntre_fechas(producto_5.S_4_Fecha_finalizado, producto_5.S_5_Fecha_finalizado)}} días  </td>
+                                                                <td> {{diferenciasEntre_fechas(producto_5.S_4_Fecha_finalizado, producto_5.S_5_Fecha_finalizado)}} días </td>
                                                                 <td> {{producto_5.S_5_Observaciones}} </td>
                                                             </tr>
                                                         </tbody>
@@ -475,42 +454,38 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_6 in listaEtapa_6"> 
-                                                                
+                                                            <tr v-for="producto_6 in listaEtapa_6">
+
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
-                                                                    <div v-if="producto_6.Responsable_id_planif_final == Usuario_id || Rol_acceso > 2">
-                                                                        <a v-if="producto_6.Estado == 6" href="#modalPasoapaso" data-toggle="modal" 
-                                                                            class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" 
-                                                                            v-on:click="editarPasoProducto(producto_6.Id, 7)"
-                                                                            v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_6.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_6.Fecha_estimada_entrega) < 7}]"
-                                                                            >
-                                                                                <i class="ti-plus"></i> LISTO >>
+                                                                    <div v-if="producto_6.Responsable_id_planif_final == Usuario_id || Rol_acceso > 2 || Usuario_id == '3'">
+                                                                        <a v-if="producto_6.Estado == 6" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_6.Id, 7)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_6.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_6.Fecha_estimada_entrega) < 7}]">
+                                                                            <i class="ti-plus"></i> LISTO >>
                                                                         </a>
                                                                     </div>
                                                                     <span v-if="producto_6.Estado > 6"> {{producto_6.S_6_Fecha_finalizado | Fecha}}</span>
                                                                     <span v-if="producto_6.Estado < 6"> En etapa previa</span>
-                                                                    
+
                                                                 </td>
 
-                                                                <td v-if="diferenciasEntre_fechas(null, producto_6.Fecha_estimada_entrega) < 0"> 
+                                                                <td v-if="diferenciasEntre_fechas(null, producto_6.Fecha_estimada_entrega) < 0">
                                                                     {{ diferenciasEntre_fechas(null, producto_6.Fecha_estimada_entrega) * (-1) }} días de atrazo
                                                                 </td>
                                                                 <td v-else> {{ diferenciasEntre_fechas(null, producto_6.Fecha_estimada_entrega) }} días</td>
                                                                 <td>
-                                                                    <span v-if="producto_6.Tipo_produccion == 1" class="text-secondary">  <i class="fa fa-circle"></i></span>
-                                                                    <span v-if="producto_6.Tipo_produccion == 2" class="text-warning">  <i class="fa fa-circle"></i></span>
-                                                                    <span v-if="producto_6.Tipo_produccion == 3" class="text-info">     <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_6.Tipo_produccion == 1" class="text-secondary"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_6.Tipo_produccion == 2" class="text-warning"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_6.Tipo_produccion == 3" class="text-info"> <i class="fa fa-circle"></i></span>
                                                                 </td>
                                                                 <td>
                                                                     <h4> {{producto_6.Nombre_producto}}</h4>
                                                                 </td>
-                                                                <td > {{producto_6.Identificador_venta}} </td>
+                                                                <td> {{producto_6.Identificador_venta}} </td>
                                                                 <td> {{producto_6.Nombre_cliente}} </td>
                                                                 <td> {{producto_6.S_6_Requerimientos}} </td>
                                                                 <td> {{producto_6.S_5_Fecha_finalizado | Fecha}} </td>
                                                                 <td> {{producto_6.S_6_Fecha_finalizado | Fecha}} </td>
-                                                                <td> {{diferenciasEntre_fechas(producto_6.S_5_Fecha_finalizado, producto_6.S_6_Fecha_finalizado)}} días  </td>
+                                                                <td> {{diferenciasEntre_fechas(producto_6.S_5_Fecha_finalizado, producto_6.S_6_Fecha_finalizado)}} días </td>
                                                                 <td> {{producto_6.S_6_Observaciones}} </td>
                                                             </tr>
                                                         </tbody>

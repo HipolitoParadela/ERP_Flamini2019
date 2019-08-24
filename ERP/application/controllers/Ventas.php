@@ -80,7 +80,7 @@ class ventas extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
 
-            if ($this->session->userdata('Rol_acceso') > 1) 
+            if ($this->session->userdata('Rol_acceso') > 1 || $this->session->userdata('Id') == 3) //USUARIO 3, FRANCO DÍAZ 
             {
                 $this->load->view('ventas_produccion');
             } 
@@ -1039,10 +1039,18 @@ class ventas extends CI_Controller
         /// ACA VIENE EL FILTRO, SOLO VA A BUSCAR EN LAS VENTAS DONDE EL USUARIO LOGUEADO HAYA SIDO ELEGIDO.
         if ($this->session->userdata('Rol_acceso') < 4)
         {
-            $this->db->group_start(); // Open bracket
+            if($this->session->userdata('Id') == 3)
+            {
+                // Si es el diseñador gráfico quien podrá ver todo el proceso
+            }
+            else
+            {
+                $this->db->group_start(); // Open bracket
                 $this->db->where('tbl_ventas.Responsable_id_planif_final',      $this->session->userdata('Id'));
                 $this->db->or_where('tbl_ventas.Responsable_id_planif_inicial', $this->session->userdata('Id'));
-            $this->db->group_end(); // Close bracket    
+                $this->db->group_end(); // Close bracket  
+            }
+              
         }
 
         $this->db->order_by('tbl_ventas.Fecha_estimada_entrega', 'asc');

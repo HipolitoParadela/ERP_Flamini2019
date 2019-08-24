@@ -54,7 +54,8 @@ include "menusidebar.php";
 
                             </div>
                         </div>
-                        <div class="card">
+                        <!-- {{Usuario_id}} -->
+                        <div class="card" v-if="Usuario_id == '5' || Usuario_id == '9' || Usuario_id == 1">
                             <div class="card-header">
                                 <h4>Valores de la venta</h4>
                             </div>

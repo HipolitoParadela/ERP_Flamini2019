@@ -1835,6 +1835,7 @@ new Vue({
         this.getSuperiores();
         this.getListadoEmpresas();
         this.getListadoPuesto();
+        this.getListadoSeguimiento();
     },
 
     data: {
@@ -1877,7 +1878,12 @@ new Vue({
         listaSuperiores: [],
 
         listaRoles: [],
+
+        listaSeguimiento: [],
         texto_boton: "Cargar",
+        seguimientoData: {},
+        Archivo:  null,
+        preloader : '0',
 
         listaFormaciones: [],
         formacionData: { 'Id': '', 'Titulo': '', 'Establecimiento': '', 'Anio_inicio': '', 'Anio_finalizado': '', 'Descripcion_titulo': '' },
@@ -1942,11 +1948,6 @@ new Vue({
                 alert("mal");
                 console.log(error)
             });
-        },
-
-        //// FORMATO FECHA
-        formatoFecha: function (fecha) {
-            return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
         },
 
         //// CREAR O EDITAR una formación
@@ -2049,6 +2050,89 @@ new Vue({
             }).then(response => {
                 this.listaEmpresas = response.data
             });
+        },
+
+        //// MOSTRAR LISTADO
+        getListadoSeguimiento: function () {
+            var url = base_url + 'usuarios/obtener_seguimientos/?Id=' + Get_Id; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token
+            }).then(response => {
+                this.listaSeguimiento = response.data
+            });
+        },
+
+        //// DATOS SOBRE EL ARCHIVO SELECCIONADO EN CASO QUE QUIERA CARGAR ALGUNA ARCHIVO
+        archivoSeleccionado(event) {
+            this.Archivo = event.target.files[0]
+            //this.texto_boton = "Actualizar"
+        },
+
+        //// CREAR O EDITAR una SEGUIMIENTO
+        crearSeguimiento: function () {
+            var url = base_url + 'usuarios/cargar_seguimiento'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Datos: this.seguimientoData, 
+                Usuario_id: Get_Id
+            }).then(response => 
+            {
+                
+                this.seguimientoData.Id = response.data.Id;
+
+                /// si eso se ralizó bien, debe comprobar si hay un archivo a cargar.
+                   if (this.Archivo != null)
+                    {
+                        var url = base_url + 'usuarios/subirFotoSeguimiento/?Id=' + this.seguimientoData.Id;
+                        this.preloader = 1;
+
+                        //const formData = event.target.files[0];
+                        const formData = new FormData();
+                        formData.append("Archivo", this.Archivo);
+
+                        formData.append('_method', 'PUT');
+
+                        //Enviamos la petición
+                        axios.post(url, formData)
+                            .then(response => 
+                            {
+
+                                this.seguimientoData.Url_archivo = response.data.Url_archivo;
+
+                                toastr.success('El archivo se cargo correctamente', 'Usuarios')
+                                this.preloader = 0;
+                                this.getListadoSeguimiento();
+
+                            }).catch(error => 
+                            {
+                                alert("MAL LA CARGA EN FUNCIÓN DE CARGAR ARCHIVO");
+                                this.preloader = 0;
+                                //this.seguimientoData.Url_archivo = response.data.Url_archivo;
+                            });
+                    }
+                    // si lo hay lo carga, si no lo hay no hace nada
+
+                this.getListadoSeguimiento();
+                this.Archivo = null
+                this.texto_boton = "Actualizar"
+                toastr.success('Datos actualizados correctamente', 'Usuarios')
+
+            }).catch(error => 
+            {
+                alert("MAL LA CARGA EN FUNCIÓN DE CARGAR DATOS");
+            });
+        },
+
+        /// EDITAR UN SEGUIMIENTO
+        editarFormularioSeguimiento: function (dato) {
+            this.seguimientoData = dato;
+        },
+
+        //// LIMPIAR FORMULARIO SEGUIMIENTO
+        limpiarFormularioSeguimiento: function () {
+            this.seguimientoData = {}
         },
 
     },
@@ -2874,6 +2958,7 @@ new Vue({
             this.getListadoProductosVendidos();
             this.getListadoVentas(0,0,0,1,0);
             this.getListadoPlanificaciones();
+            this.Set_valores_usuario();
         }
     },
 
