@@ -16,6 +16,27 @@ Vue.filter('FechaTimestamp', function (fecha) {
     return fecha_dia
 })
 
+/// FECHA TIME STAMP
+Vue.filter('FechaTimeBD', function (fecha) {
+    if(fecha != null)
+    {
+        fecha = fecha.split(' ');
+
+        //var fecha_dia = fecha[0].replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
+        var fecha_dia = fecha[0].replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
+
+        var fecha_hora = fecha[1].split(':');
+        fecha_hora = fecha_hora[0] + ':' + fecha_hora[1];
+
+        return fecha_dia + ' ' + fecha_hora + 'hs '
+        //return fecha_dia
+    }
+    else{
+        return 'No definida'
+    }
+    
+})
+
 
 /// FECHA TIME STAMP
 Vue.filter('Fecha', function (fecha) {
@@ -2959,6 +2980,7 @@ new Vue({
             this.getListadoVentas(0,0,0,1,0);
             this.getListadoPlanificaciones();
             this.Set_valores_usuario();
+            this.getListadoResumenProductos();
         }
     },
 
@@ -3008,6 +3030,9 @@ new Vue({
         listaEtapa_6: [],
 
         listaPlanificaciones: [],
+
+        // COBRANZA
+        listaResumenProductos : [],
     },
 
     methods:
@@ -3196,27 +3221,6 @@ new Vue({
             });
         },
 
-        //// OPERACIONES CON FECHAS
-        
-        //// FORMATOS   | FORMATO Fecha Hora
-        formatoFecha_hora: function (fecha) {
-            //separador = ":",
-            fecha = fecha.split(' ');
-
-            //var fecha_dia = fecha[0].replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
-            var fecha_dia = fecha[0].replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
-
-            var fecha_hora = fecha[1].split(':');
-            fecha_hora = fecha_hora[0] + ':' + fecha_hora[1];
-
-            return fecha_dia + ' ' + fecha_hora + 'hs '
-
-        },
-
-        //// FORMATO FECHA
-        formatoFecha: function (fecha) {
-            return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
-        },
         
         /// CANTIDAD DE DIAS ENTRE DOS FECHAS       
         diferenciasEntre_fechas: function (fechaInicio, fechaFin){
@@ -3259,6 +3263,7 @@ new Vue({
                 this.texto_boton = "Actualizar"
 
                 this.getListadoProductosVendidos();
+                this.getListadoResumenProductos();
 
             }).catch(error => {
                 alert("mal");
@@ -3331,6 +3336,7 @@ new Vue({
                 else
                 {
                     this.getListadoProductosVendidos();
+                    this.getListadoResumenProductos();
                 }
 
             }).catch(error => {
@@ -3572,6 +3578,21 @@ new Vue({
                 token: token
             }).then(response => {
                 this.listaPlanificaciones  = response.data
+            }).catch(error => {
+                    alert("mal");
+                    console.log(error.response.data)
+
+                });
+        },
+
+        //// COBRANZAS |  MOSTRAR LISTADO DE ORDENES
+        getListadoResumenProductos: function () {
+            var url = base_url + 'ventas/obtener_listado_resumen_productos?Id='+Get_Id; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token
+            }).then(response => {
+                this.listaResumenProductos  = response.data
             }).catch(error => {
                     alert("mal");
                     console.log(error.response.data)

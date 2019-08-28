@@ -90,7 +90,7 @@ class ventas extends CI_Controller
             }
 
         }
-}
+    }
 
 //// VENTAS 	  | OBTENER TODAS
 	public function obtener_listado_ventas()
@@ -329,7 +329,7 @@ class ventas extends CI_Controller
 
         $this->db->select(' tbl_ventas.*,
                             tbl_empresas.Nombre_empresa,
-                            tbl_clientes.Nombre_cliente,
+                            tbl_clientes.*,
                             tbl_vendedor.Nombre as Nombre_vendedor,
                             tbl_resp_1.Nombre as Nombre_resp_1,
                             tbl_resp_2.Nombre as Nombre_resp_2,
@@ -1059,6 +1059,77 @@ class ventas extends CI_Controller
         $result = $query->result_array();
 
         echo json_encode($result);
+
+    }
+
+//// COBRANZAS 	| Obtener listado resumen productos
+    public function obtener_listado_resumen_productos()
+    {
+
+        //Esto siempre va es para instanciar la base de datos
+        $CI = &get_instance();
+        $CI->load->database();
+        
+        //Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+        $Id = $_GET["Id"];
+
+        /// ARMO UN ARRAY CON LOS PRODUCTOS VENDITOS, AGRUPANDOLOS
+            $this->db->select(' tbl_ventas_productos.*,
+                                tbl_fabricacion.Nombre_producto,
+                                tbl_fabricacion.Codigo_interno,
+                                tbl_fabricacion.Imagen,
+                                tbl_fabricacion.Id as Producto_id,
+                                tbl_fabricacion.Precio_USD');
+            
+            $this->db->from('tbl_ventas_productos');
+
+            $this->db->join('tbl_fabricacion',  'tbl_fabricacion.Id   = tbl_ventas_productos.Producto_id', 'left');
+            
+            $this->db->where('tbl_ventas_productos.Venta_id', $Id);
+            $this->db->where('tbl_ventas_productos.Visible', 1);
+            $this->db->group_by('tbl_ventas_productos.Producto_id'); 
+            
+            $query = $this->db->get();
+            $array_productos = $query->result_array();
+        
+        /// RECORRO EL ARRAY CONTANDO CUANTOS SON DE CADA UNO
+            $Datos = array();
+            
+            foreach ($array_productos as $productos) 
+            {
+                
+                $this->db->select('Id');
+                $this->db->from('tbl_ventas_productos');
+                $this->db->where('Producto_id', $productos["Producto_id"]);
+                $this->db->where('Venta_id', $Id);
+                $this->db->where('Visible', 1);
+
+                /// con un poco mas de laburo puedo incluso traer un promedio de por donde van en su construcción
+        
+                $query = $this->db->get();
+                $cantidad = $query->num_rows();
+                
+                $subtotal = $cantidad * $productos["Precio_venta_producto"];
+                
+                
+                $datos_producto = array(
+                                            'Codigo_interno' =>     $productos["Codigo_interno"],
+                                            'Nombre_producto' =>    $productos["Nombre_producto"], 
+                                            'Precio_venta' =>       $productos["Precio_venta_producto"],
+                                            'Cantidad' =>           $cantidad,
+                                            'Subtotal' =>           $subtotal,
+                                        );
+
+                array_push($Datos, $datos_producto);
+            }
+
+		echo json_encode($Datos);
 
     }
 
