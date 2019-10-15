@@ -18,8 +18,7 @@ Vue.filter('FechaTimestamp', function (fecha) {
 
 /// FECHA TIME STAMP
 Vue.filter('FechaTimeBD', function (fecha) {
-    if(fecha != null)
-    {
+    if (fecha != null) {
         fecha = fecha.split(' ');
 
         //var fecha_dia = fecha[0].replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
@@ -31,24 +30,25 @@ Vue.filter('FechaTimeBD', function (fecha) {
         return fecha_dia + ' ' + fecha_hora + 'hs '
         //return fecha_dia
     }
-    else{
+    else {
         return 'No definida'
     }
-    
+
 })
 
 
 /// FECHA TIME STAMP
 Vue.filter('Fecha', function (fecha) {
-    
-    if(fecha != null){
+
+    if (fecha != null) {
         return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
     }
-    else{
+    else {
         return "Sin definir";
     }
 
 })
+
 
 /// FORMATO DINERO
 Vue.filter('Moneda', function (numero) {
@@ -106,14 +106,14 @@ new Vue({
 
     created: function () {
         /// CARGO FUNCIONES SEGUN EL SECCTOR QUE ESTE VISUALIZANDO - uso un if, pero tal vez un swich sea mejor en este caso
-        
-        
+
+
         if (pathname == carpeta + 'usuarios') {
             this.getListadoUsuarios(1);
-            this.getListadoRoles(); 
+            this.getListadoRoles();
             this.getListadoPuesto();
             this.getListadoEmpresas();
-        } 
+        }
 
         if (pathname == carpeta + 'curriculum/todos') {
             this.getListadoCurriculums();
@@ -128,17 +128,17 @@ new Vue({
             this.getListadoPuesto();
             //this.getListadoEmpresas();
         }
-       
+
         if (pathname == carpeta + 'stock') {
             this.getListadoCategorias();
             this.getListadoStock(0);
-            this.getListadoVentas(0,0,0,1,0);
+            this.getListadoVentas(0, 0, 0, 1, 0);
         }
 
         if (pathname == carpeta + 'clientes') {
             this.getListadoClientes();
         }
-        
+
         if (pathname == carpeta + 'proveedores') {
             this.getListadoProveedores();
         }
@@ -147,15 +147,15 @@ new Vue({
             this.valorDolar();
             this.consultaDolarBCRA();
             this.getListadoCategoriasProductos();
-            this.getListadoProductos(0,0);
+            this.getListadoProductos(0, 0);
             this.getListadoEmpresas();
-            
+
         }
 
-        if (pathname == carpeta + 'ventas'){
-            this.getListadoVentas(0,0,0,1,0);
+        if (pathname == carpeta + 'ventas') {
+            this.getListadoVentas(0, 0, 0, 1, 0);
             this.getListadoUsuarios(1);
-            this.getListadoProductos(0,0);
+            this.getListadoProductos(0, 0);
             this.getListadoClientes();
             this.getListadoEmpresas();
             this.getListadoPlanificaciones();
@@ -179,103 +179,103 @@ new Vue({
         filtro_empresa: "0",
         filtro_sexo: '0',
         filtro_edad: '0',
-        
+
 
         //Usuarios
-            listaUsuarios: [],
-            usuario: {
-                'Id': '',
-                'Nombre': '',
-                'DNI': '',
-                'Pass': '',
-                'Rol_id': '',
-                'Empresa_id':'',
-                'Puesto_Id':'',
-                'Imagen': '',
-                'Telefono': '',
-                'Fecha_nacimiento': '',
-                'Domicilio': '',
-                'Nacionalidad': '',
-                'Genero': '',
-                'Email': '',
-                'Obra_social': '',
-                'Numero_obra_social': '',
-                'Hijos': '',
-                'Estado_civil': '',
-                'Datos_persona_contacto': '',
-                'Datos_bancarios': '',
-                'Periodo_liquidacion_sueldo': '',
-                'Horario_laboral': '',
-                'Superior_inmediato': '',
-                'Telefono': '',
-                'Observaciones': '',
-                'Presencia': '1',
-                'Fecha_alta': '',
-                'Fecha_baja': '',
-                'Activo': 1
-            },
+        listaUsuarios: [],
+        usuario: {
+            'Id': '',
+            'Nombre': '',
+            'DNI': '',
+            'Pass': '',
+            'Rol_id': '',
+            'Empresa_id': '',
+            'Puesto_Id': '',
+            'Imagen': '',
+            'Telefono': '',
+            'Fecha_nacimiento': '',
+            'Domicilio': '',
+            'Nacionalidad': '',
+            'Genero': '',
+            'Email': '',
+            'Obra_social': '',
+            'Numero_obra_social': '',
+            'Hijos': '',
+            'Estado_civil': '',
+            'Datos_persona_contacto': '',
+            'Datos_bancarios': '',
+            'Periodo_liquidacion_sueldo': '',
+            'Horario_laboral': '',
+            'Superior_inmediato': '',
+            'Telefono': '',
+            'Observaciones': '',
+            'Presencia': '1',
+            'Fecha_alta': '',
+            'Fecha_baja': '',
+            'Activo': 1
+        },
 
-            usuarioFoto: { 'Id': '', 'Nombre': '', 'Imagen': '' },
-            Archivo: '',
-            preloader: '0',
+        usuarioFoto: { 'Id': '', 'Nombre': '', 'Imagen': '' },
+        Archivo: '',
+        preloader: '0',
 
-            listaRoles: [],
+        listaRoles: [],
 
-            listaEmpresas: [],
-            empresaDatos: { 'Id':'', 'Nombre_empresa':'', 'Descripcion':''},
+        listaEmpresas: [],
+        empresaDatos: { 'Id': '', 'Nombre_empresa': '', 'Descripcion': '' },
 
-            listaPuestos: [],
-            puesto: { 'Id': '', 'Nombre_puesto': '', 'Descripcion': ''},
+        listaPuestos: [],
+        puesto: { 'Id': '', 'Nombre_puesto': '', 'Descripcion': '' },
 
-            listaCurriculums: [],
+        listaCurriculums: [],
 
         //Stock
-            listaCategorias: [],
-            categoriaDatos: { 'Id': '', 'Nombre_categoria': '', 'Descripcion': '' },
-            filtro_categoria: '0',
+        listaCategorias: [],
+        categoriaDatos: { 'Id': '', 'Nombre_categoria': '', 'Descripcion': '' },
+        filtro_categoria: '0',
 
-            listaStock: [],
-            stockDato: { 'Id': '', 'Nombre_item': '', 'Categoria_id': '', 'Descripcion': '', 'Cant_actual': '0', 'Cant_ideal': '', 'Ult_modificacion_id': '' },
-            
-            stockFoto: { 'Id': '', 'Nombre': '', 'Imagen': '' },
+        listaStock: [],
+        stockDato: { 'Id': '', 'Nombre_item': '', 'Categoria_id': '', 'Descripcion': '', 'Cant_actual': '0', 'Cant_ideal': '', 'Ult_modificacion_id': '' },
 
-            cantMovimientoStock : [],
-            descripcionMovimiento: [],
+        stockFoto: { 'Id': '', 'Nombre': '', 'Imagen': '' },
 
-            egresoDato:{},
+        cantMovimientoStock: [],
+        descripcionMovimiento: [],
+
+        egresoDato: {},
 
         // Clientes
-            listaClientes: [],
-            clienteDatos: { 'Id': '', 'Nombre_cliente': '', 'Producto_servicio': '', 'Direccion': '', 'Localidad': '', 'Provincia': '', 'Pais': '', 'Telefono': '', 'Email': '', 'Web': '', 'Nombre_persona_contacto': '', 'Datos_persona_contacto': '', 'Mas_datos_cliente': '' },
-            clienteFoto: { 'Id': '', 'Nombre_cliente': '', 'Imagen': '' },
+        listaClientes: [],
+        clienteDatos: { 'Id': '', 'Nombre_cliente': '', 'Producto_servicio': '', 'Direccion': '', 'Localidad': '', 'Provincia': '', 'Pais': '', 'Telefono': '', 'Email': '', 'Web': '', 'Nombre_persona_contacto': '', 'Datos_persona_contacto': '', 'Mas_datos_cliente': '' },
+        clienteFoto: { 'Id': '', 'Nombre_cliente': '', 'Imagen': '' },
 
         // Proveedores
-            listaProveedores: [],
-            proveedorDatos: { 'Id': '', 'Nombre_proveedor': '', 'Producto_servicio': '', 'Direccion': '', 'Localidad': '', 'Provincia': '', 'Pais': '', 'Telefono': '', 'Email': '', 'Web': '', 'Nombre_persona_contacto': '', 'Datos_persona_contacto': '', 'Mas_datos_proveedor': '' },
-            proveedorFoto: { 'Id': '', 'Nombre_proveedor': '', 'Imagen': '' },
+        listaProveedores: [],
+        proveedorDatos: { 'Id': '', 'Nombre_proveedor': '', 'Producto_servicio': '', 'Direccion': '', 'Localidad': '', 'Provincia': '', 'Pais': '', 'Telefono': '', 'Email': '', 'Web': '', 'Nombre_persona_contacto': '', 'Datos_persona_contacto': '', 'Mas_datos_proveedor': '' },
+        proveedorFoto: { 'Id': '', 'Nombre_proveedor': '', 'Imagen': '' },
 
         // Productos
-            listaProductos: [],
-            productoDatos: {},
+        listaProductos: [],
+        productoDatos: {},
 
-            productoFoto: { 'Id': '', 'Nombre': '', 'Imagen': '' },
-            valorDolarHoy: '',
-            valorDolarBCRA: '',
+        productoFoto: { 'Id': '', 'Nombre': '', 'Imagen': '' },
+        valorDolarHoy: '',
+        valorDolarBCRA: '',
 
         // Ventas
-            listaVentas: [],
-            listaPlanificaciones: [],
-            filtro_vendedor: '0',
-            filtro_cliente: '0',
-            filtro_estado: '1',
-            ventaDatos : {},
-            planificacionDatos : {},
-            filtro_planificacion: '0',
+        listaVentas: [],
+        listaPlanificaciones: [],
+        filtro_vendedor: '0',
+        filtro_cliente: '0',
+        filtro_estado: '1',
+        ventaDatos: {},
+        planificacionDatos: {},
+        filtro_planificacion: '0',
 
         // Compras
-            listaCompras: [],
-            compraDatos: { 'Id': '', 'Proveedor_id': '', 'Fecha_compra': '', 'Factura_identificador': '', 'Valor': '', 'Descripcion': ''},
-            compraFoto: { 'Id': '', 'Factura_identificador': '', 'Imagen': '' },
+        listaCompras: [],
+        compraDatos: { 'Id': '', 'Proveedor_id': '', 'Fecha_compra': '', 'Factura_identificador': '', 'Valor': '', 'Descripcion': '' },
+        compraFoto: { 'Id': '', 'Factura_identificador': '', 'Imagen': '' },
     },
 
     methods:
@@ -316,18 +316,16 @@ new Vue({
         },
 
         //// DOLAR CAMBIO DOLAR A PESO
-        cambioDolar_peso: function(monto){
-            
-            if (monto == null) 
-            { return null }
-            else 
-            { 
+        cambioDolar_peso: function (monto) {
+
+            if (monto == null) { return null }
+            else {
                 var calculo = parseInt(monto) * this.valorDolarHoy.libre
                 return calculo.toFixed(2)
             }
         },
 
-        
+
         //// MOSTRAR LISTADO DE Usuarios  
         getListadoUsuarios: function (estado) {
             var url = base_url + 'usuarios/obtener_Usuarios/?estado=' + estado + '&empresa=' + this.filtro_empresa + '&puesto=' + this.filtro_puesto; // url donde voy a mandar los datos
@@ -378,13 +376,11 @@ new Vue({
         },
 
         //// Dasactivar usuario  
-        desactivarUsuario: function (Id) 
-        {
+        desactivarUsuario: function (Id) {
             var url = base_url + 'usuarios/desactivar_usuario'; // url donde voy a mandar los datos
 
             var opcion = confirm("¿Esta seguro de eliminar a este usuario?");
-            if (opcion == true) 
-            {
+            if (opcion == true) {
                 axios.post(url, {
                     token: token,
                     Id: Id
@@ -479,13 +475,13 @@ new Vue({
 
         //// FORMATO FECHA
         formatoFecha: function (fecha) {
-            if(fecha == null) { 
-                return 'No definida'    
+            if (fecha == null) {
+                return 'No definida'
             }
             else {
                 return fecha.replace(/^(\d{4})-(\d{2})-(\d{2})$/g, '$3/$2/$1');
             }
-            
+
         },
 
         //// FORMATO HORA
@@ -564,7 +560,7 @@ new Vue({
             var fecha_hora = fecha[1].split(':');
             fecha_hora = fecha_hora[0] + ':' + fecha_hora[1];
 
-            return fecha_dia + ' ' +fecha_hora + 'hs '
+            return fecha_dia + ' ' + fecha_hora + 'hs '
 
         },
 
@@ -575,7 +571,7 @@ new Vue({
             //SOLICITANDO CONFIRMACIÓN PARA ELIMINAR
             var opcion = confirm("¿Esta seguro de eliminar a este usuario?");
             if (opcion == true) {
-                            
+
                 axios.post(url, {
                     token: token,
                     Id: Id, tabla: tbl
@@ -634,7 +630,7 @@ new Vue({
             }).catch(error => {
                 alert("mal");
                 console.log(error)
-                
+
             });
         },
 
@@ -681,7 +677,7 @@ new Vue({
             }).catch(error => {
                 alert("mal");
                 console.log(error)
-                
+
             });
         },
 
@@ -708,14 +704,13 @@ new Vue({
                 console.log(this.listaCurriculums)
             });
         },
-        
+
         //// CURRICULUM | Dasactivar testeados
         desactivarTesteado: function (Id) {
             var url = base_url + 'curriculum/desactivar'; // url donde voy a mandar los datos
 
             var opcion = confirm("¿Esta seguro de eliminar a este curriculum?");
-            if (opcion == true) 
-            {
+            if (opcion == true) {
                 axios.post(url, {
                     token: token,
                     Id: Id
@@ -736,8 +731,7 @@ new Vue({
             var url = base_url + 'curriculum/desactivar'; // url donde voy a mandar los datos
 
             var opcion = confirm("¿Esta seguro de eliminar a este curriculum?");
-            if (opcion == true) 
-            {
+            if (opcion == true) {
                 axios.post(url, {
                     token: token,
                     Id: Id
@@ -778,7 +772,7 @@ new Vue({
             this.categoriaDatos = categoria;
             this.texto_boton = "Actualizar";
         },
-        
+
         //// STOCK | CREAR O EDITAR CATEGORIA
         crearCategoria: function () {
             var url = base_url + 'stock/cargar_categoria'; // url donde voy a mandar los datos
@@ -804,8 +798,8 @@ new Vue({
         },
 
         //// STOCK |  MOSTRAR LISTADO DE CATEGORIAS
-        getListadoStock : function (categoria) {
-            var url = base_url + 'stock/obtener_listado_de_stock?categoria='+categoria; // url donde voy a mandar los datos
+        getListadoStock: function (categoria) {
+            var url = base_url + 'stock/obtener_listado_de_stock?categoria=' + categoria; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -891,10 +885,10 @@ new Vue({
 
             axios.post(url, {
                 token: token,
-                Id: id, 
-                Cantidad: cantidad, 
-                Descripcion: descripcion, 
-                Proceso_id: null, 
+                Id: id,
+                Cantidad: cantidad,
+                Descripcion: descripcion,
+                Proceso_id: null,
                 Tipo_movimiento: null
             }).then(response => {
 
@@ -911,7 +905,7 @@ new Vue({
             });
         },
 
-        editarStockProducto: function(item){
+        editarStockProducto: function (item) {
             this.egresoDato = item;
         },
 
@@ -921,10 +915,10 @@ new Vue({
 
             axios.post(url, {
                 token: token,
-                Id: this.egresoDato.Id, 
-                Cantidad: this.egresoDato.Cantidad, 
-                Descripcion: this.egresoDato.Descripcion_egreso, 
-                Proceso_id: this.egresoDato.Venta_id, 
+                Id: this.egresoDato.Id,
+                Cantidad: this.egresoDato.Cantidad,
+                Descripcion: this.egresoDato.Descripcion_egreso,
+                Proceso_id: this.egresoDato.Venta_id,
                 Tipo_movimiento: 2
             }).then(response => {
 
@@ -944,18 +938,16 @@ new Vue({
             var Valor_actual = parseInt(actual);
             var Valor_ideal = parseInt(ideal);
 
-            if (Valor_actual < Valor_ideal) 
-            {
+            if (Valor_actual < Valor_ideal) {
                 return 'text-danger'
             }
-            else  
-            {
+            else {
                 return ''
             }
         },
 
         //// STOCK  | Dasactivar un item
-        desactivarStock : function (Id) {
+        desactivarStock: function (Id) {
             var url = base_url + 'stock/desactivar_producto'; // url donde voy a mandar los datos
 
             var opcion = confirm("¿Esta seguro de eliminar a este producto?");
@@ -1238,7 +1230,7 @@ new Vue({
 
         //// FABRICACION |  MOSTRAR LISTADO DE CATEGORIAS
         getListadoProductos: function (categoria, empresa) {
-            var url = base_url + 'fabricacion/obtener_listado_de_productos?categoria=' + categoria +'&empresa='+empresa; // url donde voy a mandar los datos
+            var url = base_url + 'fabricacion/obtener_listado_de_productos?categoria=' + categoria + '&empresa=' + empresa; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -1261,7 +1253,7 @@ new Vue({
                 this.productoDatos.Id = response.data.Id;
                 this.texto_boton = "Actualizar"
 
-                this.getListadoProductos(0,0);
+                this.getListadoProductos(0, 0);
 
             }).catch(error => {
                 alert("mal");
@@ -1284,7 +1276,7 @@ new Vue({
         },
 
         ///// FABRICACION |   CARGAR IMAGEN DE PRODUCTO DE FABRICACION
-        uploadFotoProducto(Id) { 
+        uploadFotoProducto(Id) {
             //this.texto_boton = "Actualizar"
             var url = base_url + 'fabricacion/subirFotoProducto/?Id=' + Id; // url donde voy a mandar los datos
             this.preloader = 1;
@@ -1300,7 +1292,7 @@ new Vue({
 
                     ////DEBO HACER FUNCIONAR BIEN ESTO PARA QUE SE ACTUALICE LA FOTO QUE CARGO EN EL MOMENTO, SI NO PARECE Q NO SE CARGARA NADA
                     this.productoFoto.Imagen = response.data.Imagen;
-                    this.getListadoProductos(0,0);
+                    this.getListadoProductos(0, 0);
                     toastr.success('Proceso realizado correctamente', 'Fabricación')
 
                     this.preloader = 0;
@@ -1330,7 +1322,7 @@ new Vue({
 
                     toastr.success('Proceso realizado correctamente', 'Productos')
 
-                    this.getListadoProductos(0,0);
+                    this.getListadoProductos(0, 0);
 
                 }).catch(error => {
                     alert("mal");
@@ -1349,12 +1341,12 @@ new Vue({
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.listaVentas  = response.data
+                this.listaVentas = response.data
             }).catch(error => {
-                    alert("mal");
-                    console.log(error.response.data)
+                alert("mal");
+                console.log(error.response.data)
 
-                });
+            });
         },
 
         //// VENTAS | CREAR O EDITAR ITEM
@@ -1368,10 +1360,10 @@ new Vue({
 
                 toastr.success('Proceso realizado correctamente', 'Fabricación')
 
-                this.ventaDatos.Id = response.data.Id;   
+                this.ventaDatos.Id = response.data.Id;
                 this.texto_boton = "Actualizar"
 
-                this.getListadoVentas(0,0,0,1,0);
+                this.getListadoVentas(0, 0, 0, 1, 0);
 
             }).catch(error => {
                 alert("mal");
@@ -1396,8 +1388,7 @@ new Vue({
             var url = base_url + 'ventas/desactivarVenta'; // url donde voy a mandar los datos
 
             var opcion = confirm("¿Esta seguro de eliminar a esta venta?");
-            if (opcion == true) 
-            {
+            if (opcion == true) {
                 axios.post(url, {
                     token: token,
                     Id: Id
@@ -1414,7 +1405,7 @@ new Vue({
             }
         },
 
-         //// VENTAS  | CANTIDAD DE DIAS ENTRE DOS FECHAS
+        //// VENTAS  | CANTIDAD DE DIAS ENTRE DOS FECHAS
         diferenciasEntre_fechas: function (fechaInicio, fechaFin) {
 
             if (fechaFin == null) { fechaFin = hoy_php }
@@ -1445,12 +1436,12 @@ new Vue({
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.listaPlanificaciones  = response.data
+                this.listaPlanificaciones = response.data
             }).catch(error => {
-                    alert("mal");
-                    console.log(error.response.data)
+                alert("mal");
+                console.log(error.response.data)
 
-                });
+            });
         },
 
         //// PLANIFICACIONES | CREAR O EDITAR ITEM
@@ -1464,7 +1455,7 @@ new Vue({
 
                 toastr.success('Proceso realizado correctamente', 'Ventas')
 
-                this.planificacionDatos.Id = response.data.Id;   
+                this.planificacionDatos.Id = response.data.Id;
                 this.texto_boton = "Actualizar"
 
                 this.getListadoPlanificaciones();
@@ -1491,7 +1482,7 @@ new Vue({
 
         //// COMPRAS  | MOSTRAR LISTADO
         getListadoCompras: function (Planificacion_id) {
-            var url = base_url + 'compras/obtener_compras?Planificacion_id='+Planificacion_id; // url donde voy a mandar los datos
+            var url = base_url + 'compras/obtener_compras?Planificacion_id=' + Planificacion_id; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -1619,10 +1610,10 @@ new Vue({
             return this.listaProveedores.filter((item) => item.Nombre_proveedor.toLowerCase().includes(this.buscar));
         },
 
-        buscarProducto : function () {
+        buscarProducto: function () {
             return this.listaProductos.filter((item) => item.Nombre_producto.toLowerCase().includes(this.buscar));
         },
-        
+
     }
 });
 ///--------------
@@ -1660,7 +1651,7 @@ new Vue({
         listaVentas: [],
         cantProductosPropios: '0',
         valorDolarHoy: '',
-        listaNoticias:{}
+        listaNoticias: {}
     },
 
     methods:
@@ -1706,7 +1697,7 @@ new Vue({
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.cantProductosPropios= response.data
+                this.cantProductosPropios = response.data
             });
         },
 
@@ -1732,7 +1723,7 @@ new Vue({
             var fecha_hora = fecha[1].split(':');
             fecha_hora = fecha_hora[0] + ':' + fecha_hora[1];
 
-            return fecha_dia + ' ' +fecha_hora + 'hs '
+            return fecha_dia + ' ' + fecha_hora + 'hs '
 
         },
 
@@ -1753,7 +1744,7 @@ new Vue({
         },
 
         //// MOSTRAR LISTADO DE COMPRAS 
-        getListadoCompras : function () {
+        getListadoCompras: function () {
             var url = base_url + 'compras/obtener_compras_dashboarad'; // url donde voy a mandar los datos
 
             axios.post(url, {
@@ -1838,7 +1829,7 @@ new Vue({
         },
 
 
-        
+
         //////
     }
 });
@@ -1857,6 +1848,7 @@ new Vue({
         this.getListadoEmpresas();
         this.getListadoPuesto();
         this.getListadoSeguimiento();
+        this.getListadoCategoriasSeguimiento();
     },
 
     data: {
@@ -1903,14 +1895,18 @@ new Vue({
         listaSeguimiento: [],
         texto_boton: "Cargar",
         seguimientoData: {},
-        Archivo:  null,
-        preloader : '0',
+        Archivo: null,
+        preloader: '0',
 
         listaFormaciones: [],
         formacionData: { 'Id': '', 'Titulo': '', 'Establecimiento': '', 'Anio_inicio': '', 'Anio_finalizado': '', 'Descripcion_titulo': '' },
 
         listaEmpresas: [],
         listaPuestos: [],
+
+        //CATEGORIA SEGUIMIENTO
+        listaCatReportes: [],
+        catReporte: {},
     },
 
     methods:
@@ -2096,52 +2092,47 @@ new Vue({
 
             axios.post(url, {
                 token: token,
-                Datos: this.seguimientoData, 
+                Datos: this.seguimientoData,
                 Usuario_id: Get_Id
-            }).then(response => 
-            {
-                
+            }).then(response => {
+
                 this.seguimientoData.Id = response.data.Id;
 
                 /// si eso se ralizó bien, debe comprobar si hay un archivo a cargar.
-                   if (this.Archivo != null)
-                    {
-                        var url = base_url + 'usuarios/subirFotoSeguimiento/?Id=' + this.seguimientoData.Id;
-                        this.preloader = 1;
+                if (this.Archivo != null) {
+                    var url = base_url + 'usuarios/subirFotoSeguimiento/?Id=' + this.seguimientoData.Id;
+                    this.preloader = 1;
 
-                        //const formData = event.target.files[0];
-                        const formData = new FormData();
-                        formData.append("Archivo", this.Archivo);
+                    //const formData = event.target.files[0];
+                    const formData = new FormData();
+                    formData.append("Archivo", this.Archivo);
 
-                        formData.append('_method', 'PUT');
+                    formData.append('_method', 'PUT');
 
-                        //Enviamos la petición
-                        axios.post(url, formData)
-                            .then(response => 
-                            {
+                    //Enviamos la petición
+                    axios.post(url, formData)
+                        .then(response => {
 
-                                this.seguimientoData.Url_archivo = response.data.Url_archivo;
+                            this.seguimientoData.Url_archivo = response.data.Url_archivo;
 
-                                toastr.success('El archivo se cargo correctamente', 'Usuarios')
-                                this.preloader = 0;
-                                this.getListadoSeguimiento();
+                            toastr.success('El archivo se cargo correctamente', 'Usuarios')
+                            this.preloader = 0;
+                            this.getListadoSeguimiento();
 
-                            }).catch(error => 
-                            {
-                                alert("MAL LA CARGA EN FUNCIÓN DE CARGAR ARCHIVO");
-                                this.preloader = 0;
-                                //this.seguimientoData.Url_archivo = response.data.Url_archivo;
-                            });
-                    }
-                    // si lo hay lo carga, si no lo hay no hace nada
+                        }).catch(error => {
+                            alert("MAL LA CARGA EN FUNCIÓN DE CARGAR ARCHIVO");
+                            this.preloader = 0;
+                            //this.seguimientoData.Url_archivo = response.data.Url_archivo;
+                        });
+                }
+                // si lo hay lo carga, si no lo hay no hace nada
 
                 this.getListadoSeguimiento();
                 this.Archivo = null
                 this.texto_boton = "Actualizar"
                 toastr.success('Datos actualizados correctamente', 'Usuarios')
 
-            }).catch(error => 
-            {
+            }).catch(error => {
                 alert("MAL LA CARGA EN FUNCIÓN DE CARGAR DATOS");
             });
         },
@@ -2156,12 +2147,81 @@ new Vue({
             this.seguimientoData = {}
         },
 
+
+        //// CATEGORIAS SEGUIMIENTO | MOSTRAR LISTADO
+        getListadoCategoriasSeguimiento: function () {
+            var url = base_url + 'usuarios/obtener_categorias_seguimientos'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token
+            }).then(response => {
+                this.listaCatReportes = response.data
+            });
+        },
+
+        //// CATEGORIAS SEGUIMIENTO | CREAR O EDITAR
+        crearCatReporte: function () {
+            var url = base_url + 'usuarios/cargar_categorias_seguimiento'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Datos: this.catReporte,
+            }).then(response => {
+
+                this.catReporte.Id = response.data.Id;
+
+
+                this.getListadoCategoriasSeguimiento();
+                this.Archivo = null
+                this.texto_boton = "Actualizar"
+                toastr.success('Datos actualizados correctamente', 'Usuarios')
+
+            }).catch(error => {
+                alert("MAL LA CARGA EN FUNCIÓN DE CARGAR DATOS");
+            });
+        },
+
+        //// CATEGORIAS SEGUIMIENTO | EDITAR
+        editarFormularioCatReporte: function (dato) {
+            this.catReporte = dato;
+        },
+
+        //// CATEGORIAS SEGUIMIENTO | LIMPIAR FORMULARIO
+        limpiarFormularioCatSeguimiento: function () {
+            this.catReporte = {}
+        },
+
+        //// PROMEDIO CALIFICACION SEGUIMIENTOS 
+        promedioCalificaciones: function (datos) 
+        {    
+            if (datos != null) 
+            {
+                var Promedio = 0;
+            
+                for (var i = 0; i < datos.length; i++) 
+                {
+                    var item = 0;
+            
+                    if (isFinite(datos[i].Calificacion)) 
+                    {
+                        item = parseInt(datos[i].Calificacion);
+                    }
+            
+                    Promedio = Promedio + item;
+                }
+                return Promedio / datos.length
+            }
+            else 
+            {
+                return "Sin datos";
+            }
+        },
     },
 
     ////// ACCIONES COMPUTADAS     
     computed:
     {
-        
+
     }
 });
 
@@ -2212,7 +2272,7 @@ new Vue({
 
         listaPuestos: [],
 
-        listaPuestosInteres:[],
+        listaPuestosInteres: [],
 
         puestoData: { 'Id': '', 'Puesto_id': '', 'Justificacion': '' },
     },
@@ -2231,7 +2291,7 @@ new Vue({
             });
         },
 
-    
+
         ////  CURRICULUM | CREAR O EDITA
         actualizarCurriculum: function () {
             var url = base_url + 'curriculum/actualizar_curriculum'; // url donde voy a mandar los datos
@@ -2253,8 +2313,7 @@ new Vue({
         },
 
         //// MOSTRAR LISTADO DE puestos  
-        getListadoPuestos: function ()
-        {
+        getListadoPuestos: function () {
             var url = base_url + 'usuarios/obtener_puestos'; // url donde voy a mandar los datos
 
             axios.post(url, {
@@ -2266,8 +2325,7 @@ new Vue({
 
 
         //// CURRICULUM | CREAR O EDITAR EMPRESAS
-        agregarPuestoCurriculum: function () 
-        {
+        agregarPuestoCurriculum: function () {
             var url = base_url + 'curriculum/cargar_puesto_curriculum'; // url donde voy a mandar los datos
 
             axios.post(url, {
@@ -2291,8 +2349,7 @@ new Vue({
 
 
         ////  CURRICULUM | OBTENER PUESTOS ASIGNADOS
-        getListadoPuestosCurriculum: function () 
-        {
+        getListadoPuestosCurriculum: function () {
             var url = base_url + 'curriculum/obtener_puestos_curriculum/?Id=' + Get_Id;  //// averiguar como tomar el Id que viene por URL aca
 
             axios.post(url, {
@@ -2348,7 +2405,7 @@ new Vue({
         lista_proveedores_vinculados: [],
         lista_proveedores_no_vinculados: [],
 
-        movimientoDatos  : ''
+        movimientoDatos: ''
 
     },
 
@@ -2379,7 +2436,7 @@ new Vue({
             });
         },
 
-        
+
         classAlertaStock: function (actual, ideal) {
             var Valor_actual = parseInt(actual);
             var Valor_ideal = parseInt(ideal);
@@ -2403,7 +2460,7 @@ new Vue({
             var fecha_hora = fecha[1].split(':');
             fecha_hora = fecha_hora[0] + ':' + fecha_hora[1];
 
-            return fecha_dia + ' ' +fecha_hora + 'hs '
+            return fecha_dia + ' ' + fecha_hora + 'hs '
 
         },
 
@@ -2520,8 +2577,8 @@ new Vue({
 
     data: {
         mostrar: "1",
-        clienteDatos: { 'Id': '', 'Nombre_cliente': '', 'Producto_servicio': '', 'Imagen':'', 'Direccion': '', 'Localidad': '', 'Provincia': '', 'Pais': '', 'Telefono': '', 'Email': '', 'Web': '', 'Nombre_persona_contacto': '', 'Datos_persona_contacto': '', 'Mas_datos_cliente': '' },
-        listaSeguimiento : [],
+        clienteDatos: { 'Id': '', 'Nombre_cliente': '', 'Producto_servicio': '', 'Imagen': '', 'Direccion': '', 'Localidad': '', 'Provincia': '', 'Pais': '', 'Telefono': '', 'Email': '', 'Web': '', 'Nombre_persona_contacto': '', 'Datos_persona_contacto': '', 'Mas_datos_cliente': '' },
+        listaSeguimiento: [],
         texto_boton: "Cargar",
         seguimientoData: {},
 
@@ -2539,8 +2596,8 @@ new Vue({
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.listaSeguimiento  = response.data;
-            
+                this.listaSeguimiento = response.data;
+
             });
         },
 
@@ -2613,11 +2670,11 @@ new Vue({
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.listaVentas  = response.data
+                this.listaVentas = response.data
             }).catch(error => {
-                    alert("mal");
-                    console.log(error.response.data)
-                });
+                alert("mal");
+                console.log(error.response.data)
+            });
         },
 
         //// FORMATOS   | FORMATO Fecha Hora
@@ -2690,19 +2747,19 @@ new Vue({
 
     data: {
         mostrar: "1",
-        proveedoresDatos : { 'Id': '', 'Nombre_proveedor': '', 'Producto_servicio': '', 'Imagen': '', 'Direccion': '', 'Localidad': '', 'Provincia': '', 'Pais': '', 'Telefono': '', 'Email': '', 'Web': '', 'Nombre_persona_contacto': '', 'Datos_persona_contacto': '', 'Mas_datos_proveedor': '' },
+        proveedoresDatos: { 'Id': '', 'Nombre_proveedor': '', 'Producto_servicio': '', 'Imagen': '', 'Direccion': '', 'Localidad': '', 'Provincia': '', 'Pais': '', 'Telefono': '', 'Email': '', 'Web': '', 'Nombre_persona_contacto': '', 'Datos_persona_contacto': '', 'Mas_datos_proveedor': '' },
         listaSeguimiento: [],
         texto_boton: "Cargar",
         seguimientoData: {},
         listaProductos: [],
-        Archivo:  null,
-        preloader : '0',
-        comentarioDatos : {},
+        Archivo: null,
+        preloader: '0',
+        comentarioDatos: {},
 
-        lista_categoria_productos_vinculados : [],
+        lista_categoria_productos_vinculados: [],
         lista_categoria_productos_no_vinculados: [],
 
-        listaComprasProveedor:[]
+        listaComprasProveedor: []
     },
 
     methods:
@@ -2726,7 +2783,7 @@ new Vue({
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.listaComprasProveedor= response.data
+                this.listaComprasProveedor = response.data
             });
         },
 
@@ -2754,50 +2811,45 @@ new Vue({
             axios.post(url, {
                 token: token,
                 Datos: this.seguimientoData, Id_proveedor: Get_Id
-            }).then(response => 
-            {
-                
+            }).then(response => {
+
                 this.seguimientoData.Id = response.data.Id;
 
                 /// si eso se ralizó bien, debe comprobar si hay un archivo a cargar.
-                   if (this.Archivo != null)
-                    {
-                        var url = base_url + 'proveedores/subirFotoSeguimiento/?Id=' + this.seguimientoData.Id;
-                        this.preloader = 1;
+                if (this.Archivo != null) {
+                    var url = base_url + 'proveedores/subirFotoSeguimiento/?Id=' + this.seguimientoData.Id;
+                    this.preloader = 1;
 
-                        //const formData = event.target.files[0];
-                        const formData = new FormData();
-                        formData.append("Archivo", this.Archivo);
+                    //const formData = event.target.files[0];
+                    const formData = new FormData();
+                    formData.append("Archivo", this.Archivo);
 
-                        formData.append('_method', 'PUT');
+                    formData.append('_method', 'PUT');
 
-                        //Enviamos la petición
-                        axios.post(url, formData)
-                            .then(response => 
-                            {
+                    //Enviamos la petición
+                    axios.post(url, formData)
+                        .then(response => {
 
-                                this.seguimientoData.Url_archivo = response.data.Url_archivo;
+                            this.seguimientoData.Url_archivo = response.data.Url_archivo;
 
-                                toastr.success('El archivo se cargo correctamente', 'Proveedores')
-                                this.preloader = 0;
-                                this.getListadoSeguimiento();
+                            toastr.success('El archivo se cargo correctamente', 'Proveedores')
+                            this.preloader = 0;
+                            this.getListadoSeguimiento();
 
-                            }).catch(error => 
-                            {
-                                alert("MAL LA CARGA EN FUNCIÓN DE CARGAR ARCHIVO");
-                                this.preloader = 0;
-                                //this.seguimientoData.Url_archivo = response.data.Url_archivo;
-                            });
-                    }
-                    // si lo hay lo carga, si no lo hay no hace nada
+                        }).catch(error => {
+                            alert("MAL LA CARGA EN FUNCIÓN DE CARGAR ARCHIVO");
+                            this.preloader = 0;
+                            //this.seguimientoData.Url_archivo = response.data.Url_archivo;
+                        });
+                }
+                // si lo hay lo carga, si no lo hay no hace nada
 
                 this.getListadoSeguimiento();
                 this.Archivo = null
                 this.texto_boton = "Actualizar"
                 toastr.success('Datos actualizados correctamente', 'Proveedores')
 
-            }).catch(error => 
-            {
+            }).catch(error => {
                 alert("MAL LA CARGA EN FUNCIÓN DE CARGAR DATOS");
             });
         },
@@ -2842,8 +2894,8 @@ new Vue({
             }).then(response => {
                 this.listaProductos = response.data
             });
-        },     
-        
+        },
+
         //// VINCULO CATEGORÍA STOCK PROVEEDOR |  Vincular proveedor a producto del stock
         Vincular_categoria_productos_proveedor: function (Categoria_id) {
             var url = base_url + 'proveedores/Vincular_categoria_productos_proveedor'; // url donde voy a mandar los datos
@@ -2903,9 +2955,9 @@ new Vue({
                 this.lista_categoria_productos_no_vinculados = response.data
             });
         },
-        
+
         /// VINCULO CATEGORÍA STOCK PROVEEDOR | EDITAR UN COMENTARIO DE UN PRODUCTO
-        editarFormularioComentario: function(dato) {
+        editarFormularioComentario: function (dato) {
             this.comentarioDatos = dato;
         },
 
@@ -2957,8 +3009,7 @@ new Vue({
     el: '#ventas',
 
     created: function () {
-        if (pathname == carpeta + 'ventas/produccion') 
-        {
+        if (pathname == carpeta + 'ventas/produccion') {
             this.Set_valores_usuario();
             this.getListadoProductosEstado_1();
             this.getListadoProductosEstado_2();
@@ -2967,20 +3018,20 @@ new Vue({
             this.getListadoProductosEstado_5();
             this.getListadoProductosEstado_6();
         }
-        else
-        {
+        else {
             this.getDatosventas();
             this.getListadoUsuarios(1);
             this.getListadoClientes();
             this.getListadoSeguimiento(0, 2);
             this.getListaUsados();
             this.getListadoEmpresas();
-            this.getListadoProductos(0,0);
+            this.getListadoProductos(0, 0);
             this.getListadoProductosVendidos();
-            this.getListadoVentas(0,0,0,1,0);
+            this.getListadoVentas(0, 0, 0, 1, 0);
             this.getListadoPlanificaciones();
             this.Set_valores_usuario();
             this.getListadoResumenProductos();
+            this.getMovimientos();
         }
     },
 
@@ -2990,7 +3041,7 @@ new Vue({
 
         Rol_acceso: '',
         Usuario_id: '',
-        
+
         listaSeguimiento: [],
         texto_boton: "Cargar",
         seguimientoData: {},
@@ -3007,19 +3058,19 @@ new Vue({
         preloader: '0',
 
         cookies: [],
-        
+
         filtro_empresa: '0',
 
         listaProductos: [],
-        productoData: {'Cantidad': 1,},
+        productoData: { 'Cantidad': 1, },
 
-        listaProductosVendidos : [],
-        productoPasoData: {'Estado':'', 'Producto_id':'', 'Comentarios': 'Sin comentarios'},
+        listaProductosVendidos: [],
+        productoPasoData: { 'Estado': '', 'Producto_id': '', 'Comentarios': 'Sin comentarios' },
 
         productoAnulado: {},
-        infoModal: {'Requerimentos':'', 'Observaciones':''},
+        infoModal: { 'Requerimentos': '', 'Observaciones': '' },
         listaVentas: [],
-        productoAsignado: {'Id':'', 'Venta_id':''},
+        productoAsignado: { 'Id': '', 'Venta_id': '' },
         precioVentaTotal: 0,
 
         listaEtapa_1: [],
@@ -3032,11 +3083,13 @@ new Vue({
         listaPlanificaciones: [],
 
         // COBRANZA
-        listaResumenProductos : [],
+        listaResumenProductos: [],
+        listaMovimientos: [],
+        movimientoDatos: {}
     },
 
     methods:
-    {   
+    {
         //// DATOS SOBRE EL ARCHIVO SELECCIONADO EN CASO QUE QUIERA CARGAR ALGUNA ARCHIVO
         Set_valores_usuario() {
             this.Rol_acceso = Rol_acceso
@@ -3044,9 +3097,9 @@ new Vue({
 
             /* console.log(Rol_acceso);
             console.log(Usuario_id); */
-            
+
         },
-        
+
         //// MOSTRAR LISTADO DE Usuarios  
         getListadoUsuarios: function (estado) {
             var url = base_url + 'usuarios/obtener_Usuarios/?estado=' + estado + '&empresa=' + this.filtro_empresa + '&puesto=' + this.filtro_puesto; // url donde voy a mandar los datos
@@ -3083,7 +3136,7 @@ new Vue({
         //// OBTENER DATOS DE UN CLIENTE
         getDatosventas: function () {
             var url = base_url + 'ventas/obtener_datos_venta/?Id=' + Get_Id;  //// averiguar como tomar el Id que viene por URL aca
-    
+
             /* console.log(document.cookie) */
 
             axios.post(url, {
@@ -3139,7 +3192,7 @@ new Vue({
 
             axios.post(url, {
                 token: token,
-                Datos: this.seguimientoData, 
+                Datos: this.seguimientoData,
                 Venta_id: Get_Id,
                 Categoria_seguimiento: categoria,
             }).then(response => {
@@ -3178,7 +3231,7 @@ new Vue({
 
 
                 this.getListadoSeguimiento(categoria_a_listar, this.mostrar);
-                
+
                 this.texto_boton = "Actualizar"
                 toastr.success('Datos actualizados correctamente', 'Orden Trabajo')
 
@@ -3197,7 +3250,7 @@ new Vue({
         limpiarFormularioSeguimiento: function () {
             this.seguimientoData = {}
         },
-        
+
         //// MOSTRAR LISTADO DE PRODUCTOS COMPRADOS
         getListaUsados: function () {
             var url = base_url + 'stock/obtener_movimientos_v2/?Id=' + Get_Id; // url donde voy a mandar los datos
@@ -3211,8 +3264,8 @@ new Vue({
         },
 
         //// FABRICACION |  MOSTRAR LISTADO DE CATEGORIAS
-        getListadoProductos: function (categoria,empresa) {
-            var url = base_url + 'fabricacion/obtener_listado_de_productos?categoria=' + categoria+'&empresa='+empresa; // url donde voy a mandar los datos
+        getListadoProductos: function (categoria, empresa) {
+            var url = base_url + 'fabricacion/obtener_listado_de_productos?categoria=' + categoria + '&empresa=' + empresa; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -3221,13 +3274,13 @@ new Vue({
             });
         },
 
-        
-        /// CANTIDAD DE DIAS ENTRE DOS FECHAS       
-        diferenciasEntre_fechas: function (fechaInicio, fechaFin){
 
-            if (fechaFin == null)       { fechaFin = hoy_php  }
-            if (fechaInicio == null)    { fechaInicio = hoy_php }
-            
+        /// CANTIDAD DE DIAS ENTRE DOS FECHAS       
+        diferenciasEntre_fechas: function (fechaInicio, fechaFin) {
+
+            if (fechaFin == null) { fechaFin = hoy_php }
+            if (fechaInicio == null) { fechaInicio = hoy_php }
+
             var fechaInicio = new Date(fechaInicio).getTime();
             var fechaFin = new Date(fechaFin).getTime();
             var diff = fechaFin - fechaInicio;
@@ -3290,14 +3343,13 @@ new Vue({
 
                 /// Realizar suma del costo de todos los productos vendidos
                 this.precioVentaTotal = 0;
-                for (let index = 0; index < this.listaProductosVendidos.length; index++) 
-                {
+                for (let index = 0; index < this.listaProductosVendidos.length; index++) {
                     /* console.log(this.listaProductosVendidos[index].Precio_USD) */
 
                     var precioVenta = this.listaProductosVendidos[index].Precio_USD;
-                   
-                    if(precioVenta == null) { precioVenta = 0 }
-                    
+
+                    if (precioVenta == null) { precioVenta = 0 }
+
                     this.precioVentaTotal = this.precioVentaTotal + parseInt(precioVenta);
                 }
             });
@@ -3323,9 +3375,8 @@ new Vue({
                 toastr.success('Proceso realizado correctamente', 'Ventas')
                 this.texto_boton = "Actualizar"
 
-                
-                if (pathname == carpeta + 'ventas/produccion') 
-                {
+
+                if (pathname == carpeta + 'ventas/produccion') {
                     this.getListadoProductosEstado_1()
                     this.getListadoProductosEstado_2()
                     this.getListadoProductosEstado_3()
@@ -3333,8 +3384,7 @@ new Vue({
                     this.getListadoProductosEstado_5()
                     this.getListadoProductosEstado_6()
                 }
-                else
-                {
+                else {
                     this.getListadoProductosVendidos();
                     this.getListadoResumenProductos();
                 }
@@ -3349,8 +3399,7 @@ new Vue({
             var url = base_url + 'ventas/cambiar_estado_venta'; // url donde voy a mandar los datos
 
             var opcion = confirm("¿Esta seguro que quiere avanzar el lote a la siguiente estación?");
-            if (opcion == true) 
-            {
+            if (opcion == true) {
                 axios.post(url, {
                     token: token,
                     Datos: this.ventaDatos
@@ -3360,7 +3409,7 @@ new Vue({
                     this.texto_boton = "Actualizar"
 
                     this.getDatosventas();
-                   
+
 
                 }).catch(error => {
                     console.log(error.response.data)
@@ -3383,8 +3432,7 @@ new Vue({
             var url = base_url + 'ventas/anular_producto'; // url donde voy a mandar los datos
 
             var opcion = confirm("¿Esta seguro que quiere anular este producto?");
-            if (opcion == true) 
-            {
+            if (opcion == true) {
                 axios.post(url, {
                     token: token,
                     Datos: this.productoAnulado
@@ -3402,7 +3450,7 @@ new Vue({
         },
 
         //// VENTAS  | Eliminar
-        desactivarProductoVenta : function (Id) {
+        desactivarProductoVenta: function (Id) {
             var url = base_url + 'ventas/eliminar_producto'; // url donde voy a mandar los datos
 
             var opcion = confirm("¿Esta seguro de eliminar a este producto?");
@@ -3429,7 +3477,7 @@ new Vue({
             this.infoModal.Requerimentos = requerimentos;
             this.infoModal.Observaciones = observaciones;
         },
-        
+
         //// VENTAS |  MOSTRAR LISTADO DE VENTAS
         getListadoVentas: function (Usuario_id, Empresa_id, Cliente_id, Estado, Planificacion_id) {
             var url = base_url + 'ventas/obtener_listado_ventas?Empresa_id=' + Empresa_id + '&Vendedor_id=' + Usuario_id + '&Cliente_id=' + Cliente_id + '&Estado=' + Estado + '&Planificacion_id=' + Planificacion_id; // url donde voy a mandar los datos
@@ -3437,12 +3485,12 @@ new Vue({
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.listaVentas  = response.data
+                this.listaVentas = response.data
             }).catch(error => {
-                    alert("mal");
-                    console.log(error.response.data)
+                alert("mal");
+                console.log(error.response.data)
 
-                });
+            });
         },
 
         /// EDITAR MODAL ASIGNAR PRODUCTO VENTA
@@ -3456,8 +3504,7 @@ new Vue({
             var url = base_url + 'fabricacion/reasignar_producto'; // url donde voy a mandar los datos
 
             var opcion = confirm("¿Esta seguro que quiere reasignar este producto?");
-            if (opcion == true) 
-            {
+            if (opcion == true) {
                 axios.post(url, {
                     token: token,
                     Datos: this.productoAsignado
@@ -3485,7 +3532,7 @@ new Vue({
                 this.listaEtapa_1 = response.data
             });
         },
-        
+
         //// PRODUCCION  | MOSTRAR LISTADO Estado 1
         getListadoProductosEstado_2: function () {
             var url = base_url + 'ventas/obtener_productos_a_fabricar'; // url donde voy a mandar los datos
@@ -3551,23 +3598,22 @@ new Vue({
 
             /// SUMAR LOS ENTREGADOS
             var Total = 0;
-            if(items.length > 0)
-            {
+            if (items.length > 0) {
                 for (var i = 0; i < items.length; i++) {
                     var item = 0;
-    
+
                     if (isFinite(items[i].Precio_venta_producto)) {
                         item = parseInt(items[i].Precio_venta_producto);
                     }
-    
+
                     Total = Total + item;
                 }
                 return Total
             }
-            else{
+            else {
                 return 0
             }
-            
+
         },
 
         //// PLANIFICACIONES |  MOSTRAR LISTADO DE ORDENES
@@ -3577,35 +3623,111 @@ new Vue({
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.listaPlanificaciones  = response.data
+                this.listaPlanificaciones = response.data
             }).catch(error => {
-                    alert("mal");
-                    console.log(error.response.data)
+                alert("mal");
+                console.log(error.response.data)
 
-                });
+            });
         },
 
         //// COBRANZAS |  MOSTRAR LISTADO DE ORDENES
         getListadoResumenProductos: function () {
-            var url = base_url + 'ventas/obtener_listado_resumen_productos?Id='+Get_Id; // url donde voy a mandar los datos
+            var url = base_url + 'ventas/obtener_listado_resumen_productos?Id=' + Get_Id; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.listaResumenProductos  = response.data
+                this.listaResumenProductos = response.data
             }).catch(error => {
+                alert("mal");
+                console.log(error.response.data)
+
+            });
+        },
+
+        //// FONDO  | MOSTRAR LISTADO MOVIMIENTOS
+        getMovimientos: function () {
+            var url = base_url + 'finanzas/obtener_movimientos'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Origen_movimiento: 'Ventas',
+                Fila_movimiento: Get_Id
+            }).then(response => {
+                this.listaMovimientos = response.data
+            });
+        },
+
+        limpiarFormularioMovimiento: function () {
+            this.movimientoDatos = {};
+        },
+
+        //// MOVIMIENTOS | CREAR O EDITAR EN EFECTIVO
+        crear_movimiento: function () {
+            var url = base_url + 'finanzas/cargar_movimiento'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Datos: this.movimientoDatos,
+                Origen_movimiento: 'Ventas',
+                Op: 1,
+                Planificacion_id: this.ventaDatos.Planificacion_id,
+                Fila_movimiento: Get_Id,
+
+            }).then(response => {
+
+                toastr.success('Proceso realizado correctamente', 'Fondo')
+
+                this.texto_boton = "Actualizar"
+                this.getMovimientos()
+
+
+            }).catch(error => {
+                alert("mal");
+                console.log(error.response.data)
+            });
+        },
+
+        //// MOVIMIENTOS  | Dasactivar
+        desactivarAlgo: function (Id, tabla) {
+            var url = base_url + 'funcionescomunes/desvisualizar'; // url donde voy a mandar los datos
+
+            var opcion = confirm("¿Esta seguro de eliminar a este pago?");
+            if (opcion == true) {
+                axios.post(url, {
+                    token: token,
+                    Id: Id,
+                    tabla: tabla
+                }).then(response => {
+
+                    toastr.success('Proceso realizado correctamente', 'Ventas')
+
+                    this.getMovimientos();
+
+                }).catch(error => {
                     alert("mal");
-                    console.log(error.response.data)
+                    console.log(error)
 
                 });
+            }
         },
+
+        //// SUMAR PRODUCTOS   
+        calcularMontosVentas: function (n1, n2, n3, n4) {
+
+            var Total = parseInt(n1) + parseInt(n2) + parseInt(n3) - parseInt(n4);
+
+            return Total;
+        },
+
     },
 
     ////// ACCIONES COMPUTADAS     
     computed:
     {
-        
-    }   
+
+    }
 });
 
 
@@ -3615,54 +3737,56 @@ new Vue({
     el: '#fabricacion',
 
     created: function () {
-        
-            this.getDatosId();
-            this.getListadoArchivos();
-            this.getListadoCategoriasProductos();
-            this.getListadoVentas();
-            this.getListadoStock();
-            this.getListadoInsumos();
-            this.getListadoEmpresas();
-        
-        
+
+        this.getDatosId();
+        this.getListadoArchivos();
+        this.getListadoCategoriasProductos();
+        this.getListadoVentas();
+        this.getListadoStock();
+        this.getListadoInsumos();
+        this.getListadoEmpresas();
+
+
     },
 
     data: {
         mostrar: "1",
-        productoDatos: {'Id': '',
-                        'Codigo_interno': '',
-                        'Codigo_interno': '',},
+        productoDatos: {
+            'Id': '',
+            'Codigo_interno': '',
+            'Codigo_interno': '',
+        },
         'Categoria_fabricacion_id': '',
         'Nombre_producto': '',
         'Imagen': '',
         'Descripcion_publica_corta': '',
         'Descripcion_publica_larga': '',
         'Descripcion_tecnica_privada': '',
-        
-        listaArchivos : [],
+
+        listaArchivos: [],
         texto_boton: "Cargar",
         archivoData: {},
-        
+
         listaProductos: [],
         Archivo: null,
         preloader: '0',
         comentarioDatos: {},
 
-        listaCategorias : [],
+        listaCategorias: [],
         listaVentas: [],
         filtro_vendedor: '0',
         filtro_empresa: '0',
         filtro_cliente: '0',
         filtro_estado: '0',
 
-        insumoDatos: {'Stock_id':0, 'Cantidad':0, 'Observaciones':'',},
+        insumoDatos: { 'Stock_id': 0, 'Cantidad': 0, 'Observaciones': '', },
         listaInsumos: [],
         listaStock: [],
         listaEmpresas: [],
     },
 
     methods:
-    {   
+    {
         //// MOSTRAR LISTADO DE EMPRESAS  
         getListadoEmpresas: function () {
             var url = base_url + 'usuarios/obtener_empresas'; // url donde voy a mandar los datos
@@ -3678,7 +3802,7 @@ new Vue({
         getListadoArchivos: function () {
             var url = base_url + 'fabricacion/obtener_listado_archivos/?Id=' + Get_Id; // url donde voy a mandar los datos
             axios.post(url, {
-                token: token, 
+                token: token,
             }).then(response => {
                 this.listaArchivos = response.data
             });
@@ -3728,7 +3852,7 @@ new Vue({
                 this.listaVentas = response.data
 
                 /* console.log(response.data) */
-                
+
             }).catch(error => {
                 alert("mal")
                 /* console.log(error.response.data) */
@@ -3862,10 +3986,10 @@ new Vue({
             this.archivoData = {}
         },
 
-        
+
         //// INSUMOS FABRICACIÓN  | CREAR O EDITAR 
-        cargarInsumo : function () {
-            var url = base_url + 'fabricacion/cargar_insumo_producto?Fabricacion_id='+Get_Id; // url donde voy a mandar los datos
+        cargarInsumo: function () {
+            var url = base_url + 'fabricacion/cargar_insumo_producto?Fabricacion_id=' + Get_Id; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token,
@@ -3889,7 +4013,7 @@ new Vue({
         getListadoInsumos: function () {
             var url = base_url + 'fabricacion/obtener_listado_insumos/?Fabricacion_id=' + Get_Id; // url donde voy a mandar los datos
             axios.post(url, {
-                token: token, 
+                token: token,
             }).then(response => {
                 this.listaInsumos = response.data
             });
@@ -3899,7 +4023,7 @@ new Vue({
         getListadoStock: function () {
             var url = base_url + 'stock/obtener_listado_de_stock?categoria=0'; // url donde voy a mandar los datos
             axios.post(url, {
-                token: token, 
+                token: token,
             }).then(response => {
                 this.listaStock = response.data
             });
@@ -3915,7 +4039,7 @@ new Vue({
             this.insumoDatos = {}
         },
 
-        
+
         ////////////////////////////-----------------
     },
 
@@ -3944,11 +4068,11 @@ new Vue({
         mostrar: "1",
         compraDatos: {},
         texto_boton: "Cargar",
-        buscar:'',
+        buscar: '',
 
         listaProveedores: [],
         listaComprados: [],
-        listaProductos : [],
+        listaProductos: [],
 
         cantMovimientoStock: [],
         descripcionMovimiento: [],
@@ -3968,9 +4092,9 @@ new Vue({
             }).then(response => {
                 this.compraDatos = response.data[0]
             }).catch(error => {
-                    alert("mal");
-                    console.log(error.response.data)
-                });
+                alert("mal");
+                console.log(error.response.data)
+            });
         },
 
         //// STOCK | CREAR
@@ -4049,7 +4173,7 @@ new Vue({
             axios.post(url, {
                 token: token,
                 Proveedor_id: this.compraDatos.Proveedor_id,
-                
+
 
             }).then(response => {
                 this.listaProductos = response.data
@@ -4064,12 +4188,12 @@ new Vue({
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.listaPlanificaciones  = response.data
+                this.listaPlanificaciones = response.data
             }).catch(error => {
-                    alert("mal");
-                    console.log(error.response.data)
+                alert("mal");
+                console.log(error.response.data)
 
-                });
+            });
         },
     },
 

@@ -26,9 +26,18 @@ include "menusidebar.php";
                                     <img v-if="usuario.Imagen != null" width="420px" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+usuario.Imagen" alt="">
                                     <img v-else src="https://freeiconshop.com/wp-content/uploads/edd/person-flat.png" alt="">
                                 </div>
-                                <h5 class="text-sm-center mt-2 mb-1">{{usuario.Nombre}}</h5>
+                                <h4 class="text-sm-center mt-2 mb-1">{{usuario.Nombre}}</h4>
                                 <div class="location text-sm-center">
-                                    <i class="fa fa-map-marker"></i> {{usuario.Domicilio}}</div>
+                                    <i class="fa fa-map-marker"></i> {{usuario.Domicilio}}
+                                </div>
+                                <hr>
+                                <p align="center">
+                                    Puntaje RRHH</b>
+                                </p>
+                                <h2 align="center">
+                                    {{promedioCalificaciones(listaSeguimiento)}}
+                                </h2>
+                                
                             </div>
                         </div>
                         <div>
@@ -303,9 +312,9 @@ include "menusidebar.php";
                                     </div>
                                     <div class="card-body">
                                         <p align="right">
-                                            <a href="#modalSeguimiento" data-toggle="modal" title="Nuevo item" class="btn btn-success btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="limpiarFormularioSeguimiento()">
-                                                <i class="ti-plus"></i> Añadir reporte
-                                            </a>
+
+                                            <button class="au-btn au-btn-icon au-btn--blue au-btn--small" data-toggle="modal" data-target="#seguimientoCatModal" v-on:click="limpiarFormularioCatSeguimiento()">
+                                                <!--<i class="zmdi zmdi-plus"></i>-->Gestionar Categorías</button>
                                         </p>
                                     </div>
                                     <div class="card-body">
@@ -318,9 +327,12 @@ include "menusidebar.php";
                                                             <th>Fecha</th>
                                                             <th>Descripcion</th>
                                                             <th>Calificación</th>
+                                                            <th>Categoría</th>
                                                             <th>Archivo</th>
                                                             <th>Usuario</th>
-                                                            <th></th>
+                                                            <th><a href="#modalSeguimiento" data-toggle="modal" title="Nuevo item" class="btn btn-success btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="limpiarFormularioSeguimiento()">
+                                                                    <i class="ti-plus"></i> Añadir reporte
+                                                                </a></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -328,7 +340,8 @@ include "menusidebar.php";
                                                             <!-- <td>{{seguimiento.Nombre_proveedor}}</td> -->
                                                             <td>{{seguimiento.Fecha | Fecha}}</td>
                                                             <td>{{seguimiento.Descripcion}}</td>
-                                                            <td>{{seguimiento.Calificacion}}</td>
+                                                            <td align="center">{{seguimiento.Calificacion}}</td>
+                                                            <td>{{seguimiento.Nombre_categoria}}</td>
                                                             <td><a v-if="seguimiento.Url_archivo != null" target="_blank" v-bind:href="'<?php echo base_url(); ?>uploads/imagenes/'+seguimiento.Url_archivo"> Ver archivo</a></td>
                                                             <td>{{seguimiento.Nombre}}</td>
                                                             <td>
@@ -425,6 +438,17 @@ include "menusidebar.php";
                                     <label class=" form-control-label">Calificación</label>
                                     <input type="number" class="form-control" placeholder="" v-model="seguimientoData.Calificacion">
                                 </div>
+
+
+                                <div class="form-group">
+                                    <label class=" form-control-label">Categoría</label>
+                                    <select class="form-control" v-model="seguimientoData.Categoria_id">
+                                        <option v-for="categoria in listaCatReportes" v-bind:value="categoria.Id">{{categoria.Nombre_categoria}}</option>
+                                    </select>
+                                </div>
+
+
+
                                 <div class="form-group">
                                     <label class="control-label">Datos del seguimiento</label>
                                     <textarea class="form-control" rows="5" placeholder="" v-model="seguimientoData.Descripcion"></textarea>
@@ -458,7 +482,62 @@ include "menusidebar.php";
                 </div>
             </div>
         </div>
-        <!-- /.modal -->
+        <!-- modal categorias seguimiento -->
+        <div class="modal fade" id="seguimientoCatModal" tabindex="-1" role="dialog" aria-labelledby="scrollmodalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="scrollmodalLabel">Listado de categorías de reportes</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <table class="table table-borderless table-striped table-earning">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="catReporte in listaCatReportes">
+                                    <td>{{catReporte.Nombre_categoria}}</td>
+                                    <td>{{catReporte.Descripcion}}</td>
+                                    <td>
+                                        <button class="item" v-on:click="editarFormularioCatReporte(catReporte)" title="Editar">
+                                            <i class="zmdi zmdi-edit"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <form class="form-horizontal" action="post" v-on:submit.prevent="crearCatReporte()">
+                        <div class="modal-body">
+
+                            <div class="horizontal-form">
+                                <div class="form-group">
+                                    <label class=" form-control-label">Nombre de la categoría</label> <input type="text" class="form-control" v-model="catReporte.Nombre_categoria">
+                                </div>
+                                <div class="form-group">
+                                    <label class=" form-control-label">Descripción</label>
+                                    <textarea class="form-control" rows="5" v-model="catReporte.Descripcion"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">{{texto_boton}}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- end modal empresas -->
 
         <!-- END MAIN CONTENT-->
         <!-- END PAGE CONTAINER-->

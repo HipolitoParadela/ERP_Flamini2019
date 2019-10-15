@@ -55,30 +55,7 @@ include "menusidebar.php";
                             </div>
                         </div>
                         <!-- {{Usuario_id}} -->
-                        <div class="card" v-if="Usuario_id == '5' || Usuario_id == '9' || Usuario_id == 1">
-                            <div class="card-header">
-                                <h4>Valores de la venta</h4>
-                            </div>
-                            <div class="card-body text-center">
-                                <!-- <h1>
-                                            ${{sumarProductos(listaProductosVendidos) + ventaDatos.Valor_instalacion  + ventaDatos.Valor_logistica  | Moneda}}
-                                        </h1>
-                                         <em>Total</em>
-                                         <hr> -->
-                                <h2>
-                                    ${{sumarProductos(listaProductosVendidos) | Moneda}}
-                                </h2>
-                                <em>Valor de productos</em>
-                                <h2>
-                                    ${{ventaDatos.Valor_logistica | Moneda}}
-                                </h2>
-                                <em>Valor de logística</em>
-                                <h2>
-                                    ${{ventaDatos.Valor_instalacion | Moneda}}
-                                </h2>
-                                <em>Valor de instalación</em>
-                            </div>
-                        </div>
+
                         <div class="card" v-if="Usuario_id == '5' || Usuario_id == '9' || Usuario_id == 1">
                             <div class="card-header">
                                 <h4>Datos contacto cliente</h4>
@@ -117,7 +94,7 @@ include "menusidebar.php";
                             <li class="nav-item">
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 6 }" href="#" v-on:click="getListadoSeguimiento(4, 6)">Instalación</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item" v-if="Usuario_id == '5' || Usuario_id == '9' || Usuario_id == 1 || Usuario_id == 4">
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 7 }" href="#" v-on:click="getListadoSeguimiento(5,7)">Cobranza</a>
                             </li>
                         </ul>
@@ -406,7 +383,7 @@ include "menusidebar.php";
 
                                 <div class="row">
                                     <div class="col-lg-12">
-                                        <div class="card">
+                                        <!-- <div class="card">
                                             <div class="card-header">
                                                 <strong>Productos del lote</strong>
                                             </div>
@@ -418,9 +395,7 @@ include "menusidebar.php";
                                                                 <thead>
                                                                     <tr>
                                                                         <th>
-                                                                            <a v-if="ventaDatos.Estado < 2" href="#modalProductos" data-toggle="modal" class="btn btn-success btn-flat btn-addon" v-on:click="limpiarFormularioProductos()">
-                                                                                <i class="ti-plus"></i> Añadir producto
-                                                                            </a>
+                                                                            
                                                                         </th>
                                                                         <th>Código</th>
                                                                         <th>Producto</th>
@@ -440,10 +415,10 @@ include "menusidebar.php";
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="card">
                                             <div class="card-header">
-                                                <strong>Estado de la fabricación</strong>
+                                                <strong>Seguimiento de la producción</strong>
                                             </div>
 
                                             <div class="card-body">
@@ -453,37 +428,49 @@ include "menusidebar.php";
                                                             <table id="table2excel" class="table table-striped">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th>Producto</th>
-                                                                        <th>P. Venta</th>
                                                                         <td></td>
+                                                                        <th>Producto</th>
+                                                                        <th>Código</th>
+                                                                        <th>Cantidad</th>
+                                                                        <th>P. Venta</th>
                                                                         <th>Stock</th>
                                                                         <th>Proceso materiales</th>
                                                                         <th>Soldadura</th>
                                                                         <th>Pintura</th>
                                                                         <th>Rotulación</th>
                                                                         <th>Empaque</th>
-                                                                        <th></th>
+                                                                        <th>
+                                                                            <a v-if="ventaDatos.Estado < 2" href="#modalProductos" data-toggle="modal" class="btn btn-success btn-flat btn-addon" v-on:click="limpiarFormularioProductos()">
+                                                                                <i class="ti-plus"></i> Añadir productos
+                                                                            </a>
+                                                                        </th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <tr v-for="productoFabricado in listaProductosVendidos">
-                                                                        <td>
-                                                                            <h4> {{productoFabricado.Nombre_producto}}</h4>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h4> ${{productoFabricado.Precio_venta_producto | Moneda}}</h4>
-                                                                        </td>
                                                                         <td>
                                                                             <span v-if="productoFabricado.Tipo_produccion == 1" class="text-secondary"><i class="fa fa-circle"></i></span>
                                                                             <span v-if="productoFabricado.Tipo_produccion == 2" class="text-warning"><i class="fa fa-circle"></i></span>
                                                                             <span v-if="productoFabricado.Tipo_produccion == 3" class="text-info"><i class="fa fa-circle"></i></span>
                                                                         </td>
                                                                         <td>
+                                                                            <h4> {{productoFabricado.Nombre_producto}}</h4>
+                                                                        </td>
+                                                                        <td>
+                                                                            {{productoFabricado.Codigo_interno}}
+                                                                        </td>
+                                                                        <td align="center">
+                                                                            <h4>{{productoFabricado.Cantidad}}</h4>
+                                                                        </td>
+                                                                        <td>
+                                                                            <h4> ${{productoFabricado.Precio_venta_producto | Moneda}}</h4>
+                                                                        </td>
+                                                                        <td>
                                                                             <a v-if="productoFabricado.Estado == 1" href="#modalPasoapaso" data-toggle="modal" class="btn btn-info btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(productoFabricado.Id, 2)">
                                                                                 <i class="ti-plus"></i> Stock OK >>
                                                                             </a>
                                                                             <span v-if="productoFabricado.Estado > 1"> {{productoFabricado.S_1_Fecha_finalizado | Fecha}}</span>
-                                                                            <span v-if="productoFabricado.Estado < 1">En etapa previa</span>
+                                                                            <span v-if="productoFabricado.Estado < 1">En espera</span>
                                                                             <button class="item" v-on:click="infoEtapa(productoFabricado.S_1_Requerimientos, productoFabricado.S_1_Observaciones)" data-toggle="modal" data-target="#modalDatosEtapa" data-placement="top" title="Info de esta etapa">
                                                                                 <i class="fa fa-exclamation-circle"></i>
                                                                             </button>
@@ -494,7 +481,7 @@ include "menusidebar.php";
                                                                                 <i class="ti-plus"></i> Procesamiento completado >>
                                                                             </a>
                                                                             <span v-if="productoFabricado.Estado > 2">{{productoFabricado.S_2_Fecha_finalizado | Fecha}}</span>
-                                                                            <span v-if="productoFabricado.Estado < 2">En etapa previa</span>
+                                                                            <span v-if="productoFabricado.Estado < 2">En espera</span>
                                                                             <button class="item" v-on:click="infoEtapa(productoFabricado.S_2_Requerimientos, productoFabricado.S_2_Observaciones)" data-toggle="modal" data-target="#modalDatosEtapa" data-placement="top" title="Info de esta etapa">
                                                                                 <i class="fa fa-exclamation-circle"></i>
                                                                             </button>
@@ -505,7 +492,7 @@ include "menusidebar.php";
                                                                                 <i class="ti-plus"></i> Soldadura completada >>
                                                                             </a>
                                                                             <span v-if="productoFabricado.Estado > 3">{{productoFabricado.S_3_Fecha_finalizado | Fecha}}</span>
-                                                                            <span v-if="productoFabricado.Estado < 3">En etapa previa</span>
+                                                                            <span v-if="productoFabricado.Estado < 3">En espera</span>
                                                                             <button class="item" v-on:click="infoEtapa(productoFabricado.S_3_Requerimientos, productoFabricado.S_3_Observaciones)" data-toggle="modal" data-target="#modalDatosEtapa" data-placement="top" title="Info de esta etapa">
                                                                                 <i class="fa fa-exclamation-circle"></i>
                                                                             </button>
@@ -516,7 +503,7 @@ include "menusidebar.php";
                                                                                 <i class="ti-plus"></i> Pintura completada >>
                                                                             </a>
                                                                             <span v-if="productoFabricado.Estado > 4">{{productoFabricado.S_4_Fecha_finalizado | Fecha}}</span>
-                                                                            <span v-if="productoFabricado.Estado < 4"> En etapa previa</span>
+                                                                            <span v-if="productoFabricado.Estado < 4"> En espera</span>
                                                                             <button class="item" v-on:click="infoEtapa(productoFabricado.S_4_Requerimientos, productoFabricado.S_4_Observaciones)" data-toggle="modal" data-target="#modalDatosEtapa" data-placement="top" title="Info de esta etapa">
                                                                                 <i class="fa fa-exclamation-circle"></i>
                                                                             </button>
@@ -527,7 +514,7 @@ include "menusidebar.php";
                                                                                 <i class="ti-plus"></i> Rotulación completada >>
                                                                             </a>
                                                                             <span v-if="productoFabricado.Estado > 5">{{productoFabricado.S_5_Fecha_finalizado | Fecha}}</span>
-                                                                            <span v-if="productoFabricado.Estado < 5">En etapa previa</span>
+                                                                            <span v-if="productoFabricado.Estado < 5">En espera</span>
                                                                             <button class="item" v-on:click="infoEtapa(productoFabricado.S_5_Requerimientos, productoFabricado.S_5_Observaciones)" data-toggle="modal" data-target="#modalDatosEtapa" data-placement="top" title="Info de esta etapa">
                                                                                 <i class="fa fa-exclamation-circle"></i>
                                                                             </button>
@@ -537,7 +524,7 @@ include "menusidebar.php";
                                                                             <a v-if="productoFabricado.Estado == 6" href="#modalPasoapaso" data-toggle="modal" class="btn btn-info btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(productoFabricado.Id, 7)">
                                                                                 <i class="ti-plus"></i> Producto empacado >>
                                                                             </a>
-                                                                            <span v-if="productoFabricado.Estado < 6">En etapa previa</span>
+                                                                            <span v-if="productoFabricado.Estado < 6">En espera</span>
                                                                             <span v-if="productoFabricado.Estado > 6">{{productoFabricado.S_6_Fecha_finalizado | Fecha}}</span>
                                                                             <button class="item" v-on:click="infoEtapa(productoFabricado.S_6_Requerimientos, productoFabricado.S_6_Observaciones)" data-toggle="modal" data-target="#modalDatosEtapa" data-placement="top" title="Info de esta etapa">
                                                                                 <i class="fa fa-exclamation-circle"></i>
@@ -784,156 +771,275 @@ include "menusidebar.php";
                         <!-- SECCION COBRANZA -->
                         <div class="row" v-show="mostrar == '7'">
                             <div class="col-lg-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <strong>Información para Cobranza</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <h3>{{ventaDatos.Info_cobranza}}</h3>
-                                    </div>
-                                    <div v-if="ventaDatos.Estado == 9" class="card-body">
-                                        <a href="#" class="btn btn-warning " v-on:click="cambiar_estado_venta()">
-                                            COBRANZA FINALIZADA
-                                        </a>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Información para Cobranza</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <h3 align="center">{{ventaDatos.Info_cobranza}}</h3>
+                                            </div>
+                                            <div v-if="ventaDatos.Estado == 9" class="card-body">
+                                                <a href="#" class="btn btn-warning " v-on:click="cambiar_estado_venta()">
+                                                    COBRANZA FINALIZADA
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <strong>Productos</strong>
+                                <div class="row">
+                                    <div class="col-lg-2">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Total productos</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <h3 align="center"> ${{sumarProductos(listaProductosVendidos) | Moneda}}</h3>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="col-lg-2">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Flete</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <h3 align="center"> ${{ventaDatos.Valor_logistica | Moneda}}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Instalación</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <h3 align="center"> ${{ventaDatos.Valor_instalacion | Moneda}}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Total a cobrar</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <h3 align="center"> $ {{calcularMontosVentas(sumarProductos(listaProductosVendidos), ventaDatos.Valor_logistica, ventaDatos.Valor_instalacion, 0) | Moneda}}</h3>
 
-                                        <div class="bootstrap-data-table-panel col-lg-12">
-                                            <div class="table-responsive">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Total cobrado</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <h3 align="center"> ${{listaMovimientos.Total | Moneda}}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Saldo</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <h3 align="center"> ${{ calcularMontosVentas(sumarProductos(listaProductosVendidos), ventaDatos.Valor_logistica, ventaDatos.Valor_instalacion, listaMovimientos.Total) | Moneda}}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Productos</strong>
+                                            </div>
+                                            <div class="card-body">
+
+                                                <div class="bootstrap-data-table-panel col-lg-12">
+                                                    <div class="table-responsive">
+                                                        <div class="table-responsive">
+                                                            <table id="table2excel" class="table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Código</th>
+                                                                        <th>Producto</th>
+
+                                                                        <th>Cantidad</th>
+                                                                        <th>Precio</th>
+                                                                        <!-- <th>Subtotal</th> -->
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr v-for="productos in listaResumenProductos">
+                                                                        <td>{{productos.Codigo_interno}}</td>
+                                                                        <td>{{productos.Nombre_producto}}</td>
+
+                                                                        <td align="center">{{productos.Cantidad}}</td>
+                                                                        <td align="right">{{productos.Precio_venta}}</td>
+                                                                        <!-- <td>{{productos.Subtotal}}</td> -->
+                                                                    </tr>
+                                                                </tbody>
+                                                                <tfoot>
+                                                                    <tr>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th colspan="2">
+                                                                            <h4 align="right">${{sumarProductos(listaProductosVendidos) | Moneda}}</h4>
+                                                                        </th>
+                                                                    </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- PAGOS -->
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Pagos</strong>
+                                            </div>
+                                            <div class="card-body">
                                                 <div class="table-responsive">
                                                     <table id="table2excel" class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th>Código</th>
-                                                                <th>Producto</th>
-                                                                <th>Precio Un</th>
-                                                                <th>Cantidad</th>
-                                                                <th>Subtotal</th>
+                                                                <th>
+                                                                    <button data-toggle="modal" data-target="#modalEfectivo" v-on:click="limpiarFormularioMovimiento()">
+                                                                        <i class="fa fa-plus-circle text-success"></i>
+                                                                    </button>
+                                                                </th>
+                                                                <th>Monto</th>
+                                                                <th>Fecha</th>
+                                                                <th>Modalidad</th>
+                                                                <th>Observaciones</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="productos in listaResumenProductos">
-                                                                <td>{{productos.Codigo_interno}}</td>
-                                                                <td>{{productos.Nombre_producto}}</td>
-                                                                <td>{{productos.Precio_venta}}</td>
-                                                                <td>{{productos.Cantidad}}</td>
-                                                                <td>{{productos.Subtotal}}</td>
+                                                            <tr v-for="movimiento in listaMovimientos.Datos">
+                                                                <td>
+                                                                    <button v-on:click="desactivarAlgo(movimiento.Id, 'tbl_cobros')" class="item" data-toggle="tooltip" data-placement="top" title="Eliminar">
+                                                                        <i class="zmdi zmdi-delete"></i>
+                                                                    </button>
+                                                                </td>
+                                                                <td>$ {{movimiento.Monto | Moneda}}</td>
+                                                                <td>{{movimiento.Fecha_ejecutado | Fecha}}</td>
+                                                                <td>$ {{movimiento.Modalidad_pago}}</td>
+                                                                <td>{{movimiento.Observaciones}}</td>
                                                             </tr>
                                                         </tbody>
                                                         <tfoot>
-                                                            <tr>
-                                                                <th></th>
-                                                                <th></th>
-                                                                <th></th>
-                                                                <th></th>
-                                                                <th>
-                                                                    <h4>${{sumarProductos(listaProductosVendidos) | Moneda}}</h4>
-                                                                </th>
-                                                            </tr>
+                                                            <th></th>
+                                                            <th>
+                                                                <h4>{{listaMovimientos.Total | Moneda}}</h4>
+                                                            </th>
+                                                            <th></th>
+                                                            <th></th>
+                                                            <th></th>
                                                         </tfoot>
                                                     </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <strong>Publicar reporte</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <p align="right">
-                                            <form class="form-horizontal" action="post" v-on:submit.prevent="crearSeguimiento(5,5)">
-                                                <!--   -->
-                                                <div class="row">
-                                                    <div class="col-8">
-                                                        <div class="form-group">
-                                                            <label class="control-label">Datos del seguimiento</label>
-                                                            <textarea class="form-control" rows="3" placeholder="" v-model="seguimientoData.Descripcion" required></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12">
-                                                                <input @change="archivoSeleccionado" type="file" class="form-control" name="Imagen">
+                                    <div class="col-lg-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Publicar reporte</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <p align="right">
+                                                    <form class="form-horizontal" action="post" v-on:submit.prevent="crearSeguimiento(5,5)">
+                                                        <!--   -->
+                                                        <div class="row">
+                                                            <div class="col-8">
+                                                                <div class="form-group">
+                                                                    <label class="control-label">Datos del seguimiento</label>
+                                                                    <textarea class="form-control" rows="3" placeholder="" v-model="seguimientoData.Descripcion" required></textarea>
+                                                                </div>
                                                             </div>
-                                                            <div class="col-sm-12" v-if="seguimientoData.Url_archivo != null">
-                                                                Archivo previamente cargado
-                                                                <a target="_blank" v-bind:href="'<?php echo base_url(); ?>uploads/imagenes/'+seguimientoData.Url_archivo"> Ver archivo</a>
+                                                            <div class="col-4">
+                                                                <div class="form-group">
+                                                                    <label class="control-label">Subir archivo</label>
+                                                                    <div class="col-sm-12">
+                                                                        <input @change="archivoSeleccionado" type="file" class="form-control" name="Imagen">
+                                                                    </div>
+                                                                    <div class="col-sm-12" v-if="seguimientoData.Url_archivo != null">
+                                                                        Archivo previamente cargado
+                                                                        <a target="_blank" v-bind:href="'<?php echo base_url(); ?>uploads/imagenes/'+seguimientoData.Url_archivo"> Ver archivo</a>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group" v-show="preloader == 1">
+                                                                    <p align="center">
+                                                                        EL ARCHIVO SE ESTA CARGANDO. <br> No cerrar la ventana hasta finalizada la carga, dependiendo del peso del archivo puede demorar algunos minutos.
+                                                                    </p>
+                                                                    <p align="center">
+                                                                        <img src="http://grupopignatta.com.ar/images/preloader.gif" alt="">
+                                                                    </p>
+                                                                </DIV>
+                                                                <div class="form-group">
+                                                                    <button type="submit" class="btn btn-success" :disabled="preloader == 1">Publicar reporte</button>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group" v-show="preloader == 1">
-                                                            <p align="center">
-                                                                EL ARCHIVO SE ESTA CARGANDO. <br> No cerrar la ventana hasta finalizada la carga, dependiendo del peso del archivo puede demorar algunos minutos.
-                                                            </p>
-                                                            <p align="center">
-                                                                <img src="http://grupopignatta.com.ar/images/preloader.gif" alt="">
-                                                            </p>
-                                                        </DIV>
+
+
+
+                                                    </form>
+                                            </div>
+                                            <div class="card-header">
+                                                <strong>Seguimiento</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="bootstrap-data-table-panel col-lg-12">
+                                                    <div class="table-responsive">
+                                                        <table id="table2excel" class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Fecha</th>
+                                                                    <th>Categoría</th>
+                                                                    <th>Descripcion</th>
+                                                                    <th>Archivo</th>
+                                                                    <th>Autor</th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr v-for="seguimiento in listaSeguimiento">
+                                                                    <td>{{seguimiento.Fecha | FechaTimeBD}}</td>
+
+                                                                    <td v-if="seguimiento.Categoria_seguimiento == 0">Sin categoría</td>
+                                                                    <td v-if="seguimiento.Categoria_seguimiento == 1">Compras</td>
+                                                                    <td v-if="seguimiento.Categoria_seguimiento == 2">Producción</td>
+                                                                    <td v-if="seguimiento.Categoria_seguimiento == 3">Logística</td>
+                                                                    <td v-if="seguimiento.Categoria_seguimiento == 4">Instalación</td>
+                                                                    <td v-if="seguimiento.Categoria_seguimiento == 5">Cobranza</td>
+
+                                                                    <td>{{seguimiento.Descripcion}}</td>
+                                                                    <td><a v-if="seguimiento.Url_archivo != null" target="_blank" v-bind:href="'<?php echo base_url(); ?>uploads/imagenes/'+seguimiento.Url_archivo"> Ver archivo</a></td>
+                                                                    <td>{{seguimiento.Nombre}}</td>
+                                                                    <td>
+                                                                        <a href="#modalSeguimiento" data-toggle="modal" v-on:click="editarFormularioSeguimiento(seguimiento)">
+                                                                            <i class="fa fa-edit"></i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
-
-
-                                                <div class="form-group">
-                                                    <button type="submit" class="btn btn-success" :disabled="preloader == 1">{{texto_boton}}</button>
-                                                </div>
-                                            </form>
-                                    </div>
-                                </div>
-                                <div class="card">
-                                    <div class="card-header">
-                                        <strong>Seguimiento</strong>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="bootstrap-data-table-panel col-lg-12">
-                                            <div class="table-responsive">
-                                                <table id="table2excel" class="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Fecha</th>
-                                                            <th>Categoría</th>
-                                                            <th>Descripcion</th>
-                                                            <th>Archivo</th>
-                                                            <th>Autor</th>
-                                                            <th></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr v-for="seguimiento in listaSeguimiento">
-                                                            <td>{{seguimiento.Fecha | FechaTimeBD}}</td>
-
-                                                            <td v-if="seguimiento.Categoria_seguimiento == 0">Sin categoría</td>
-                                                            <td v-if="seguimiento.Categoria_seguimiento == 1">Compras</td>
-                                                            <td v-if="seguimiento.Categoria_seguimiento == 2">Producción</td>
-                                                            <td v-if="seguimiento.Categoria_seguimiento == 3">Logística</td>
-                                                            <td v-if="seguimiento.Categoria_seguimiento == 4">Instalación</td>
-                                                            <td v-if="seguimiento.Categoria_seguimiento == 5">Cobranza</td>
-
-                                                            <td>{{seguimiento.Descripcion}}</td>
-                                                            <td><a v-if="seguimiento.Url_archivo != null" target="_blank" v-bind:href="'<?php echo base_url(); ?>uploads/imagenes/'+seguimiento.Url_archivo"> Ver archivo</a></td>
-                                                            <td>{{seguimiento.Nombre}}</td>
-                                                            <td>
-                                                                <a href="#modalSeguimiento" data-toggle="modal" v-on:click="editarFormularioSeguimiento(seguimiento)">
-                                                                    <i class="fa fa-edit"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+
+
                             </div>
                         </div>
                     </div>
@@ -1029,7 +1135,7 @@ include "menusidebar.php";
                                 <input type="number" class="form-control" v-model="productoData.Cantidad" required>
                             </div>
                             <div class="form-group" v-if="productoData.Id == null">
-                                <label class=" form-control-label">Precio cobrado por unidad de este producto</label>
+                                <label class=" form-control-label">Precio cobrado (total de este producto)</label>
                                 <input type="number" class="form-control" v-model="productoData.Precio_venta_producto" required>
                             </div>
 
@@ -1187,6 +1293,54 @@ include "menusidebar.php";
                     <hr>
                     <h4>Observaciones</h4>
                     <p>{{infoModal.Observaciones}}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal -->
+    <!-- Modal efectivo-->
+    <div class="modal fade" id="modalEfectivo" tabindex="-1" role="dialog" aria-labelledby="modalCategoriasCartaTitle" aria-hidden="true">
+        <div class="modal-dialog  modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalItemsFoto">Ingresar pago</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="horizontal-form">
+                        <form class="form-horizontal" action="post" v-on:submit.prevent="crear_movimiento()">
+                            <div class="form-group">
+                                <label class="control-label">Monto</label>
+                                <input type="number" class="form-control" v-model="movimientoDatos.Monto" required>
+                            </div>
+                            <div class="form-group">
+                                <label class=" form-control-label">Modalidad de pago</label>
+                                <select class="form-control" v-model="movimientoDatos.Modalidad_pago" required>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Banco">Banco</option>
+                                    <option value="Cheque">Cheque</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Fecha en que se realizó el pago</label>
+                                <input type="date" class="form-control" v-model="movimientoDatos.Fecha_ejecutado" required>
+                            </div>
+                            <div class="form-group">
+                                <label class=" form-control-label">Observaciones</label>
+                                <textarea class="form-control" rows="5" v-model="movimientoDatos.Observaciones"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-12">
+                                    <button type="submit" class="btn btn-success">{{texto_boton}}</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>

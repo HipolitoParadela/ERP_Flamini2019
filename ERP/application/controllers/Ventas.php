@@ -752,6 +752,7 @@ class ventas extends CI_Controller
 
             'Venta_id' =>               $Venta_id,
             'Producto_id' =>            $this->datosObtenidos->Datos->Producto_id,
+            'Cantidad' =>               $Cantidad,
             'Precio_venta_producto' =>  $this->datosObtenidos->Datos->Precio_venta_producto,
             'Tipo_produccion' =>        $Tipo_produccion,
             'Observaciones' =>          $this->datosObtenidos->Datos->Observaciones,
@@ -768,7 +769,12 @@ class ventas extends CI_Controller
         );
 
         $this->load->model('App_model');
+        /// ESTE MODO, ES MAS SIMPLE... AL CARGAR UN PRODUCTO PONE UNA CANTIDAD Y SE GESTIONAN SUS AVANCES EN CONJUNTO, Y NO UNO POR UNO 
+        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
         
+        /* 
+        ESTE MODO... SIRVE PARA QUE UN PRODUCTO SE CARGUE MUCHAS VECES. DEPENDIENDO DE LA CANTIDAD
+
         if($Cantidad != null)
         {
             for ($i=0; $i < $Cantidad; $i++) 
@@ -779,7 +785,7 @@ class ventas extends CI_Controller
         else
         {
             $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
-        }
+        } */
         
             
         if ($insert_id >= 0) {
@@ -810,7 +816,8 @@ class ventas extends CI_Controller
         $this->db->select(' tbl_ventas_productos.*,
                             tbl_fabricacion.Nombre_producto,
                             tbl_fabricacion.Imagen,
-                            tbl_fabricacion.Precio_USD');
+                            tbl_fabricacion.Precio_USD,
+                            tbl_fabricacion.Codigo_interno');
         
         $this->db->from('tbl_ventas_productos');
 
@@ -1113,16 +1120,17 @@ class ventas extends CI_Controller
                 /// con un poco mas de laburo puedo incluso traer un promedio de por donde van en su construcción
         
                 $query = $this->db->get();
-                $cantidad = $query->num_rows();
+                $Cantidad_metodo_uno_por_uno = $query->num_rows();
                 
-                $subtotal = $cantidad * $productos["Precio_venta_producto"];
+                $subtotal = $Cantidad_metodo_uno_por_uno * $productos["Precio_venta_producto"];
                 
                 
                 $datos_producto = array(
                                             'Codigo_interno' =>     $productos["Codigo_interno"],
                                             'Nombre_producto' =>    $productos["Nombre_producto"], 
                                             'Precio_venta' =>       $productos["Precio_venta_producto"],
-                                            'Cantidad' =>           $cantidad,
+                                            'Cantidad' =>           $productos["Cantidad"],
+                                            'Cantidad_metodo_uno_por_uno' =>           $Cantidad_metodo_uno_por_uno,
                                             'Subtotal' =>           $subtotal,
                                         );
 

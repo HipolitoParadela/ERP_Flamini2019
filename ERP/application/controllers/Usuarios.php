@@ -11,9 +11,12 @@ class Usuarios extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
 
-            if ($this->session->userdata('Rol_acceso') > 3) {
+            if ($this->session->userdata('Rol_acceso') > 4 || $this->session->userdata('Id') == 12) 
+            {
                 $this->load->view('usuarios_listado');
-            } else {
+            } 
+            else 
+            {
                 header("Location: " . base_url() . "login"); /// enviar a pagina de error
             }
 
@@ -29,7 +32,7 @@ class Usuarios extends CI_Controller
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
             //if (plan_contratado() > 3) {}
 
-            if ($this->session->userdata('Rol_acceso') > 3) 
+            if ($this->session->userdata('Rol_acceso') > 4 || $this->session->userdata('Id') == 12) 
             {
                 $this->load->view('usuarios_datos');
                 
@@ -567,11 +570,13 @@ class Usuarios extends CI_Controller
 
         $this->db->select(' tbl_usuarios_seguimiento.*,
                             tbl_usuarios.Nombre,
-                            tbl_rrhh.Nombre as Nombre_rrhh');
+                            tbl_rrhh.Nombre as Nombre_rrhh,
+                            tbl_usuarios_seguimiento_categorias.Nombre_categoria');
         
         $this->db->from('tbl_usuarios_seguimiento');
         $this->db->join('tbl_usuarios', 'tbl_usuarios.Id = tbl_usuarios_seguimiento.Usuario_id', 'left');
         $this->db->join('tbl_usuarios as tbl_rrhh', 'tbl_rrhh.Id = tbl_usuarios_seguimiento.Usuario_rrhh_id', 'left');
+        $this->db->join('tbl_usuarios_seguimiento_categorias', 'tbl_usuarios_seguimiento_categorias.Id = tbl_usuarios_seguimiento.Categoria_id', 'left');
 
         $this->db->where('tbl_usuarios_seguimiento.Usuario_id', $Id);
         $this->db->where('tbl_usuarios_seguimiento.Visible', 1);
@@ -609,6 +614,7 @@ class Usuarios extends CI_Controller
             'Descripcion' =>        $this->datosObtenidos->Datos->Descripcion,
             'Calificacion' =>       $this->datosObtenidos->Datos->Calificacion,
             'Usuario_rrhh_id' =>    $this->session->userdata('Id'),
+            'Categoria_id' =>       $this->datosObtenidos->Datos->Categoria_id,
             'Visible' =>            1
 
         );
@@ -677,6 +683,69 @@ class Usuarios extends CI_Controller
             @unlink($_FILES[$file_element_name]);
         }
         echo json_encode(array('status' => $status, 'Url_archivo' => $nombre_archivo));
+    }
+
+//// SEGUIMIENTOS 	| OBTENER Listado
+    public function obtener_categorias_seguimientos()
+    {
+
+        //Esto siempre va es para instanciar la base de datos
+        $CI = &get_instance();
+        $CI->load->database();
+        
+        //Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+        $this->db->select('*');
+        
+        $this->db->from('tbl_usuarios_seguimiento_categorias');
+        $this->db->where('tbl_usuarios_seguimiento_categorias.Visible', 1);
+
+        $this->db->order_by('tbl_usuarios_seguimiento_categorias.Nombre_categoria', 'asc');
+        $query = $this->db->get();
+        $result = $query->result_array();
+
+        echo json_encode($result);
+
+    }
+
+//// SEGUIMIENTOS CATEGORIAS 	| CARGAR O EDITAR FORMACION
+    public function cargar_categorias_seguimiento()
+    {
+        $CI = &get_instance();
+        $CI->load->database();
+
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+        $Id = null;
+        if(isset($this->datosObtenidos->Datos->Id))
+        {
+            $Id = $this->datosObtenidos->Datos->Id;
+        }
+
+        $data = array(
+
+            'Nombre_categoria' =>         $this->datosObtenidos->Datos->Nombre_categoria,
+            'Descripcion' =>              $this->datosObtenidos->Datos->Descripcion,
+
+        );
+
+        $this->load->model('App_model');
+        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_usuarios_seguimiento_categorias');
+
+        if ($insert_id >= 0) {
+            echo json_encode(array("Id" => $insert_id));
+        } else {
+            echo json_encode(array("Id" => 'Error'));
+        }
     }
 
 ///// fin documento

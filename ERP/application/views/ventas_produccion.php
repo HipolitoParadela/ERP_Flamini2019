@@ -57,6 +57,7 @@ include "menusidebar.php";
                                                         <thead>
                                                             <tr>
                                                                 <th></th>
+                                                                <th>Cantidad</th>
                                                                 <th>Entrega <br> estimada en</th>
                                                                 <th>Tipo</th>
                                                                 <th>Producto</th>
@@ -82,6 +83,9 @@ include "menusidebar.php";
                                                                     </div>
                                                                     <span v-if="producto_1.Estado > 1"> {{producto_1.S_1_Fecha_finalizado | Fecha}}</span>
                                                                     <span v-if="producto_1.Estado < 1"> En etapa previa</span>
+                                                                </td>
+                                                                <td>
+                                                                    <h4 align="center">{{producto_1.Cantidad}}</h4>
                                                                 </td>
                                                                 <td v-if="diferenciasEntre_fechas(null, producto_1.Fecha_estimada_entrega) < 0">
                                                                     {{ diferenciasEntre_fechas(null, producto_1.Fecha_estimada_entrega) * (-1) }} días de atrazo
@@ -132,6 +136,7 @@ include "menusidebar.php";
                                                         <thead>
                                                             <tr>
                                                                 <th></th>
+                                                                <th>Cantidad</th>
                                                                 <th>Entrega <br> estimada en</th>
                                                                 <th>Tipo</th>
                                                                 <th>Producto</th>
@@ -159,7 +164,9 @@ include "menusidebar.php";
                                                                     <span v-if="producto_2.Estado < 2"> En etapa previa</span>
 
                                                                 </td>
-
+                                                                <td>
+                                                                    <h4 align="center">{{producto_2.Cantidad}}</h4>
+                                                                </td>
                                                                 <td v-if="diferenciasEntre_fechas(null, producto_2.Fecha_estimada_entrega) < 0">
                                                                     {{ diferenciasEntre_fechas(null, producto_2.Fecha_estimada_entrega) * (-1) }} días de atrazo
                                                                 </td>
@@ -209,6 +216,7 @@ include "menusidebar.php";
                                                         <thead>
                                                             <tr>
                                                                 <th></th>
+                                                                <th>Cantidad</th>
                                                                 <th>Entrega <br> estimada en</th>
                                                                 <th>Tipo</th>
                                                                 <th>Producto</th>
@@ -235,6 +243,9 @@ include "menusidebar.php";
                                                                     <span v-if="producto_3.Estado > 3"> {{producto_3.S_3_Fecha_finalizado | Fecha}}</span>
                                                                     <span v-if="producto_3.Estado < 3"> En etapa previa</span>
 
+                                                                </td>
+                                                                <td>
+                                                                    <h4 align="center">{{producto_3.Cantidad}}</h4>
                                                                 </td>
 
                                                                 <td v-if="diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 0">
@@ -286,6 +297,7 @@ include "menusidebar.php";
                                                         <thead>
                                                             <tr>
                                                                 <th></th>
+                                                                <th>Cantidad</th>
                                                                 <th>Entrega <br> estimada en</th>
                                                                 <th>Tipo</th>
                                                                 <th>Producto</th>
@@ -312,6 +324,9 @@ include "menusidebar.php";
                                                                     <span v-if="producto_4.Estado > 4"> {{producto_4.S_4_Fecha_finalizado | Fecha}}</span>
                                                                     <span v-if="producto_4.Estado < 4"> En etapa previa</span>
 
+                                                                </td>
+                                                                <td>
+                                                                    <h4 align="center">{{producto_4.Cantidad}}</h4>
                                                                 </td>
 
                                                                 <td v-if="diferenciasEntre_fechas(null, producto_4.Fecha_estimada_entrega) < 0">
@@ -363,6 +378,7 @@ include "menusidebar.php";
                                                         <thead>
                                                             <tr>
                                                                 <th></th>
+                                                                <th>Cantidad</th>
                                                                 <th>Entrega <br> estimada en</th>
                                                                 <th>Tipo</th>
                                                                 <th>Producto</th>
@@ -390,7 +406,9 @@ include "menusidebar.php";
                                                                     <span v-if="producto_5.Estado < 5"> En etapa previa</span>
 
                                                                 </td>
-
+                                                                <td>
+                                                                    <h4 align="center">{{producto_5.Cantidad}}</h4>
+                                                                </td>
                                                                 <td v-if="diferenciasEntre_fechas(null, producto_5.Fecha_estimada_entrega) < 0">
                                                                     {{ diferenciasEntre_fechas(null, producto_5.Fecha_estimada_entrega) * (-1) }} días de atrazo
                                                                 </td>
@@ -440,6 +458,7 @@ include "menusidebar.php";
                                                         <thead>
                                                             <tr>
                                                                 <th></th>
+                                                                <th>Cantidad</th>
                                                                 <th>Entrega <br> estimada en</th>
                                                                 <th>Tipo</th>
                                                                 <th>Producto</th>
@@ -467,7 +486,9 @@ include "menusidebar.php";
                                                                     <span v-if="producto_6.Estado < 6"> En etapa previa</span>
 
                                                                 </td>
-
+                                                                <td>
+                                                                    <h4 align="center">{{producto_6.Cantidad}}</h4>
+                                                                </td>
                                                                 <td v-if="diferenciasEntre_fechas(null, producto_6.Fecha_estimada_entrega) < 0">
                                                                     {{ diferenciasEntre_fechas(null, producto_6.Fecha_estimada_entrega) * (-1) }} días de atrazo
                                                                 </td>
