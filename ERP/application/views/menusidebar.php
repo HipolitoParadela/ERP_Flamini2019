@@ -6,16 +6,33 @@
                                 <i class="fas fa-tachometer-alt"></i>Dashboard
                             </a>
                         </li>
+                        
+                        <li>
+                            <a href="<?= base_url();?>ventas">
+                                <i class="fa fa-tags"></i>Planificaciones | Ventas
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= base_url();?>compras">
+                                <i class="fas fa-shopping-cart"></i>Compras
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= base_url();?>ventas/produccion">
+                            <i class="fas fa-cog"></i></i>Producción
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= base_url();?>stock/pruductosdereventa">
+                                <i class="fa fa-dropbox"></i>Productos de reventa
+                            </a>
+                        </li>
                         <li>
                             <a href="<?= base_url();?>usuarios">
                                 <i class="fas fa-users"></i>Personal
                             </a>
                         </li>
-                        <li>
-                            <a href="<?= base_url();?>stock">
-                                <i class="fas fa-list-alt"></i>Insumos producción
-                            </a>
-                        </li>
+                        
                         <li>
                             <a href="<?= base_url();?>clientes">
                                 <i class="fas fa-suitcase"></i>Clientes
@@ -24,6 +41,11 @@
                         <li>
                             <a href="<?= base_url();?>proveedores">
                                 <i class="fas fa-truck"></i>Proveedores
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= base_url();?>stock">
+                                <i class="fas fa-list-alt"></i>Insumos producción
                             </a>
                         </li>
                         <li>
@@ -36,21 +58,7 @@
                                 <i class="fas fa-retweet"></i>Stock de reserva
                             </a>
                         </li>
-                        <li>
-                            <a href="<?= base_url();?>compras">
-                                <i class="fas fa-shopping-cart"></i>Compras
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<?= base_url();?>ventas">
-                                <i class="fa fa-tags"></i>Planificaciones | Ventas
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<?= base_url();?>ventas/produccion">
-                            <i class="fas fa-cog"></i></i>Producción
-                            </a>
-                        </li>
+                        
                         <!--<li class="has-sub">
                             <a class="js-arrow" href="#">
                                 <i class="fas fa-archive"></i>Curriculums</a>
@@ -82,25 +90,13 @@
                                 <i class="fas fa-tachometer-alt"></i>Dashboard</a>
                         </li>
                         <li>
-                            <a href="<?= base_url();?>usuarios">
-                                <i class="fas fa-users"></i>Personal</a>
-                        </li>
-                        <li>
-                            <a href="<?= base_url();?>stock">
-                                <i class="fas fa-list-alt"></i>Insumos producción</a>
-                        </li>
-                        <li>
-                            <a href="<?= base_url();?>clientes">
-                                <i class="fas fa-suitcase"></i>Clientes</a>
-                        </li>
-                        <li>
-                            <a href="<?= base_url();?>proveedores">
-                                <i class="fas fa-truck"></i>Proveedores
+                            <a href="<?= base_url();?>ventas">
+                            <i class="fa fa-tags"></i>Planificaciones | Ventas
                             </a>
                         </li>
                         <li>
-                            <a href="<?= base_url();?>ventas">
-                            <i class="fa fa-tags"></i>Planificaciones | Ventas
+                            <a href="<?= base_url();?>ventas/produccion">
+                            <i class="fas fa-cog"></i></i>Producción
                             </a>
                         </li>
                         <li>
@@ -114,15 +110,34 @@
                             </a>
                         </li>
                         <li>
+                            <a href="<?= base_url();?>stock/pruductosdereventa">
+                                <i class="fa fa-dropbox"></i>Productos de reventa
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= base_url();?>stock">
+                                <i class="fas fa-list-alt"></i>Insumos producción</a>
+                        </li>
+                        <li>
                             <a href="<?= base_url();?>compras">
                                 <i class="fas fa-shopping-cart"></i>Compras
                             </a>
                         </li>
                         <li>
-                            <a href="<?= base_url();?>ventas/produccion">
-                            <i class="fas fa-cog"></i></i>Producción
+                            <a href="<?= base_url();?>clientes">
+                                <i class="fas fa-suitcase"></i>Clientes</a>
+                        </li>
+                        <li>
+                            <a href="<?= base_url();?>proveedores">
+                                <i class="fas fa-truck"></i>Proveedores
                             </a>
                         </li>
+                        <li>
+                            <a href="<?= base_url();?>usuarios">
+                                <i class="fas fa-users"></i>Personal</a>
+                        </li>
+                        
+                        
                         <!--<li class="has-sub">
                             <a class="js-arrow" href="#">
                                 <i class="fas fa-archive"></i>Curriculums</a>

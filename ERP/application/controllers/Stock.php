@@ -40,6 +40,26 @@ class Stock extends CI_Controller
         }
     }
 
+//// STOCK          | PRODUCTOS DE REVENTA | DATOS
+public function pruductosdereventa()
+{
+    if ($this->session->userdata('Login') != true) {
+        header("Location: " . base_url() . "login"); /// enviar a pagina de error
+    } else {
+        ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
+        //if (plan_contratado() > 3) {}
+
+        if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7) 
+        {
+            $this->load->view('stock_productos_reventa');
+            
+        } else {
+            header("Location: " . base_url() . "login"); /// enviar a pagina de error
+        }
+
+    }
+}
+
 //// STOCK 	        | OBTENER LISTADO STOCK
 	public function obtener_listado_de_stock()
     {
@@ -141,6 +161,8 @@ class Stock extends CI_Controller
             echo json_encode(array("Id" => 0));
         }
     }
+
+
 
 //// MOVIMIENTOS 	| OBTENER MOVIMIENTOS DE UN STOCK  ¡¡OBSOLETO!! 
     public function obtener_movimientos()
@@ -245,6 +267,7 @@ class Stock extends CI_Controller
 
         $Stock_id = $this->datosObtenidos->Id;
         $Cantidad = $this->datosObtenidos->Cantidad;
+        $Precio_venta_producto = $this->datosObtenidos->Precio_venta_producto;
         $Descripcion = $this->datosObtenidos->Descripcion;
 
         $Proceso_id = $this->datosObtenidos->Proceso_id;                // Se refiere al Id, de la orden de trabajo, o de la Compra
@@ -252,12 +275,13 @@ class Stock extends CI_Controller
         
         $data = array(
 
-            'Stock_id'          => $Stock_id,
-            'Cantidad'          => $Cantidad,
-            'Descripcion'       => $Descripcion,
-            'Usuario_id'        => $this->session->userdata('Id'),
-            'Proceso_id'        => $Proceso_id,
-            'Tipo_movimiento'   => $Tipo_movimiento,
+            'Stock_id'              => $Stock_id,
+            'Cantidad'              => $Cantidad,
+            'Precio_venta_producto' => $Precio_venta_producto,
+            'Descripcion'           => $Descripcion,
+            'Usuario_id'            => $this->session->userdata('Id'),
+            'Proceso_id'            => $Proceso_id,
+            'Tipo_movimiento'       => $Tipo_movimiento,
         );
 
         $this->load->model('App_model');
@@ -535,7 +559,6 @@ class Stock extends CI_Controller
         $CI =& get_instance();
         $CI->load->database();
 		$token = @$CI->db->token;
-
 
 		$this->db->select('*');
 		$this->db->from('tbl_stock_categorias');

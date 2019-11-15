@@ -561,6 +561,57 @@ include "menusidebar.php";
                                             <span class="text-warning"><i class="fa fa-circle"></i> Reclamo</span>
                                             <span class="text-info"><i class="fa fa-circle"></i> Muestra</span>
                                         </p>
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Productos de reventa</strong>
+                                            </div>
+
+                                            <div class="card-body">
+                                                <div class="bootstrap-data-table-panel col-lg-12">
+                                                    <div class="table-responsive">
+                                                        <div class="table-responsive">
+                                                            <table id="table2excel" class="table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Producto</th>
+                                                                        <th>Cantidad</th>
+                                                                        <th>P. Venta</th>
+                                                                        <th>
+                                                                            <a v-if="ventaDatos.Estado < 2" href="#productosreventaModal" data-toggle="modal" class="btn btn-success btn-flat btn-addon" v-on:click="limpiarFormularioProductos()">
+                                                                                <i class="ti-plus"></i> Añadir productos
+                                                                            </a>
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr v-for="productoReventa in listaProductosReventaLote">
+                                                                        <td>
+                                                                            <h4> {{productoReventa.Nombre_item}}</h4>
+                                                                        </td>
+                                                                        <td align="center">
+                                                                            <h4>{{productoReventa.Cantidad}}</h4>
+                                                                        </td>
+                                                                        <td>
+                                                                            <h4> ${{productoReventa.Precio_venta_producto | Moneda}}</h4>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="table-data-feature">
+                                                                                <!-- <button class="item" v-on:click="editarFormularioProductosReventa(productoReventa)" data-toggle="modal" data-target="#productosreventaModal" data-placement="top" title="Editar">
+                                                                                    <i class="zmdi zmdi-edit"></i>
+                                                                                </button> -->
+                                                                                <!-- <button class="item" v-on:click="anularProductoReventa(productoReventa)" title="Anular este producto. Al hacerlo debe eliminar el movimiento y reacomodar el valor original">
+                                                                                    <i class="fa fa-ban"></i>
+                                                                                </button> -->
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1130,11 +1181,11 @@ include "menusidebar.php";
                                     <option v-for="producto in listaProductos" v-bind:value="producto.Id">{{producto.Nombre_producto}}</option>
                                 </datalist>
                             </div>
-                            <div class="form-group" v-if="productoData.Id == null">
+                            <div class="form-group">
                                 <label class=" form-control-label">Cantidad de unidades de este producto</label>
                                 <input type="number" class="form-control" v-model="productoData.Cantidad" required>
                             </div>
-                            <div class="form-group" v-if="productoData.Id == null">
+                            <div class="form-group">
                                 <label class=" form-control-label">Precio cobrado (total de este producto)</label>
                                 <input type="number" class="form-control" v-model="productoData.Precio_venta_producto" required>
                             </div>
@@ -1349,13 +1400,58 @@ include "menusidebar.php";
         </div>
     </div>
     <!-- /.modal -->
-    <!-- END MAIN CONTENT-->
-    <!-- END PAGE CONTAINER-->
-    <?php
-    // CABECERA
-    include "footer.php";
-    ?>
-    </body>
 
-    </html>
-    <!-- end document-->
+    <!-- modal ORDEN TRABAJO SALIDA STOCK -->
+    <div class="modal fade" id="productosreventaModal" tabindex="-1" role="dialog" aria-labelledby="scrollmodalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scrollmodalLabel">{{egresoDato.Nombre_item}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form class="form-horizontal" action="post" v-on:submit.prevent="movimientoStock_v2()">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="control-label">Seleccionar producto</label>
+                            <select class="form-control" v-model="egresoDato.Id" required>
+                                <option v-for="prod in listaProductosReventa" v-bind:value="prod.Id"> {{prod.Nombre_item}}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class=" form-control-label">Cantidad</label>
+                            <input type="number" min="1" class="form-control" v-model="egresoDato.Cantidad" required>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Precio cobrado (total de este producto)</label>
+                            <input type="number" min="1" class="form-control" v-model="egresoDato.Precio_venta_producto" required>
+                        </div>
+                        <div class="form-group">
+                            <label class=" form-control-label">Descripción</label>
+                            <textarea class="form-control" rows="5" v-model="egresoDato.Descripcion_egreso"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">{{texto_boton}}</button>
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT-->
+<!-- END PAGE CONTAINER-->
+<?php
+// CABECERA
+include "footer.php";
+?>
+</body>
+
+</html>
+<!-- end document-->

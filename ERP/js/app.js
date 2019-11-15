@@ -135,6 +135,11 @@ new Vue({
             this.getListadoVentas(0, 0, 0, 1, 0);
         }
 
+        if (pathname == carpeta + 'stock/pruductosdereventa') {
+            this.getListadoStock(6);
+            this.getListadoVentas(0, 0, 0, 1, 0);
+        }
+
         if (pathname == carpeta + 'clientes') {
             this.getListadoClientes();
         }
@@ -919,6 +924,7 @@ new Vue({
                 Cantidad: this.egresoDato.Cantidad,
                 Descripcion: this.egresoDato.Descripcion_egreso,
                 Proceso_id: this.egresoDato.Venta_id,
+                Precio_venta_producto: 0,
                 Tipo_movimiento: 2
             }).then(response => {
 
@@ -3032,6 +3038,8 @@ new Vue({
             this.Set_valores_usuario();
             this.getListadoResumenProductos();
             this.getMovimientos();
+            this.getListadoProductosReventa(6); // 6 para marcar la categoria a la que pertenecen los productos de reventa
+            this.getListadoProductosReventaLote(); // 6 para marcar la categoria a la que pertenecen los productos de reventa
         }
     },
 
@@ -3085,7 +3093,12 @@ new Vue({
         // COBRANZA
         listaResumenProductos: [],
         listaMovimientos: [],
-        movimientoDatos: {}
+        movimientoDatos: {},
+
+        // PRODUCTOS DE REVENTA
+        egresoDato: {},
+        listaProductosReventa:[],
+        listaProductosReventaLote:[]
     },
 
     methods:
@@ -3719,6 +3732,67 @@ new Vue({
             var Total = parseInt(n1) + parseInt(n2) + parseInt(n3) - parseInt(n4);
 
             return Total;
+        },
+
+
+        //// PRODUCTOS DE REVENTA |   MOSTRAR LISTADO
+        getListadoProductosReventaLote: function () {
+            var url = base_url + 'stock/obtener_movimientos_v2/?Id=' + Get_Id; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Tipo_movimiento: 2
+
+            }).then(response => {
+                this.listaProductosReventaLote = response.data
+        
+            }).catch(error => {
+                alert("mal");
+                console.log(error.response.data)
+
+            });
+        },
+
+        //// PRODUCTOS DE REVENTA |  MOSTRAR LISTADO DE CATEGORIAS
+        getListadoProductosReventa: function (categoria) {
+            var url = base_url + 'stock/obtener_listado_de_stock?categoria=' + categoria; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token
+            }).then(response => {
+                this.listaProductosReventa = response.data
+            });
+        },
+
+
+        //// PRODUCTOS DE REVENTA | Integrar a la venta y restar del stock
+        movimientoStock_v2: function () {
+            var url = base_url + 'stock/cargar_movimiento'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token,
+                Id: this.egresoDato.Id,
+                Cantidad: this.egresoDato.Cantidad,
+                Descripcion: this.egresoDato.Descripcion_egreso,
+                Proceso_id: Get_Id,
+                Precio_venta_producto: this.egresoDato.Precio_venta_producto,
+                Tipo_movimiento: 2
+            }).then(response => {
+
+                toastr.success('Proceso realizado correctamente', 'Stock')
+
+                this.getListadoProductosReventaLote();
+
+            }).catch(error => {
+                alert("mal");
+                console.log(error.response.data)
+
+            });
+        },
+
+        //// PRODUCTOS DE REVENTA | EDITAR UN PRODUCTO AGREGADO
+        editarFormularioProductosReventa: function (dato) {
+            this.egresoDato = dato;
         },
 
     },
