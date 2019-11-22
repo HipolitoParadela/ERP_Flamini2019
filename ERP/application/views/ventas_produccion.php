@@ -76,7 +76,7 @@ include "menusidebar.php";
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
-                                                                    <div v-if="Usuario_id == 3 || producto_1.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 2">
+                                                                    <div v-if="Usuario_id == 3 || producto_1.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 1">
                                                                         <a v-if="producto_1.Estado == 1" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_1.Id, 2)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_1.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_1.Fecha_estimada_entrega) < 7}]">
                                                                             <i class="ti-plus"></i> LISTO >>
                                                                         </a>
@@ -155,7 +155,7 @@ include "menusidebar.php";
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
-                                                                    <div v-if="producto_2.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 2 || Usuario_id == '3'">
+                                                                    <div v-if="producto_2.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 1 || Usuario_id == '3'">
                                                                         <a v-if="producto_2.Estado == 2" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_2.Id, 3)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_2.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_2.Fecha_estimada_entrega) < 7}]">
                                                                             <i class="ti-plus"></i> LISTO >>
                                                                         </a>
@@ -235,7 +235,7 @@ include "menusidebar.php";
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
-                                                                    <div v-if="producto_3.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 2 || Usuario_id == '3'">
+                                                                    <div v-if="producto_3.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 1 || Usuario_id == '3'">
                                                                         <a v-if="producto_3.Estado == 3" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_3.Id, 4)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 7}]">
                                                                             <i class="ti-plus"></i> LISTO >>
                                                                         </a>
@@ -316,7 +316,7 @@ include "menusidebar.php";
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
-                                                                    <div v-if="producto_4.Responsable_id_planif_final == Usuario_id || Rol_acceso > 2 || Usuario_id == '3'">
+                                                                    <div v-if="producto_4.Responsable_id_planif_final == Usuario_id || Rol_acceso > 1 || Usuario_id == '3'">
                                                                         <a v-if="producto_4.Estado == 4" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_4.Id, 5)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_4.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_4.Fecha_estimada_entrega) < 7}]">
                                                                             <i class="ti-plus"></i> LISTO >>
                                                                         </a>
@@ -397,7 +397,7 @@ include "menusidebar.php";
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
-                                                                    <div v-if="producto_5.Responsable_id_planif_final == Usuario_id || Rol_acceso > 2 || Usuario_id == '3'">
+                                                                    <div v-if="producto_5.Responsable_id_planif_final == Usuario_id || Rol_acceso > 1 || Usuario_id == '3'">
                                                                         <a v-if="producto_5.Estado == 5" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_5.Id, 6)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_5.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_5.Fecha_estimada_entrega) < 7}]">
                                                                             <i class="ti-plus"></i> LISTO >>
                                                                         </a>
@@ -477,7 +477,7 @@ include "menusidebar.php";
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
-                                                                    <div v-if="producto_6.Responsable_id_planif_final == Usuario_id || Rol_acceso > 2 || Usuario_id == '3'">
+                                                                    <div v-if="producto_6.Responsable_id_planif_final == Usuario_id || Rol_acceso > 1 || Usuario_id == '3'">
                                                                         <a v-if="producto_6.Estado == 6" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_6.Id, 7)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_6.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_6.Fecha_estimada_entrega) < 7}]">
                                                                             <i class="ti-plus"></i> LISTO >>
                                                                         </a>

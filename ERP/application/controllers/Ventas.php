@@ -78,8 +78,9 @@ class ventas extends CI_Controller
     {
         if ($this->session->userdata('Login') != true) {
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
-        } else {
-
+        } 
+        else 
+        {
             if ($this->session->userdata('Rol_acceso') > 1 || $this->session->userdata('Id') == 3) //USUARIO 3, FRANCO DÍAZ 
             {
                 $this->load->view('ventas_produccion');
@@ -88,7 +89,6 @@ class ventas extends CI_Controller
             {
                 header("Location: " . base_url() . "login"); /// enviar a pagina de error
             }
-
         }
     }
 
@@ -1046,9 +1046,14 @@ class ventas extends CI_Controller
         /// ACA VIENE EL FILTRO, SOLO VA A BUSCAR EN LAS VENTAS DONDE EL USUARIO LOGUEADO HAYA SIDO ELEGIDO.
         if ($this->session->userdata('Rol_acceso') < 4)
         {
-            if($this->session->userdata('Id') == 3)
+            if($this->session->userdata('Id') == 3) /// ROL 3 es Franco
             {
                 // Si es el diseñador gráfico quien podrá ver todo el proceso
+            }
+            elseif($this->session->userdata('Id') == 7) /// ROL 7 que es belen
+            {
+                // Si es el encargado de smart, puede ver solo productos de smart en producción.
+                $this->db->where('tbl_fabricacion.Empresa_id', 3); // Empresa 3 es smart
             }
             else
             {

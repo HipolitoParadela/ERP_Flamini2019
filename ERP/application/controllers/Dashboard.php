@@ -28,7 +28,7 @@ class Dashboard extends CI_Controller
         }
     }
 
-    /// CANTIDAD DE LISTADOS DE MES EN CURSO
+/// CANTIDAD DE LISTADOS DE MES EN CURSO
     public function obtener_cantidad_de_items_stoqueados()
     {
         //$this->datosObtenidos = json_decode(file_get_contents('php://input'));
@@ -60,7 +60,7 @@ class Dashboard extends CI_Controller
     }
 
 
-    /// CANTIDAD DE USUARIOS A LA FECHA
+/// CANTIDAD DE USUARIOS A LA FECHA
     public function obtener_cantidad_usuarios()
     {
 
@@ -87,7 +87,7 @@ class Dashboard extends CI_Controller
     }
     
 
-    /// CONSULTAR ALS VENTAS DEL AÑO
+/// CONSULTAR ALS VENTAS DEL AÑO
     public function obtener_cantCompras()
     {
         $Anio = date('Y');
@@ -116,7 +116,7 @@ class Dashboard extends CI_Controller
     }
 
 
-    /// CANTIDAD DE PRDUCTOS DE FABRICACIÓN PROPIA
+/// CANTIDAD DE PRDUCTOS DE FABRICACIÓN PROPIA
     public function obtener_productosPropios()
     {
         $Anio = date('Y');
@@ -146,7 +146,7 @@ class Dashboard extends CI_Controller
 
     
     
-    /// CONSULTAR LAS VENTAS DE HOY
+/// CONSULTAR LAS VENTAS DE HOY
     public function obtener_listado_comandas_hoy()
     {
 
@@ -203,7 +203,7 @@ class Dashboard extends CI_Controller
 
     }
 
-    /// CONSULTAR LAS VENTAS DE AYER
+/// CONSULTAR LAS VENTAS DE AYER
     public function obtener_listado_comandas_de_ayer()
     {
         //$this->datosObtenidos = json_decode(file_get_contents('php://input'));
@@ -263,7 +263,7 @@ class Dashboard extends CI_Controller
 
     }
 
-    /// info Minuto a minuto
+/// info Minuto a minuto
     public function infoTimeline()
     {
         $this->datosObtenidos = json_decode(file_get_contents('php://input'));
@@ -323,7 +323,46 @@ class Dashboard extends CI_Controller
 
     }
 
-    /// Logs presencia
+/// LISTADO DE SEGUIMIENTO DE PERSONAL
+    public function obtener_seguimiento_personal()
+    {
+
+        //Esto siempre va es para instanciar la base de datos
+        $CI = &get_instance();
+        $CI->load->database();
+        //Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+        $this->db->select(' tbl_usuarios_seguimiento.*,
+                            tbl_usuarios.Nombre,
+                            tbl_usuarios.Imagen,
+                            tbl_usuarios.Id as Usuarios_id,
+                            tbl_usuarios_seguimiento_categorias.Nombre_categoria');
+
+        $this->db->from('tbl_usuarios_seguimiento');
+
+        $this->db->join('tbl_usuarios', 'tbl_usuarios.Id = tbl_usuarios_seguimiento.Usuario_id', 'left');
+        $this->db->join('tbl_usuarios_seguimiento_categorias', 'tbl_usuarios_seguimiento_categorias.Id = tbl_usuarios_seguimiento.Categoria_id', 'left');
+
+        $this->db->order_by("tbl_usuarios_seguimiento.Fecha", "desc");
+        $this->db->limit(25, 0); /// paginación
+
+        //$this->db->where("DATE_FORMAT(tbl_usuarios_seguimiento.Fecha,'%Y-%m-%d')", $fecha_ayer);
+
+        $this->db->where('tbl_usuarios_seguimiento.Visible', 1);
+
+        $query = $this->db->get();
+        $result = $query->result_array();
+
+        echo json_encode($result);
+
+    }
+
+/// Logs presencia
     public function obtener_log_presencia()
     {
         //Esto siempre va es para instanciar la base de datos
@@ -353,7 +392,7 @@ class Dashboard extends CI_Controller
         $query = $this->db->get();
         $result_presentes = $query->result_array();
 
-        /// OBTENIENDO LA LISTA COMPLETA DE LOS LOG
+    /// OBTENIENDO LA LISTA COMPLETA DE LOS LOG
         $Pagina_actual = $this->datosObtenidos->Actual;
 
         $inicio = 0;

@@ -18,7 +18,7 @@ include "menusidebar.php";
                 <div class="row">
                     <div class="col-md-12">
                         <!-- DATA TABLE -->
-                        <h3 class="title-5 m-b-35">Listado de stock de insumos para producción</h3>
+                        <h3 class="title-5 m-b-35">Stock de productos para reventa</h3>
 
                         <div class="table-data__tool">
                             <div class="table-data__tool-left">
@@ -59,13 +59,13 @@ include "menusidebar.php";
                                         <td>
                                             <div class="round-img">
                                                 <a href="#modalFotoItem" data-toggle="modal" v-on:click="editarFormularioItemFoto(stock)">
-                                                    <img v-if="stock.Imagen != null" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+stock.Imagen" width="60px">
-                                                    <img v-else src="<?php echo base_url(); ?>uploads/imagenes/addimagen.jpg" width="50px" alt="">
+                                                    <img class="img-fluid" v-if="stock.Imagen != null" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+stock.Imagen" width="60px">
+                                                    <img class="img-fluid" v-else src="<?php echo base_url(); ?>uploads/imagenes/addimagen.jpg" width="50px" alt="">
                                                 </a>
                                             </div>
                                         </td>
                                         <td>
-                                            <a v-bind:href="'stock/movimientos/?Id='+stock.Id" class="btn btn-link">
+                                            <a v-bind:href="'<?php echo base_url(); ?>stock/movimientos/?Id='+stock.Id" class="btn btn-link">
                                                 {{stock.Nombre_item}}
                                             </a>
                                         </td>
@@ -93,7 +93,7 @@ include "menusidebar.php";
                                         <td>
                                             <div class="table-data-feature">
 
-                                                <a class="item" v-bind:href="'stock/movimientos/?Id='+stock.Id" title="Ver movimientos">
+                                                <a class="item" v-bind:href="'<?php echo base_url(); ?>stock/movimientos/?Id='+stock.Id" title="Ver movimientos">
                                                     <i class="zmdi zmdi-mail-send"></i>
                                                 </a>
                                                 <button class="item" v-on:click="editarFormulariostock(stock)" data-toggle="modal" data-target="#stockmodal" data-placement="top" title="Edición rápida">
@@ -176,8 +176,8 @@ include "menusidebar.php";
                 </div>
                 <div class="modal-body">
                     <p aling="center">
-                        <img v-if="stockFoto.Imagen != null" class="avatar_grande" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+stockFoto.Imagen" alt="">
-                        <img v-else class="avatar_grande" src="<?php echo base_url(); ?>uploads/imagenes/addimagen.jpg" alt="">
+                        <img class="img-fluid" v-if="stockFoto.Imagen != null" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+stockFoto.Imagen" alt="">
+                        <img class="img-fluid" v-else  src="<?php echo base_url(); ?>uploads/imagenes/addimagen.jpg" alt="">
                     </p>
                     <hr>
                     <div class="horizontal-form">

@@ -1641,6 +1641,7 @@ new Vue({
         this.obtener_cantProductosPropios();
         this.valorDolar();
         this.noticiasGoogle();
+        this.seguimientoPersonal();
 
 
         //setInterval(() => { this.getTimeline(0, null); }, 60000); //// funcion para actualizar automaticamente cada 1minuto
@@ -1657,7 +1658,8 @@ new Vue({
         listaVentas: [],
         cantProductosPropios: '0',
         valorDolarHoy: '',
-        listaNoticias: {}
+        listaNoticias: {},
+        listaSeguimientoPersonal: []
     },
 
     methods:
@@ -1833,6 +1835,18 @@ new Vue({
 
             });
         },
+
+        //// MOSTRAR LISTADO DE SEGUIMIENTO PERSONAL
+        seguimientoPersonal: function () {
+            var url = base_url + 'dashboard/obtener_seguimiento_personal'; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token
+            }).then(response => {
+                this.listaSeguimientoPersonal = response.data
+            });
+        },
+
 
 
 
@@ -3727,9 +3741,9 @@ new Vue({
         },
 
         //// SUMAR PRODUCTOS   
-        calcularMontosVentas: function (n1, n2, n3, n4) {
+        calcularMontosVentas: function (n1, n2, n3, n4, n5) {
 
-            var Total = parseInt(n1) + parseInt(n2) + parseInt(n3) - parseInt(n4);
+            var Total = parseInt(n1) + parseInt(n2) + parseInt(n3) +  parseInt(n4) - parseInt(n5);
 
             return Total;
         },

@@ -847,7 +847,7 @@ include "menusidebar.php";
                                                 <strong>Total productos</strong>
                                             </div>
                                             <div class="card-body">
-                                                <h3 align="center"> ${{sumarProductos(listaProductosVendidos) | Moneda}}</h3>
+                                                <h3 align="center"> ${{sumarProductos(listaProductosVendidos) + sumarProductos(listaProductosReventaLote) | Moneda}}</h3><br>
                                             </div>
                                         </div>
                                     </div>
@@ -877,8 +877,8 @@ include "menusidebar.php";
                                                 <strong>Total a cobrar</strong>
                                             </div>
                                             <div class="card-body">
-                                                <h3 align="center"> $ {{calcularMontosVentas(sumarProductos(listaProductosVendidos), ventaDatos.Valor_logistica, ventaDatos.Valor_instalacion, 0) | Moneda}}</h3>
-
+                                                <h3 align="center"> $ {{calcularMontosVentas(sumarProductos(listaProductosVendidos), ventaDatos.Valor_logistica, ventaDatos.Valor_instalacion, sumarProductos(listaProductosReventaLote), 0) | Moneda}}</h3>
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -898,7 +898,7 @@ include "menusidebar.php";
                                                 <strong>Saldo</strong>
                                             </div>
                                             <div class="card-body">
-                                                <h3 align="center"> ${{ calcularMontosVentas(sumarProductos(listaProductosVendidos), ventaDatos.Valor_logistica, ventaDatos.Valor_instalacion, listaMovimientos.Total) | Moneda}}</h3>
+                                                <h3 align="center"> ${{ calcularMontosVentas(sumarProductos(listaProductosVendidos), ventaDatos.Valor_logistica, ventaDatos.Valor_instalacion, sumarProductos(listaProductosReventaLote), listaMovimientos.Total) | Moneda}}</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -907,7 +907,7 @@ include "menusidebar.php";
                                     <div class="col-lg-6">
                                         <div class="card">
                                             <div class="card-header">
-                                                <strong>Productos</strong>
+                                                <strong>Productos propios</strong>
                                             </div>
                                             <div class="card-body">
 
@@ -931,7 +931,7 @@ include "menusidebar.php";
                                                                         <td>{{productos.Nombre_producto}}</td>
 
                                                                         <td align="center">{{productos.Cantidad}}</td>
-                                                                        <td align="right">{{productos.Precio_venta}}</td>
+                                                                        <td align="right">${{productos.Precio_venta | Moneda}}</td>
                                                                         <!-- <td>{{productos.Subtotal}}</td> -->
                                                                     </tr>
                                                                 </tbody>
@@ -941,6 +941,51 @@ include "menusidebar.php";
                                                                         <th></th>
                                                                         <th colspan="2">
                                                                             <h4 align="right">${{sumarProductos(listaProductosVendidos) | Moneda}}</h4>
+                                                                        </th>
+                                                                    </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <strong>Productos de reventa</strong>
+                                            </div>
+                                            <div class="card-body">
+
+                                                <div class="bootstrap-data-table-panel col-lg-12">
+                                                    <div class="table-responsive">
+                                                        <div class="table-responsive">
+                                                            <table id="table2excel" class="table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        
+                                                                        <th>Producto</th>
+
+                                                                        <th>Cantidad</th>
+                                                                        <th>Precio</th>
+                                                                        <!-- <th>Subtotal</th> -->
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr v-for="productosRev in listaProductosReventaLote">
+                                                                        <td>{{productosRev.Nombre_item}}</td>
+
+                                                                        <td align="center">{{productosRev.Cantidad}}</td>
+                                                                        <td align="right">${{productosRev.Precio_venta_producto | Moneda}}</td>
+                                                                        <!-- <td>{{productosRev.Subtotal}}</td> -->
+                                                                    </tr>
+                                                                </tbody>
+                                                                <tfoot>
+                                                                    <tr>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th colspan="2">
+                                                                            <h4 align="right">${{sumarProductos(listaProductosReventaLote) | Moneda}}</h4>
                                                                         </th>
                                                                     </tr>
                                                                 </tfoot>

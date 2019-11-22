@@ -23,8 +23,13 @@
                             </a>
                         </li>
                         <li>
+                            <a href="<?= base_url();?>fabricacion">
+                                <i class="fas fa-barcode"></i>Productos propios
+                            </a>
+                        </li>
+                        <li>
                             <a href="<?= base_url();?>stock/pruductosdereventa">
-                                <i class="fa fa-dropbox"></i>Productos de reventa
+                                <i class="fas fa-barcode"></i>Productos de reventa
                             </a>
                         </li>
                         <li>
@@ -48,11 +53,7 @@
                                 <i class="fas fa-list-alt"></i>Insumos producción
                             </a>
                         </li>
-                        <li>
-                            <a href="<?= base_url();?>fabricacion">
-                                <i class="fas fa-barcode"></i>Productos propios
-                            </a>
-                        </li>
+                        
                         <li>
                             <a href="<?= base_url();?>fabricacion/stockfabricados/?Id=1">
                                 <i class="fas fa-retweet"></i>Stock de reserva
@@ -105,15 +106,16 @@
                             </a>
                         </li>
                         <li>
+                            <a href="<?= base_url();?>stock/pruductosdereventa">
+                                <i class="fas fa-barcode"></i>Productos de reventa
+                            </a>
+                        </li>
+                        <li>
                             <a href="<?= base_url();?>fabricacion/stockfabricados/?Id=1">
                                 <i class="fas fa-retweet"></i>Stock de reserva
                             </a>
                         </li>
-                        <li>
-                            <a href="<?= base_url();?>stock/pruductosdereventa">
-                                <i class="fa fa-dropbox"></i>Productos de reventa
-                            </a>
-                        </li>
+                        
                         <li>
                             <a href="<?= base_url();?>stock">
                                 <i class="fas fa-list-alt"></i>Insumos producción</a>
