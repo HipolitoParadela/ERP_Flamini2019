@@ -34,7 +34,7 @@ include "menusidebar.php";
                                 <p align="center">
                                     Puntaje RRHH</b>
                                 </p>
-                                <h2 align="center">
+                                <h2 align="center" v-bind:class="classColorReporte(promedioCalificaciones(listaSeguimiento))">
                                     {{promedioCalificaciones(listaSeguimiento)}}
                                 </h2>
                                 
@@ -340,7 +340,9 @@ include "menusidebar.php";
                                                             <!-- <td>{{seguimiento.Nombre_proveedor}}</td> -->
                                                             <td>{{seguimiento.Fecha | Fecha}}</td>
                                                             <td>{{seguimiento.Descripcion}}</td>
-                                                            <td align="center">{{seguimiento.Calificacion}}</td>
+                                                            <td align="center">
+                                                                <h3 v-bind:class="classColorReporte(seguimiento.Calificacion)">{{seguimiento.Calificacion}}</h3>
+                                                            </td>
                                                             <td>{{seguimiento.Nombre_categoria}}</td>
                                                             <td><a v-if="seguimiento.Url_archivo != null" target="_blank" v-bind:href="'<?php echo base_url(); ?>uploads/imagenes/'+seguimiento.Url_archivo"> Ver archivo</a></td>
                                                             <td>{{seguimiento.Nombre}}</td>

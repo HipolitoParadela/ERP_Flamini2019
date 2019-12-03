@@ -24,7 +24,7 @@ include "menusidebar.php";
                                     <div class="card-body">
                                         <div class="user-photo m-b-30">
                                             <img v-if="productoDatos.Imagen != null" width="420px" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+productoDatos.Imagen" alt="">
-                                            <img v-else src="http://pxresto.com/pxresto/uploads/imagenes/addimagen.jpg" alt="">
+                                            <img v-else src="<?php echo base_url(); ?>uploads/imagenes/addimagen.jpg" alt="">
                                         </div>
                                         <h5 class="text-sm-center mt-2 mb-1">{{productoDatos.Nombre_producto}}</h5>
                                         <div class="location text-sm-center">

@@ -115,6 +115,14 @@ new Vue({
             this.getListadoEmpresas();
         }
 
+        if (pathname == carpeta + 'usuarios/resumenreportes') 
+        {
+            this.resumenReportes();
+            this.getSuperiores();
+            this.getListadoEmpresas();
+            this.getListadoPuesto();
+        }
+
         if (pathname == carpeta + 'curriculum/todos') {
             this.getListadoCurriculums();
             //this.getListadoRoles();
@@ -219,6 +227,7 @@ new Vue({
             'Fecha_baja': '',
             'Activo': 1
         },
+        listaReportes: [],
 
         usuarioFoto: { 'Id': '', 'Nombre': '', 'Imagen': '' },
         Archivo: '',
@@ -459,6 +468,51 @@ new Vue({
                     console.log(error)
                     this.preloader = 0;
                 });
+        },
+
+        //// REPORTES RESUMEN | MOSTRAR LISTADO
+        resumenReportes: function () {
+            var url = base_url + 'usuarios/obtener_resumenReportes/?estado=1&empresa=' + this.filtro_empresa + '&puesto=' + this.filtro_puesto; // url donde voy a mandar los datos
+
+            axios.post(url, {
+                token: token
+            }).then(response => {
+
+                this.listaReportes = response.data
+
+                //console.log(this.listaReportes)
+
+            }).catch(error => {
+                
+                console.log(error.response.data)
+            });
+        },
+
+        //// USUARIOS | OBTENER USUARIOS LIDERES
+        getSuperiores: function () {
+            var url = base_url + 'usuarios/obtener_lideres';  //// averiguar como tomar el Id que viene por URL aca
+
+            axios.post(url, {
+                token: token
+            }).then(response => {
+                this.listaSuperiores = response.data
+
+
+            });
+        },
+
+        //// REPORTES RESUMEN | COLOREAR ITEMS BAJOS DE STOCK
+        classColorReporte: function (numero) 
+        {
+            var numero = Math.round(numero);
+
+            if (numero == 5) { return 'text-success' }
+            else if (numero == 4) { return 'text-success' }
+            else if (numero == 3) { return 'text-secondary' }
+            else if (numero == 2) { return 'text-warning' }
+            else if (numero == 1) { return 'text-danger' }
+            else { return ''  }
+            
         },
 
         //// Carga el formulario Items para editar FOTO
@@ -1847,6 +1901,8 @@ new Vue({
             });
         },
 
+        
+
 
 
 
@@ -1860,15 +1916,19 @@ new Vue({
 new Vue({
     el: '#usuarios',
 
-    created: function () {
-        this.getDatosUsuario();
-        this.getListadoRoles();
-        this.getFormaciones();
-        this.getSuperiores();
-        this.getListadoEmpresas();
-        this.getListadoPuesto();
-        this.getListadoSeguimiento();
-        this.getListadoCategoriasSeguimiento();
+    created: function () 
+    {
+            this.getDatosUsuario();
+            this.getListadoRoles();
+            this.getFormaciones();
+            this.getSuperiores();
+            this.getListadoEmpresas();
+            this.getListadoPuesto();
+            this.getListadoSeguimiento();
+            this.getListadoCategoriasSeguimiento();
+        
+        
+        
     },
 
     data: {
@@ -1927,6 +1987,13 @@ new Vue({
         //CATEGORIA SEGUIMIENTO
         listaCatReportes: [],
         catReporte: {},
+
+        listaReportes: [],
+
+        filtro_puesto: "0",
+        filtro_empresa: "0",
+        filtro_sexo: '0',
+        filtro_edad: '0',
     },
 
     methods:
@@ -2167,7 +2234,6 @@ new Vue({
             this.seguimientoData = {}
         },
 
-
         //// CATEGORIAS SEGUIMIENTO | MOSTRAR LISTADO
         getListadoCategoriasSeguimiento: function () {
             var url = base_url + 'usuarios/obtener_categorias_seguimientos'; // url donde voy a mandar los datos
@@ -2229,13 +2295,30 @@ new Vue({
             
                     Promedio = Promedio + item;
                 }
-                return Promedio / datos.length
+                Promedio = Promedio / datos.length
+                return Promedio.toFixed(2)
             }
             else 
             {
                 return "Sin datos";
             }
         },
+
+        //// REPORTES RESUMEN | COLOREAR ITEMS BAJOS DE STOCK
+        classColorReporte: function (numero) 
+        {
+            var numero = Math.round(numero);
+
+            if (numero == 5) { return 'text-success' }
+            else if (numero == 4) { return 'text-success' }
+            else if (numero == 3) { return 'text-secondary' }
+            else if (numero == 2) { return 'text-warning' }
+            else if (numero == 1) { return 'text-danger' }
+            else { return ''  }
+            
+        },
+
+         
     },
 
     ////// ACCIONES COMPUTADAS     

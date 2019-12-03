@@ -43,6 +43,26 @@ class Usuarios extends CI_Controller
         }
     }
 
+//// USUARIOS       | VISTA | RESUMEN REPORTES
+    public function resumenreportes()
+    {
+        if ($this->session->userdata('Login') != true) {
+            header("Location: " . base_url() . "login"); /// enviar a pagina de error
+        } else {
+            ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
+            //if (plan_contratado() > 3) {}
+
+            if ($this->session->userdata('Rol_acceso') > 4 || $this->session->userdata('Id') == 12) 
+            {
+                $this->load->view('usuarios_resumen_puntajes');
+                
+            } else {
+                header("Location: " . base_url() . "login"); /// enviar a pagina de error
+            }
+
+        }
+    }
+
 //// USUARIOS 	    | OBTENER USUARIOS
 	public function obtener_Usuarios()
     {
@@ -581,7 +601,7 @@ class Usuarios extends CI_Controller
         $this->db->where('tbl_usuarios_seguimiento.Usuario_id', $Id);
         $this->db->where('tbl_usuarios_seguimiento.Visible', 1);
 
-        $this->db->order_by('tbl_usuarios_seguimiento.Id', 'desc');
+        $this->db->order_by('tbl_usuarios_seguimiento.Fecha', 'desc');
         $query = $this->db->get();
         $result = $query->result_array();
 
@@ -746,6 +766,129 @@ class Usuarios extends CI_Controller
         } else {
             echo json_encode(array("Id" => 'Error'));
         }
+    }
+
+//// RESUMEN REPORTES   | OBTENER TABLA
+	public function obtener_resumenReportes()
+    {
+			
+        //Esto siempre va es para instanciar la base de datos
+        $CI =& get_instance();
+        $CI->load->database();
+		$token = @$CI->db->token;
+
+           
+        /// ARRAY DE USUARIOS
+            $estado = 1;
+            $empresa = $_GET["empresa"];
+            $puesto = $_GET["puesto"];
+
+            $this->db->select('	tbl_usuarios.*,
+                                tbl_roles.Nombre_rol,
+                                tbl_empresas.Nombre_empresa,
+                                tbl_puestos.Nombre_puesto,
+                                tbl_lider.Nombre as Nombre_lider');
+            $this->db->from('tbl_usuarios');
+            $this->db->join('tbl_roles', 'tbl_roles.Acceso = tbl_usuarios.Rol_acceso','left');
+            $this->db->join('tbl_empresas', 'tbl_empresas.Id = tbl_usuarios.Empresa_id', 'left');
+            $this->db->join('tbl_puestos', 'tbl_puestos.Id = tbl_usuarios.Puesto_Id', 'left');
+            $this->db->join('tbl_usuarios as tbl_lider', 'tbl_lider.Id = tbl_usuarios.Superior_inmediato', 'left');
+            $this->db->where('tbl_usuarios.Activo',$estado);
+
+            if($empresa > 0) { $this->db->where('tbl_usuarios.Empresa_id', $empresa); }
+            if ($puesto > 0) {  $this->db->where('tbl_usuarios.Puesto_Id', $puesto); }
+
+            $this->db->order_by("Nombre", "asc");
+            $query = $this->db->get();
+            $array_usuarios = $query->result_array();
+
+        /// ARRAY DE CATEGORIAS
+            $this->db->select('*');
+            $this->db->from('tbl_usuarios_seguimiento_categorias');
+            $this->db->where('Visible', 1);
+            $this->db->order_by('Nombre_categoria', 'asc');
+            $query = $this->db->get();
+            $array_categorias = $query->result_array();
+        
+        
+        
+        /// Armando el array final
+            $Datos_reportes = array();
+            
+            foreach ($array_usuarios as $usuario) 
+            {
+                $Datos_reportes_usuarios = array();
+                $suma_calificaciones_totales = 0;
+                $cant_calificaciones_encontradas = 0;
+            
+                // comienzo a recorrer categoría por categoría, buscando los reportes que pueda tener este usuario y generando un promedio.
+                foreach ($array_categorias as $categoria) 
+                {
+
+                    $this->db->select('Calificacion');
+                    $this->db->from('tbl_usuarios_seguimiento');
+                    $this->db->where('Usuario_id', $usuario["Id"]);
+                    $this->db->where('Categoria_id', $categoria["Id"]);
+                    $this->db->where('Visible', 1);
+                    
+                    $query = $this->db->get();
+                    $result_calificaciones = $query->result_array();
+
+                    if ($query->num_rows() > 0) 
+                    {
+                        $suma_calificaciones = 0;
+
+                        // recorre todas las calificaciones que encuentre de ese usuario y de esa categoria
+                        foreach ($result_calificaciones as $calificacion) 
+                        {
+                            $suma_calificaciones = $suma_calificaciones + $calificacion["Calificacion"];
+                        }
+                        
+                        $promedio = $suma_calificaciones / $query->num_rows();
+                        $promedio = round($promedio, 2);
+
+                        $suma_calificaciones_totales = $suma_calificaciones_totales + $suma_calificaciones; /// sumando calificaciones, para dar con promedio general
+                        $cant_calificaciones_encontradas = $cant_calificaciones_encontradas + $query->num_rows(); /// sumando cantidad de calificaciones encontradas, para dar con el divisor general
+                    } 
+                    else 
+                    {
+                        $promedio = "";
+                    }
+
+                    array_push($Datos_reportes_usuarios, $promedio);
+                    
+                }
+                
+                if($cant_calificaciones_encontradas > 0)
+                {
+                    $promedio_general = $suma_calificaciones_totales / $cant_calificaciones_encontradas; /// sacando promedio general de la persona
+                    $promedio_general = round($promedio_general, 2);
+                }
+                else
+                {
+                    $promedio_general = ""; 
+                }
+                    
+                
+                $datos_usuario = array(
+                                        "Datos_usuario" => $usuario,
+                                        "Datos_reportes_usuario" => $Datos_reportes_usuarios,
+                                        "Promedio_general" => $promedio_general,
+                                    );
+                
+                array_push( $Datos_reportes, $datos_usuario);
+            
+            }
+            
+            
+            // necesito, un array de las categorias solas, y otro de los usaurios y su tabla, incluso también uno de los totales por categoría. si no es mucho lio.
+            $Datos = array(
+                            "Categorias" => $array_categorias,
+                            "Reportes" => $Datos_reportes
+                        );
+            
+        echo json_encode($Datos);
+		
     }
 
 ///// fin documento

@@ -40,25 +40,25 @@ class Stock extends CI_Controller
         }
     }
 
-//// STOCK          | PRODUCTOS DE REVENTA | DATOS
-public function pruductosdereventa()
-{
-    if ($this->session->userdata('Login') != true) {
-        header("Location: " . base_url() . "login"); /// enviar a pagina de error
-    } else {
-        ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
-        //if (plan_contratado() > 3) {}
-
-        if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7) 
-        {
-            $this->load->view('stock_productos_reventa');
-            
-        } else {
+//// STOCK          | VISTA | PRODUCTOS DE REVENTA | DATOS
+    public function pruductosdereventa()
+    {
+        if ($this->session->userdata('Login') != true) {
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
-        }
+        } else {
+            ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
+            //if (plan_contratado() > 3) {}
 
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7) 
+            {
+                $this->load->view('stock_productos_reventa');
+                
+            } else {
+                header("Location: " . base_url() . "login"); /// enviar a pagina de error
+            }
+
+        }
     }
-}
 
 //// STOCK 	        | OBTENER LISTADO STOCK
 	public function obtener_listado_de_stock()

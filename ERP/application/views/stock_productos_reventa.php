@@ -89,7 +89,7 @@ include "menusidebar.php";
                                                 <i class="fa fa-chevron-circle-down"></i>
                                             </button>
                                         </td> -->
-                                        <td>{{stock.Fecha_hora | FechaTimeBD}}</td>
+                                        <td>{{stock.Fecha_hora | FechaTimestampBaseDatos}}</td>
                                         <td>
                                             <div class="table-data-feature">
 

@@ -123,8 +123,6 @@ include "menusidebar.php";
                                         <td v-show="filtro_estado < 10">{{formatoFecha(venta.Fecha_estimada_entrega)}}</td>
                                         <td v-show="filtro_estado < 10">{{diferenciasEntre_fechas(null, venta.Fecha_estimada_entrega)}}</td>
 
-
-
                                         <td>{{venta.Observaciones}}</td>
                                         <td>
                                             <div class="table-data-feature">

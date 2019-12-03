@@ -17,8 +17,6 @@ include "menusidebar.php";
             <div class="container-fluid">
                 <div class="row">
 
-
-
                     <!-- SECCION FICHA cliente -->
                     <div class="col-lg-12">
                         <ul class="nav nav-tabs">

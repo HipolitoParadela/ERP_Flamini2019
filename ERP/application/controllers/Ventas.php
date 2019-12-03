@@ -207,16 +207,16 @@ class ventas extends CI_Controller
 					
 				);
 
-        $this->load->model('App_model');
-        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas');
-                
-        //// si cargo bien esto, toma el id de la orden y la carga en la tbl_ordentrabajo_seguimietno
-        if ($insert_id >=0 ) 
-		{   
-            
-            if($Id == null) {   $descripcion_seguimiento = "Inicio de fabricación";    }
-            else {   $descripcion_seguimiento = "Se actualizaron los datos en la ficha de esta venta.";
-   }
+                $this->load->model('App_model');
+                $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas');
+                        
+                //// si cargo bien esto, toma el id de la orden y la carga en la tbl_ordentrabajo_seguimietno
+                if ($insert_id >=0 ) 
+                {   
+                    
+                    if($Id == null) {   $descripcion_seguimiento = "Inicio de fabricación";    }
+                    else {   $descripcion_seguimiento = "Se actualizaron los datos en la ficha de esta venta.";
+        }
             
             $data = array(
 
