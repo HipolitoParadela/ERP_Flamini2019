@@ -60,6 +60,27 @@ class Stock extends CI_Controller
         }
     }
 
+
+//// STOCK          | VISTA | PAÑOL | DATOS
+public function panol()
+{
+    if ($this->session->userdata('Login') != true) {
+        header("Location: " . base_url() . "login"); /// enviar a pagina de error
+    } else {
+        ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
+        //if (plan_contratado() > 3) {}
+
+        if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7) 
+        {
+            $this->load->view('stock_panol');
+            
+        } else {
+            header("Location: " . base_url() . "login"); /// enviar a pagina de error
+        }
+
+    }
+}
+
 //// STOCK 	        | OBTENER LISTADO STOCK
 	public function obtener_listado_de_stock()
     {
@@ -70,6 +91,7 @@ class Stock extends CI_Controller
 		$token = @$CI->db->token;
 
         //$estado = $_GET["estado"];
+        $tipo = $_GET["tipo"];
         $categoria = $_GET["categoria"];
 
 
@@ -82,10 +104,8 @@ class Stock extends CI_Controller
 
         $this->db->where('tbl_stock.Visible', 1);
 
-        if($categoria > 0)
-        {
-            $this->db->where('tbl_stock.Categoria_id', $categoria);
-        }
+        if($categoria > 0) { $this->db->where('tbl_stock.Categoria_id', $categoria); }
+        if( $tipo > 0 )         { $this->db->where('tbl_stock.Tipo', $tipo); }
 
 		$this->db->order_by("tbl_stock_movimientos.Fecha_hora", "desc");
         $query = $this->db->get();
@@ -432,7 +452,9 @@ class Stock extends CI_Controller
 	
 		$data = array(
                         
+                    'Tipo' => 		        $this->datosObtenidos->Tipo,
                     'Nombre_item' => 		$this->datosObtenidos->Data->Nombre_item,
+                    'Unidad_medida'=>       $this->datosObtenidos->Data->Unidad_medida,
                     'Cant_actual' => 		$this->datosObtenidos->Data->Cant_actual,
 					'Categoria_id' => 		$this->datosObtenidos->Data->Categoria_id,
 					'Descripcion' => 		$this->datosObtenidos->Data->Descripcion,
@@ -454,45 +476,6 @@ class Stock extends CI_Controller
         }
     }
 
-//// STOCK 	        | DESACTIVAR USUARIO
-	public function desactivar_usuario()
-    {
-        $CI =& get_instance();
-		$CI->load->database();
-		
-		$token = @$CI->db->token;
-        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
-        if ($this->datosObtenidos->token != $token)
-        { 
-            exit("No coinciden los token");
-        }
-
-		$Id = $this->usuario_existe($this->datosObtenidos->usuarioData->DNI);
-
-		$fecha = date("Y-m-d");
-
-		$data = array(
-                        
-                'Fecha_baja' =>             $fecha,   
-                'Activo' => 	            0,
-                'Ultima_actualizacion' =>   $fecha,
-                'Ultimo_editor_id' => 		$this->session->userdata('Id')    
-				);
-
-        $this->load->model('App_model');
-        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_usuarios');
-                
-		if ($insert_id >=0 ) 
-		{   
-            echo json_encode(array("Id" => $insert_id));         
-		} 
-		else 
-		{
-            echo json_encode(array("Id" => 0));
-        }
-
-        /// , A TENER EN CUENTA PARA LLEVAR UN SEGUIMIENTO DE QUIEN ELIMINO A ESTE USUARIO
-    }
 
 //// STOCK 	        | SUBIR FOTO
 	public function subirFotoStock()

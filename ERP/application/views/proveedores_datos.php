@@ -338,8 +338,6 @@ include "menusidebar.php";
         </div>
     </div>
     <!-- end modal proveedores -->
-    <!-- END MAIN CONTENT-->
-    <!-- END PAGE CONTAINER-->
     <!-- modal movimientos -->
     <div class="modal fade" id="movimientomodal" tabindex="-1" role="dialog" aria-labelledby="scrollmodalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">

@@ -18,12 +18,12 @@ include "menusidebar.php";
                 <div class="row">
                     <div class="col-md-12">
                         <!-- DATA TABLE -->
-                        <h3 class="title-5 m-b-35">Stock materias primas</h3>
+                        <h3 class="title-5 m-b-35">Pañol</h3>
 
                         <div class="table-data__tool">
                             <div class="table-data__tool-left">
                                 <div class="rs-select2--light">
-                                    <select class="form-control-sm form-control" v-model="filtro_categoria" v-on:change="getListadoStock(1, filtro_categoria)">
+                                    <select class="form-control-sm form-control" v-model="filtro_categoria" v-on:change="getListadoStockPanol(stock_tipo, filtro_categoria)">
                                         <option selected="selected" v-bind:value="0">Todas las categorías</option>
                                         <option v-for="categoriaSeleccionada in listaCategorias" v-bind:value="categoriaSeleccionada.Id">{{categoriaSeleccionada.Nombre_categoria}}</option>
                                     </select>
@@ -87,7 +87,7 @@ include "menusidebar.php";
                                             </div>
                                         </td>
                                         <td>
-                                            <a v-bind:href="'./stock/movimientos/?Id='+stock.Id" class="btn btn-link">
+                                            <a v-bind:href="'../stock/movimientos/?Id='+stock.Id" class="btn btn-link">
                                                 {{stock.Nombre_item}}
                                             </a>
                                         </td>
@@ -116,7 +116,7 @@ include "menusidebar.php";
                                         <td>
                                             <div class="table-data-feature">
 
-                                                <a class="item" v-bind:href="'./stock/movimientos/?Id='+stock.Id" title="Ver movimientos">
+                                                <a class="item" v-bind:href="'../stock/movimientos/?Id='+stock.Id" title="Ver movimientos">
                                                     <i class="zmdi zmdi-mail-send"></i>
                                                 </a>
                                                 <button class="item" v-on:click="editarFormulariostock(stock)" data-toggle="modal" data-target="#stockmodal" data-placement="top" title="Edición rápida">
@@ -314,13 +314,13 @@ include "menusidebar.php";
                         <div class="form-group">
                             <label class="control-label">Lote de venta en la que se utilizará esta pieza/producto</label>
                             <select class="form-control" v-model="egresoDato.Venta_id" required>
-                            <option value="0">Stock de reserva o para usos especiales</option>
+                                <option value="0">Stock de reserva o para usos especiales</option>
                                 <option v-for="venta in listaVentas" v-bind:value="venta.Id"> {{venta.Identificador_venta}} ---- Cliente {{venta.Nombre_cliente}}, {{venta.Nombre_vendedor}}</option>
                             </select>
                         </div>
                         <div class="horizontal-form">
                             <div class="form-group">
-                                <label class=" form-control-label">Cantidad retirada  en {{egresoDato.Unidad_medida}}</label>
+                                <label class=" form-control-label">Cantidad retirada en {{egresoDato.Unidad_medida}}</label>
                                 <input type="number" min="1" class="form-control" v-model="egresoDato.Cantidad" required>
                             </div>
                             <div class="form-group">

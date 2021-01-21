@@ -1,0 +1,29 @@
+Stock 
+
+- Listado de productos faltantes en stock, creo que esta en el de nico
+
+Compras
+- Poner ese mismo listado de stock
+- Sistema pra actualizar precios - en lo de nico deberia estar
+
+Ventas
+- Automatizar el descuento de items de cada producto - Puede estar en el ERP grande de pixel, o de px sistemas
+
+Cobranzas
+- Hablar yohana para ver como implementarlo
+
+
+
+_________________
+
+Yohana
+35173893
+Cobros2021-
+
+Paula Monte
+323894442
+IMU2021--
+
+Belén Gaido
+33670854
+..Compras2021

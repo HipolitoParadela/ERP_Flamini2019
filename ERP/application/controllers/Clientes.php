@@ -11,7 +11,7 @@ class clientes extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
 
-            if ($this->session->userdata('Rol_acceso') > 1)
+            if ($this->session->userdata('Rol_acceso') > 3  || $this->session->userdata('Id') == 6  || $this->session->userdata('Id') == 5)
             { 
                 $this->load->view('clientes_listado');
             } 
@@ -32,7 +32,7 @@ class clientes extends CI_Controller
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
             //if (plan_contratado() > 1) {}
 
-            if ($this->session->userdata('Rol_acceso') > 1) 
+            if ($this->session->userdata('Rol_acceso') > 3  || $this->session->userdata('Id') == 6  || $this->session->userdata('Id') == 5) 
             {
                 $this->load->view('clientes_datos');
                 

@@ -139,13 +139,22 @@ new Vue({
 
         if (pathname == carpeta + 'stock') {
             this.getListadoCategorias();
-            this.getListadoStock(0);
+            this.getListadoStock(2, 0);
             this.getListadoVentas(0, 0, 0, 1, 0);
+            
+        }
+
+        if (pathname == carpeta + 'stock/panol') {
+            this.getListadoCategorias();
+            this.getListadoStock(1, 0);
+            this.getListadoVentas(0, 0, 0, 1, 0);
+            
         }
 
         if (pathname == carpeta + 'stock/pruductosdereventa') {
-            this.getListadoStock(6);
+            this.getListadoStock(3, 0);
             this.getListadoVentas(0, 0, 0, 1, 0);
+            
         }
 
         if (pathname == carpeta + 'clientes') {
@@ -250,6 +259,7 @@ new Vue({
 
         listaStock: [],
         stockDato: { 'Id': '', 'Nombre_item': '', 'Categoria_id': '', 'Descripcion': '', 'Cant_actual': '0', 'Cant_ideal': '', 'Ult_modificacion_id': '' },
+        stock_tipo: 0,
 
         stockFoto: { 'Id': '', 'Nombre': '', 'Imagen': '' },
 
@@ -309,8 +319,8 @@ new Vue({
                 console.log(response.data)
 
             }).catch(error => {
-                alert("mal");
-                console.log(error.response.data)
+                console.log(error.response); //alert("mal");
+                console.log(error.response)
 
             }); */
         },
@@ -323,7 +333,7 @@ new Vue({
                 this.valorDolarHoy = response.data;
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -383,7 +393,7 @@ new Vue({
                 this.getListadoUsuarios(1);
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
                 toastr.success('Proceso realizado correctamente', 'Usuarios')
             });
@@ -405,7 +415,7 @@ new Vue({
                     this.getListadoUsuarios(1);
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
 
                 });
@@ -438,7 +448,7 @@ new Vue({
             }).catch(error => {
                 //toastr.error('Error al cargar el item'); // hacer funcionar esto, esta bueno
 
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
             });
         },
@@ -464,7 +474,7 @@ new Vue({
 
                     this.preloader = 0;
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
                     this.preloader = 0;
                 });
@@ -496,7 +506,6 @@ new Vue({
                 token: token
             }).then(response => {
                 this.listaSuperiores = response.data
-
 
             });
         },
@@ -640,7 +649,7 @@ new Vue({
                     toastr.success('Item eliminado correctamente', 'Comandas')
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
                 });
             }
@@ -687,7 +696,7 @@ new Vue({
                 this.getListadoEmpresas();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
 
             });
@@ -734,7 +743,7 @@ new Vue({
                 this.getListadoPuesto();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
 
             });
@@ -779,7 +788,7 @@ new Vue({
                     toastr.success('Proceso realizado correctamente', 'Usuarios')
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
                 });
             }
@@ -800,7 +809,7 @@ new Vue({
                     toastr.success('Proceso realizado correctamente', 'Usuarios')
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
 
                 });
@@ -850,15 +859,19 @@ new Vue({
                 this.getListadoCategorias();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
 
             });
         },
 
         //// STOCK |  MOSTRAR LISTADO DE CATEGORIAS
-        getListadoStock: function (categoria) {
-            var url = base_url + 'stock/obtener_listado_de_stock?categoria=' + categoria; // url donde voy a mandar los datos
+        getListadoStock: function (tipo, categoria) {
+
+            this.stock_tipo = tipo; 
+            console.log(tipo);
+
+            var url = base_url + 'stock/obtener_listado_de_stock?tipo='+ tipo +'&categoria=' + categoria; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -871,9 +884,12 @@ new Vue({
         crearStock: function () {
             var url = base_url + 'stock/cargar_stock_item'; // url donde voy a mandar los datos
 
+            if(!this.stockDato.Categoria_id){this.stockDato.Categoria_id = 0;}
+
             axios.post(url, {
                 token: token,
-                Data: this.stockDato
+                Data: this.stockDato,
+                Tipo: this.stock_tipo
             }).then(response => {
 
                 toastr.success('Proceso realizado correctamente', 'stock')
@@ -882,10 +898,10 @@ new Vue({
                 //this.texto_boton = "Actualizar"
                 this.stockDato = {}
 
-                this.getListadoStock(0);
+                this.getListadoStock(this.stock_tipo, 0);
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
 
             });
@@ -926,7 +942,7 @@ new Vue({
 
                     this.preloader = 0;
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
                     this.preloader = 0;
                 });
@@ -958,7 +974,7 @@ new Vue({
                 this.descripcionMovimiento = []
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -987,7 +1003,7 @@ new Vue({
                 this.getListadoStock(0);
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -1019,10 +1035,10 @@ new Vue({
 
                     toastr.success('Proceso realizado correctamente', 'Proveedores')
 
-                    this.getListadoStock(0);
+                    this.getListadoStock(this.stock_tipo, 0);
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
 
                 });
@@ -1071,7 +1087,7 @@ new Vue({
                 this.getListadoClientes();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
                 toastr.success('Proceso realizado correctamente', 'Usuarios')
             });
@@ -1093,7 +1109,7 @@ new Vue({
                     this.getListadoClientes();
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
 
                 });
@@ -1122,7 +1138,7 @@ new Vue({
 
                     this.preloader = 0;
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
                     this.preloader = 0;
                 });
@@ -1176,7 +1192,7 @@ new Vue({
                 this.getListadoProveedores();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
                 toastr.success('Proceso realizado correctamente', 'Proveedores')
             });
@@ -1198,7 +1214,7 @@ new Vue({
                     this.getListadoProveedores();
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
 
                 });
@@ -1227,7 +1243,7 @@ new Vue({
 
                     this.preloader = 0;
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
                     this.preloader = 0;
                 });
@@ -1282,7 +1298,7 @@ new Vue({
                 this.getListadoCategoriasProductos();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
 
             });
@@ -1316,7 +1332,7 @@ new Vue({
                 this.getListadoProductos(0, 0);
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
 
             });
@@ -1357,7 +1373,7 @@ new Vue({
 
                     this.preloader = 0;
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
                     this.preloader = 0;
                 });
@@ -1385,7 +1401,7 @@ new Vue({
                     this.getListadoProductos(0, 0);
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
 
                 });
@@ -1403,7 +1419,7 @@ new Vue({
             }).then(response => {
                 this.listaVentas = response.data
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -1426,7 +1442,7 @@ new Vue({
                 this.getListadoVentas(0, 0, 0, 1, 0);
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
             });
         },
@@ -1459,7 +1475,7 @@ new Vue({
                     this.getListadoVentas(this.filtro_vendedor, this.filtro_empresa, this.filtro_cliente, this.filtro_estado, this.filtro_planificacion);
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
                 });
             }
@@ -1498,7 +1514,7 @@ new Vue({
             }).then(response => {
                 this.listaPlanificaciones = response.data
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -1521,7 +1537,7 @@ new Vue({
                 this.getListadoPlanificaciones();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
             });
         },
@@ -1581,7 +1597,7 @@ new Vue({
                 this.getListadoCompras(0);
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
                 toastr.success('Proceso realizado correctamente', 'Usuarios')
             });
@@ -1603,7 +1619,7 @@ new Vue({
                     this.getListadoCompras(0);
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
 
                 });
@@ -1632,7 +1648,7 @@ new Vue({
 
                     this.preloader = 0;
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
                     this.preloader = 0;
                 });
@@ -1651,27 +1667,27 @@ new Vue({
     computed:
     {
         buscarUsuarios: function () {
-            return this.listaUsuarios.filter((item) => item.Nombre.toLowerCase().includes(this.buscar));
+            return this.listaUsuarios.filter((item) => item.Nombre.toLowerCase().includes(this.buscar.toLowerCase()));
         },
 
         buscarCurriculums: function () {
-            return this.listaCurriculums.filter((item) => item.nombre.toLowerCase().includes(this.buscar));
+            return this.listaCurriculums.filter((item) => item.nombre.toLowerCase().includes(this.buscar.toLowerCase()));
         },
 
         buscarStock: function () {
-            return this.listaStock.filter((item) => item.Nombre_item.toLowerCase().includes(this.buscar));
+            return this.listaStock.filter((item) => item.Nombre_item.toLowerCase().includes(this.buscar.toLowerCase()));
         },
 
         buscarCliente: function () {
-            return this.listaClientes.filter((item) => item.Nombre_cliente.toLowerCase().includes(this.buscar));
+            return this.listaClientes.filter((item) => item.Nombre_cliente.toLowerCase().includes(this.buscar.toLowerCase()));
         },
 
         buscarProveedor: function () {
-            return this.listaProveedores.filter((item) => item.Nombre_proveedor.toLowerCase().includes(this.buscar));
+            return this.listaProveedores.filter((item) => item.Nombre_proveedor.toLowerCase().includes(this.buscar.toLowerCase()));
         },
 
         buscarProducto: function () {
-            return this.listaProductos.filter((item) => item.Nombre_producto.toLowerCase().includes(this.buscar));
+            return this.listaProductos.filter((item) => item.Nombre_producto.toLowerCase().includes(this.buscar.toLowerCase()));
         },
 
     }
@@ -1857,7 +1873,7 @@ new Vue({
             }).then(response => {
                 this.listaVentas = response.data
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -1870,7 +1886,7 @@ new Vue({
             axios.post(url).then(response => {
                 this.valorDolarHoy = response.data
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -1884,8 +1900,8 @@ new Vue({
                 this.listaNoticias = response.data
                 //console.log(response.data)
             }).catch(error => {
-                alert("mal");
-                console.log(error.response.data)
+                //console.log(error.response); //alert("mal");
+                //console.log(error.response.data)
 
             });
         },
@@ -1926,8 +1942,6 @@ new Vue({
             this.getListadoPuesto();
             this.getListadoSeguimiento();
             this.getListadoCategoriasSeguimiento();
-        
-        
         
     },
 
@@ -2049,7 +2063,7 @@ new Vue({
                 this.texto_boton = "Actualizar"
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
             });
         },
@@ -2122,7 +2136,7 @@ new Vue({
                     toastr.success('Proceso realizado correctamente', 'Usuarios')
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
 
                 });
@@ -2410,7 +2424,7 @@ new Vue({
                 this.texto_boton = "Actualizar"
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
             });
         },
@@ -2444,7 +2458,7 @@ new Vue({
                 this.getListadoPuestosCurriculum();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
 
             });
@@ -2476,7 +2490,7 @@ new Vue({
                 toastr.success('pUESTO eliminado correctamente', 'Curriculum')
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
             });
         },
@@ -2651,7 +2665,7 @@ new Vue({
                 this.getListadoMovimientos();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
 
             });
@@ -2760,7 +2774,7 @@ new Vue({
                 this.texto_boton = "Actualizar"
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
                 toastr.success('Proceso realizado correctamente', 'Usuarios')
             });
@@ -2775,7 +2789,7 @@ new Vue({
             }).then(response => {
                 this.listaVentas = response.data
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
             });
         },
@@ -2982,7 +2996,7 @@ new Vue({
                 this.texto_boton = "Actualizar"
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
                 toastr.success('Proceso realizado correctamente', 'Proveedores')
             });
@@ -3080,7 +3094,7 @@ new Vue({
                 this.obtener_listado_de_categorias_asignadas();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
 
             });
@@ -3273,7 +3287,7 @@ new Vue({
                 this.getDatosventas();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
             });
         },
@@ -3343,11 +3357,13 @@ new Vue({
                 this.getListadoSeguimiento(categoria_a_listar, this.mostrar);
 
                 this.texto_boton = "Actualizar"
-                toastr.success('Datos actualizados correctamente', 'Orden Trabajo')
+                toastr.success('Datos actualizados correctamente', 'Ventas')
+
+                this.seguimientoData = {}; // RESETEO LA VARIABLE
 
             }).catch(error => {
                 alert("MAL LA CARGA EN FUNCIÓN DE CARGAR DATOS");
-                console.log(error.response.data)
+                console.log(error.response.data);
             });
         },
 
@@ -3415,6 +3431,11 @@ new Vue({
         agregarProducto: function () {
             var url = base_url + 'ventas/agregarProducto/?Id=' + Get_Id; // url donde voy a mandar los datos
 
+            if(!this.productoData.Precio_venta_producto){
+                this.productoData.Precio_venta_producto = 0;
+            }
+             // Seteo este dato para evitar la falla en la base datos que pide este dato obligatorio
+
             axios.post(url, {
                 token: token,
                 Datos: this.productoData
@@ -3429,7 +3450,7 @@ new Vue({
                 this.getListadoResumenProductos();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
             });
         },
@@ -3512,11 +3533,12 @@ new Vue({
             if (opcion == true) {
                 axios.post(url, {
                     token: token,
-                    Datos: this.ventaDatos
+                    Venta_id: Get_Id,
+                    Estado: this.ventaDatos.Estado
                 }).then(response => {
 
                     toastr.success('Proceso realizado correctamente', 'Ventas')
-                    this.texto_boton = "Actualizar"
+                    //this.texto_boton = "Actualizar"
 
                     this.getDatosventas();
 
@@ -3575,7 +3597,7 @@ new Vue({
                     this.getListadoProductosVendidos(0);
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
 
                 });
@@ -3597,7 +3619,7 @@ new Vue({
             }).then(response => {
                 this.listaVentas = response.data
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -3735,7 +3757,7 @@ new Vue({
             }).then(response => {
                 this.listaPlanificaciones = response.data
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -3750,7 +3772,7 @@ new Vue({
             }).then(response => {
                 this.listaResumenProductos = response.data
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -3794,7 +3816,7 @@ new Vue({
 
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
             });
         },
@@ -3816,7 +3838,7 @@ new Vue({
                     this.getMovimientos();
 
                 }).catch(error => {
-                    alert("mal");
+                    console.log(error.response); //alert("mal");
                     console.log(error)
 
                 });
@@ -3844,7 +3866,7 @@ new Vue({
                 this.listaProductosReventaLote = response.data
         
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -3881,7 +3903,7 @@ new Vue({
                 this.getListadoProductosReventaLote();
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -4005,7 +4027,7 @@ new Vue({
                 this.texto_boton = "Actualizar"
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error)
                 //toastr.success('Proceso realizado correctamente', 'Proveedores')
             });
@@ -4025,7 +4047,7 @@ new Vue({
                 /* console.log(response.data) */
 
             }).catch(error => {
-                alert("mal")
+                console.log(error.response); //alert("mal")
                 /* console.log(error.response.data) */
 
             });
@@ -4175,7 +4197,7 @@ new Vue({
 
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
             });
         },
@@ -4186,17 +4208,19 @@ new Vue({
             axios.post(url, {
                 token: token,
             }).then(response => {
-                this.listaInsumos = response.data
+                this.listaInsumos = response.data;
+                
             });
         },
 
         //// INSUMOS FABRICACIÓN  | LISTADO COMPLETO DE STOCK
         getListadoStock: function () {
-            var url = base_url + 'stock/obtener_listado_de_stock?categoria=0'; // url donde voy a mandar los datos
+            var url = base_url + 'stock/obtener_listado_de_stock?categoria=0&tipo=0'; // url donde voy a mandar los datos
             axios.post(url, {
                 token: token,
             }).then(response => {
-                this.listaStock = response.data
+                this.listaStock = response.data;
+                //console.log(this.listaStock);
             });
         },
 
@@ -4263,7 +4287,7 @@ new Vue({
             }).then(response => {
                 this.compraDatos = response.data[0]
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
             });
         },
@@ -4286,7 +4310,7 @@ new Vue({
                 this.descripcionMovimiento = []
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response)
 
             });
@@ -4321,7 +4345,7 @@ new Vue({
 
 
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
             });
         },
@@ -4361,7 +4385,7 @@ new Vue({
             }).then(response => {
                 this.listaPlanificaciones = response.data
             }).catch(error => {
-                alert("mal");
+                console.log(error.response); //alert("mal");
                 console.log(error.response.data)
 
             });
@@ -4372,7 +4396,7 @@ new Vue({
     computed:
     {
         buscarProducto: function () {
-            return this.listaProductos.filter((item) => item.Nombre_item.toLowerCase().includes(this.buscar));
+            return this.listaProductos.filter((item) => item.Nombre_item.toLowerCase().includes(this.buscar.toLowerCase()));
         },
     }
 }); 

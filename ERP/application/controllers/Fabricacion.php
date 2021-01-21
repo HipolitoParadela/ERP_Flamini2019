@@ -13,7 +13,7 @@ class Fabricacion extends CI_Controller
         } 
         else 
         {   
-            if ($this->session->userdata('Rol_acceso') > 0) // visible para todos
+            if ($this->session->userdata('Rol_acceso') > 1) // visible para todos
             {
                 $this->load->view('fabricacion_listado');
             } 
@@ -32,7 +32,7 @@ class Fabricacion extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
-            if ($this->session->userdata('Rol_acceso') > 0)  // visible para todos
+            if ($this->session->userdata('Rol_acceso') > 1)  // visible para todos
             {
                 $this->load->view('fabricacion_datos');
                 
@@ -50,7 +50,7 @@ class Fabricacion extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
-            if ($this->session->userdata('Rol_acceso') > 0)  // visible para todos
+            if ($this->session->userdata('Rol_acceso') > 1)  // visible para todos
             {
                 $this->load->view('fabricacion_productos_stock');
                 

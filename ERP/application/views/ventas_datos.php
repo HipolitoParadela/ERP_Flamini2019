@@ -1446,7 +1446,7 @@ include "menusidebar.php";
     </div>
     <!-- /.modal -->
 
-    <!-- modal ORDEN TRABAJO SALIDA STOCK -->
+    <!-- modal PRODUCTOS DE REVENTA -->
     <div class="modal fade" id="productosreventaModal" tabindex="-1" role="dialog" aria-labelledby="scrollmodalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
 

@@ -11,7 +11,7 @@ class ventas extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
 
-            if ($this->session->userdata('Rol_acceso') > 1) {
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 5 || $this->session->userdata('Id') == 6) {
                 $this->load->view('ventas_listado');
             } else {
                 header("Location: " . base_url() . "login"); /// enviar a pagina de error
@@ -29,7 +29,7 @@ class ventas extends CI_Controller
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
             //if (plan_contratado() > 1) {}
 
-            if ($this->session->userdata('Rol_acceso') > 1) 
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 5 || $this->session->userdata('Id') == 6) 
             {
                 //Esto siempre va es para instanciar la base de datos
                     $CI = &get_instance();
@@ -246,37 +246,27 @@ class ventas extends CI_Controller
         
         $token = @$CI->db->token;
         $this->datosObtenidos = json_decode(file_get_contents('php://input'));
-        if ($this->datosObtenidos->token != $token)
-        { 
-            exit("No coinciden los token");
-        }
+        if ($this->datosObtenidos->token != $token) {  exit("No coinciden los token"); }
 
-        $Id = null;
-        if(isset($this->datosObtenidos->Datos->Id))
-        {
-            $Id = $this->datosObtenidos->Datos->Id;
-        }
+        $Venta_id = null;  if(isset($this->datosObtenidos->Venta_id)) { $Venta_id = $this->datosObtenidos->Venta_id; }
 
         ///// ANALIZAR ACA SI PONGO DIRECTAMENTE EL ID A MANO O LE BUSCO OTRA MANERA, POR EL MOMENTO A MANO VA A FUNCIONAR BIEN, SI ALGUN DIA TIENEN MAS DE UN RESPONSABLE, LO TENDRAN QUE ELEGIR DE UN LISTADO
         
-        $estado = $this->datosObtenidos->Datos->Estado + 1;    
+        $estado = $this->datosObtenidos->Estado + 1;    
         
-        if($estado == 10){
-            $Fecha_finalizada = date("Y-m-d");
-        }
-        else { $Fecha_finalizada = null; }
+        $Fecha_finalizada = null;   if($estado == 10){  $Fecha_finalizada = date("Y-m-d"); }
         
         $data = array(
                         
                         'Fecha_finalizada'  => $Fecha_finalizada,            
-                        'Estado'            => $estado,                
+                        'Estado'            => $estado,
                 );
 
         $this->load->model('App_model');
-        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas');
+        $venta_insert_id = $this->App_model->insertar( $data, $Venta_id, 'tbl_ventas' );
                 
         //// si cargo bien esto, toma el id de la orden y la carga en la tbl_ordentrabajo_seguimietno
-        if ($insert_id >=0 ) 
+        if ($venta_insert_id >=0 ) 
         {   
             
             if($estado == 2)  {  $descripcion_seguimiento = "Avanzó el lote a la estación de Proceso de Materiales."; $Categoria = 2; }
@@ -292,21 +282,24 @@ class ventas extends CI_Controller
             
             $data = array(
 
-            'Venta_id' =>       $insert_id,
+            'Venta_id' =>               $venta_insert_id,
             'Categoria_seguimiento' =>  $Categoria,
-            'Descripcion' =>    $descripcion_seguimiento,
-            'Usuario_id' =>    $this->session->userdata('Id'),
-            'Visible' =>        1
+            'Descripcion' =>            $descripcion_seguimiento,
+            'Usuario_id' =>             $this->session->userdata('Id'),
+            'Visible' =>                1
             );
 
             $this->load->model('App_model');
             $insert_id_seguimiento = $this->App_model->insertar($data, null, 'tbl_ventas_seguimiento');
                 
-            echo json_encode(array("Id" => $insert_id, "Seguimiento_id" => $insert_id_seguimiento));         
+            echo json_encode(array(
+                "Id" => $venta_insert_id, 
+                "Seguimiento_id" => $insert_id_seguimiento
+            ));         
         } 
         else 
         {
-            echo json_encode(array("Id" => 0));
+            echo json_encode(array("Id" => "Error en el proceso"));
         }
     }
     

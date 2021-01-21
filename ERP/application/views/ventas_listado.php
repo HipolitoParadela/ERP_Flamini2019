@@ -170,7 +170,7 @@ include "menusidebar.php";
                     <div class="modal-body">
                         <div class="horizontal-form">
                             <div class="form-group">
-                                <label class=" form-control-label">Identificador de la vente</label>
+                                <label class=" form-control-label">Identificador de la venta</label>
                                 <input type="text" class="form-control" v-model="ventaDatos.Identificador_venta" required>
                             </div>
                             <div class="form-group">
@@ -281,7 +281,7 @@ include "menusidebar.php";
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         <button type="submit" class="btn btn-primary">{{texto_boton}}</button>
                     </div>
                 </form>

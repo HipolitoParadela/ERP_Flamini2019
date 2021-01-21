@@ -11,7 +11,7 @@ class Usuarios extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
 
-            if ($this->session->userdata('Rol_acceso') > 4 || $this->session->userdata('Id') == 12) 
+            if ($this->session->userdata('Rol_acceso') > 3) 
             {
                 $this->load->view('usuarios_listado');
             } 
@@ -32,7 +32,7 @@ class Usuarios extends CI_Controller
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
             //if (plan_contratado() > 3) {}
 
-            if ($this->session->userdata('Rol_acceso') > 4 || $this->session->userdata('Id') == 12) 
+            if ($this->session->userdata('Rol_acceso') > 3) 
             {
                 $this->load->view('usuarios_datos');
                 
@@ -52,7 +52,7 @@ class Usuarios extends CI_Controller
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
             //if (plan_contratado() > 3) {}
 
-            if ($this->session->userdata('Rol_acceso') > 4 || $this->session->userdata('Id') == 12) 
+            if ($this->session->userdata('Rol_acceso') > 3) 
             {
                 $this->load->view('usuarios_resumen_puntajes');
                 

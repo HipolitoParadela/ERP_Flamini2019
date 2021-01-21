@@ -42,6 +42,7 @@ include "menusidebar.php";
                                         <th>Categoría</th>
                                         <th>Cant. Actual</th>
                                         <th>Cant. Ideal</th>
+                                        <th>Medida</th>
                                         <!-- <th>Añadir a una venta</th> -->
                                         <th>Última Modificación</th>
                                         <th>
@@ -75,6 +76,7 @@ include "menusidebar.php";
                                             <h2 v-bind:class="classAlertaStock(stock.Cant_actual, stock.Cant_ideal)" align="center">{{stock.Cant_actual}}</h2>
                                         </td>
                                         <td align="center">{{stock.Cant_ideal}}</td>
+                                        <td>{{stock.Unidad_medida}}</td>
                                         <!--<td width= "500" bgcolor="#F2F2F2">
                                                     <div class="input-group">
                                                         <input size="6" type="number" class="form-control" v-model="cantMovimientoStock[index]">
@@ -134,11 +136,25 @@ include "menusidebar.php";
                             <div class="form-group">
                                 <label class=" form-control-label">Nombre del item</label> <input type="text" class="form-control" placeholder="" v-model="stockDato.Nombre_item">
                             </div>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label class="control-label">Categoría</label>
                                 <select class="form-control" v-model="stockDato.Categoria_id">
                                     <option value="0">Sin categoría</option>
                                     <option v-for="categoria in listaCategorias" v-bind:value="categoria.Id">{{categoria.Nombre_categoria}}</option>
+                                </select>
+                            </div> -->
+                            <div class="form-group">
+                                <label class="control-label">Unidad de medida</label>
+                                <select class="form-control" v-model="stockDato.Unidad_medida">
+                                    <option value="Un.">Unidad</option>
+                                    <option value="Packs">Pack</option>
+                                    <option value="Cajas">Cajas</option>
+                                    <option value="Mtrs">Metros</option>
+                                    <option value="Cms">Centimetros</option>
+                                    <option value="Litro">Litro</option>
+                                    <option value="Grs">Gramos</option>
+                                    <option value="Kgs">Kilogramos</option>
+
                                 </select>
                             </div>
                             <div class="form-group">
@@ -177,7 +193,7 @@ include "menusidebar.php";
                 <div class="modal-body">
                     <p aling="center">
                         <img class="img-fluid" v-if="stockFoto.Imagen != null" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+stockFoto.Imagen" alt="">
-                        <img class="img-fluid" v-else  src="<?php echo base_url(); ?>uploads/imagenes/addimagen.jpg" alt="">
+                        <img class="img-fluid" v-else src="<?php echo base_url(); ?>uploads/imagenes/addimagen.jpg" alt="">
                     </p>
                     <hr>
                     <div class="horizontal-form">
@@ -275,20 +291,21 @@ include "menusidebar.php";
                 <form class="form-horizontal" action="post" v-on:submit.prevent="movimientoStock_v2()">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="control-label">Lote de venta en la que se utilizará esta pieza/producto</label>
+                            <label class="control-label">Lote o venta en la que se utilizará esta pieza/producto</label>
                             <select class="form-control" v-model="egresoDato.Venta_id" required>
+                                <option value="0">Stock de reserva o para usos especiales</option>
                                 <option v-for="venta in listaVentas" v-bind:value="venta.Id"> {{venta.Identificador_venta}} ---- Cliente {{venta.Nombre_cliente}}, {{venta.Nombre_vendedor}}</option>
                             </select>
                         </div>
                         <div class="horizontal-form">
                             <div class="form-group">
-                                <label class=" form-control-label">Cantidad retirada</label>
+                                <label class=" form-control-label">Cantidad retirada en {{egresoDato.Unidad_medida}}</label>
                                 <input type="number" min="1" class="form-control" v-model="egresoDato.Cantidad" required>
                             </div>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label class=" form-control-label">Precio cobrado (total de este producto)</label>
                                 <input type="number" class="form-control" v-model="egresoDato.Precio_venta_producto" required>
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <label class=" form-control-label">Descripción del egreso</label>
                                 <textarea class="form-control" rows="5" v-model="egresoDato.Descripcion_egreso"></textarea>

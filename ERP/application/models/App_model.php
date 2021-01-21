@@ -20,16 +20,19 @@ class App_model extends CI_Model
     //Actualiza o inserta NUEVO RENTING dependiendo si viene por post el Id
     public function insertar($data, $Id, $tabla)
     {
-        if ($Id == null) {
+        if ($Id === null) {
+
             $result = $this->db->insert($tabla, $data);
             $insert_id = $this->db->insert_id();
             return $insert_id;
+
         } else {
+
             $this->db->where('Id', $Id);
             $result = $this->db->update($tabla, $data);
             $affected_id = $this->db->affected_rows();
             //return $affected_id;
-            return $Id;
+            return $affected_id;
         }
     }
 
