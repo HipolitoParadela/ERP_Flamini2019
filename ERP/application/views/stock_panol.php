@@ -157,6 +157,14 @@ include "menusidebar.php";
                             <div class="form-group">
                                 <label class=" form-control-label">Nombre del item</label> <input type="text" class="form-control" placeholder="" v-model="stockDato.Nombre_item">
                             </div>
+                            <div class="form-group" v-if="stockDato.Id">
+                                <label class="control-label">Tipo de producto</label>
+                                <select class="form-control" v-model="stockDato.Tipo">
+                                    <option value="2">Materia Prima</option>
+                                    <option value="1">Pañol</option>
+                                    <option value="3">Producto de reventa</option>
+                                </select>
+                            </div>
                             <div class="form-group">
                                 <label class="control-label">Categoría</label>
                                 <select class="form-control" v-model="stockDato.Categoria_id">

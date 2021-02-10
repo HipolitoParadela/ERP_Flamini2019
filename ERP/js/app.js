@@ -79,7 +79,7 @@ Vue.filter('Moneda', function (numero) {
             nuevoNumero = nuevoNumero.substring(0, nuevoNumero.indexOf(","));
 
         // Ponemos un punto cada 3 caracteres
-        for (var j, i = nuevoNumero.length - 1, j = 0; i >= 0; i-- , j++)
+        for (var j, i = nuevoNumero.length - 1, j = 0; i >= 0; i--, j++)
             resultado = nuevoNumero.charAt(i) + ((j > 0) && (j % 3 == 0) ? "." : "") + resultado;
 
         // Si tiene decimales, se lo añadimos al numero una vez forateado con 
@@ -115,8 +115,7 @@ new Vue({
             this.getListadoEmpresas();
         }
 
-        if (pathname == carpeta + 'usuarios/resumenreportes') 
-        {
+        if (pathname == carpeta + 'usuarios/resumenreportes') {
             this.resumenReportes();
             this.getSuperiores();
             this.getListadoEmpresas();
@@ -141,20 +140,20 @@ new Vue({
             this.getListadoCategorias();
             this.getListadoStock(2, 0);
             this.getListadoVentas(0, 0, 0, 1, 0);
-            
+
         }
 
         if (pathname == carpeta + 'stock/panol') {
             this.getListadoCategorias();
             this.getListadoStock(1, 0);
             this.getListadoVentas(0, 0, 0, 1, 0);
-            
+
         }
 
         if (pathname == carpeta + 'stock/pruductosdereventa') {
             this.getListadoStock(3, 0);
             this.getListadoVentas(0, 0, 0, 1, 0);
-            
+            this.getListadoCategorias();
         }
 
         if (pathname == carpeta + 'clientes') {
@@ -493,7 +492,7 @@ new Vue({
                 //console.log(this.listaReportes)
 
             }).catch(error => {
-                
+
                 console.log(error.response.data)
             });
         },
@@ -511,8 +510,7 @@ new Vue({
         },
 
         //// REPORTES RESUMEN | COLOREAR ITEMS BAJOS DE STOCK
-        classColorReporte: function (numero) 
-        {
+        classColorReporte: function (numero) {
             var numero = Math.round(numero);
 
             if (numero == 5) { return 'text-success' }
@@ -520,8 +518,8 @@ new Vue({
             else if (numero == 3) { return 'text-secondary' }
             else if (numero == 2) { return 'text-warning' }
             else if (numero == 1) { return 'text-danger' }
-            else { return ''  }
-            
+            else { return '' }
+
         },
 
         //// Carga el formulario Items para editar FOTO
@@ -819,7 +817,15 @@ new Vue({
 
         //// STOCK |  MOSTRAR LISTADO DE CATEGORIAS
         getListadoCategorias: function () {
-            var url = base_url + 'stock/obtener_categorias'; // url donde voy a mandar los datos
+            
+            var categoria_tipo = null;
+            if (pathname == carpeta + 'stock/pruductosdereventa') {
+                categoria_tipo = 3;
+            }
+            
+            var url = base_url + 'stock/obtener_categorias?categoria_tipo='+categoria_tipo; // url donde voy a mandar los datos
+
+            
 
             axios.post(url, {
                 token: token
@@ -845,6 +851,10 @@ new Vue({
         crearCategoria: function () {
             var url = base_url + 'stock/cargar_categoria'; // url donde voy a mandar los datos
 
+            if (pathname == carpeta + 'stock/pruductosdereventa') {
+                this.categoriaDatos.Tipo = 3;
+            }
+
             axios.post(url, {
                 token: token,
                 Data: this.categoriaDatos
@@ -868,10 +878,10 @@ new Vue({
         //// STOCK |  MOSTRAR LISTADO DE CATEGORIAS
         getListadoStock: function (tipo, categoria) {
 
-            this.stock_tipo = tipo; 
+            this.stock_tipo = tipo;
             console.log(tipo);
 
-            var url = base_url + 'stock/obtener_listado_de_stock?tipo='+ tipo +'&categoria=' + categoria; // url donde voy a mandar los datos
+            var url = base_url + 'stock/obtener_listado_de_stock?tipo=' + tipo + '&categoria=' + categoria; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
@@ -884,7 +894,8 @@ new Vue({
         crearStock: function () {
             var url = base_url + 'stock/cargar_stock_item'; // url donde voy a mandar los datos
 
-            if(!this.stockDato.Categoria_id){this.stockDato.Categoria_id = 0;}
+            if (!this.stockDato.Categoria_id) { this.stockDato.Categoria_id = 0; }
+            if (this.stockDato.Tipo) { this.stock_tipo = this.stockDato.Tipo; }
 
             axios.post(url, {
                 token: token,
@@ -896,9 +907,10 @@ new Vue({
 
                 this.stockDato.Id = response.data.Id;
                 //this.texto_boton = "Actualizar"
+                this.getListadoStock(this.stock_tipo, 0);
                 this.stockDato = {}
 
-                this.getListadoStock(this.stock_tipo, 0);
+
 
             }).catch(error => {
                 console.log(error.response); //alert("mal");
@@ -1329,7 +1341,7 @@ new Vue({
                 this.productoDatos.Id = response.data.Id;
                 this.texto_boton = "Actualizar"
 
-                this.getListadoProductos(0, 0);
+                this.getListadoProductos(this.filtro_categoria, this.filtro_empresa);
 
             }).catch(error => {
                 console.log(error.response); //alert("mal");
@@ -1339,7 +1351,7 @@ new Vue({
         },
 
         //// FABRICACION |  LIMPIAR EL FORMULARIO DE CREAR
-        limpiarFormularioProveedor() {
+        limpiarFormularioProducto() {
             this.productoDatos = {}
             this.texto_boton = "Cargar";
         },
@@ -1710,7 +1722,7 @@ new Vue({
         this.obtener_cantCompras();
         this.obtener_cantProductosPropios();
         this.valorDolar();
-        this.noticiasGoogle();
+        //this.noticiasGoogle();
         this.seguimientoPersonal();
 
 
@@ -1917,7 +1929,7 @@ new Vue({
             });
         },
 
-        
+
 
 
 
@@ -1932,17 +1944,16 @@ new Vue({
 new Vue({
     el: '#usuarios',
 
-    created: function () 
-    {
-            this.getDatosUsuario();
-            this.getListadoRoles();
-            this.getFormaciones();
-            this.getSuperiores();
-            this.getListadoEmpresas();
-            this.getListadoPuesto();
-            this.getListadoSeguimiento();
-            this.getListadoCategoriasSeguimiento();
-        
+    created: function () {
+        this.getDatosUsuario();
+        this.getListadoRoles();
+        this.getFormaciones();
+        this.getSuperiores();
+        this.getListadoEmpresas();
+        this.getListadoPuesto();
+        this.getListadoSeguimiento();
+        this.getListadoCategoriasSeguimiento();
+
     },
 
     data: {
@@ -2292,35 +2303,29 @@ new Vue({
         },
 
         //// PROMEDIO CALIFICACION SEGUIMIENTOS 
-        promedioCalificaciones: function (datos) 
-        {    
-            if (datos != null) 
-            {
+        promedioCalificaciones: function (datos) {
+            if (datos != null) {
                 var Promedio = 0;
-            
-                for (var i = 0; i < datos.length; i++) 
-                {
+
+                for (var i = 0; i < datos.length; i++) {
                     var item = 0;
-            
-                    if (isFinite(datos[i].Calificacion)) 
-                    {
+
+                    if (isFinite(datos[i].Calificacion)) {
                         item = parseInt(datos[i].Calificacion);
                     }
-            
+
                     Promedio = Promedio + item;
                 }
                 Promedio = Promedio / datos.length
                 return Promedio.toFixed(2)
             }
-            else 
-            {
+            else {
                 return "Sin datos";
             }
         },
 
         //// REPORTES RESUMEN | COLOREAR ITEMS BAJOS DE STOCK
-        classColorReporte: function (numero) 
-        {
+        classColorReporte: function (numero) {
             var numero = Math.round(numero);
 
             if (numero == 5) { return 'text-success' }
@@ -2328,11 +2333,11 @@ new Vue({
             else if (numero == 3) { return 'text-secondary' }
             else if (numero == 2) { return 'text-warning' }
             else if (numero == 1) { return 'text-danger' }
-            else { return ''  }
-            
+            else { return '' }
+
         },
 
-         
+
     },
 
     ////// ACCIONES COMPUTADAS     
@@ -3149,7 +3154,7 @@ new Vue({
             this.Set_valores_usuario();
             this.getListadoResumenProductos();
             this.getMovimientos();
-            this.getListadoProductosReventa(6); // 6 para marcar la categoria a la que pertenecen los productos de reventa
+            this.getListadoProductosReventa(); // 6 para marcar la categoria a la que pertenecen los productos de reventa
             this.getListadoProductosReventaLote(); // 6 para marcar la categoria a la que pertenecen los productos de reventa
         }
     },
@@ -3181,7 +3186,11 @@ new Vue({
         filtro_empresa: '0',
 
         listaProductos: [],
-        productoData: { 'Cantidad': 1, },
+        productoData: { 
+            'Cantidad': 1, 
+            'Precio_venta_producto':0,
+            'Fecha_ultima_mod': null
+        },
 
         listaProductosVendidos: [],
         productoPasoData: { 'Estado': '', 'Producto_id': '', 'Comentarios': 'Sin comentarios' },
@@ -3207,9 +3216,14 @@ new Vue({
         movimientoDatos: {},
 
         // PRODUCTOS DE REVENTA
-        egresoDato: {},
-        listaProductosReventa:[],
-        listaProductosReventaLote:[]
+        egresoDato: {
+                "Fecha_ultima_mod": null,
+                "Cantidad": 1,
+                "Precio_venta_producto" : 0
+        },
+        listaProductosReventa: [],
+        listaProductosReventaLote: [],
+        tipoMovimiento: 0,
     },
 
     methods:
@@ -3266,7 +3280,8 @@ new Vue({
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.ventaDatos = response.data[0]
+                this.ventaDatos = response.data[0];
+                //console.log(this.ventaDatos);
             });
         },
 
@@ -3391,12 +3406,13 @@ new Vue({
 
         //// FABRICACION |  MOSTRAR LISTADO DE CATEGORIAS
         getListadoProductos: function (categoria, empresa) {
-            var url = base_url + 'fabricacion/obtener_listado_de_productos?categoria=' + categoria + '&empresa=' + empresa; // url donde voy a mandar los datos
+            var url = base_url + 'fabricacion/obtener_listado_de_productos_ventas'; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.listaProductos = response.data
+                this.listaProductos = response.data;
+                //console.log(this.listaProductos);
             });
         },
 
@@ -3431,10 +3447,10 @@ new Vue({
         agregarProducto: function () {
             var url = base_url + 'ventas/agregarProducto/?Id=' + Get_Id; // url donde voy a mandar los datos
 
-            if(!this.productoData.Precio_venta_producto){
+            if (!this.productoData.Precio_venta_producto) {
                 this.productoData.Precio_venta_producto = 0;
             }
-             // Seteo este dato para evitar la falla en la base datos que pide este dato obligatorio
+            // Seteo este dato para evitar la falla en la base datos que pide este dato obligatorio
 
             axios.post(url, {
                 token: token,
@@ -3455,13 +3471,6 @@ new Vue({
             });
         },
 
-        //// LIMPIAR FORMULARIO SEGUIMIENTO
-        limpiarFormularioProductos: function () {
-            this.productoData = {};
-            this.texto_boton = "Cargar"
-        },
-
-
         //// VENTAS |  LISTADO DE PRODUCTOS VENDIDOS
         getListadoProductosVendidos: function () {
             var url = base_url + 'ventas/obtener_listado_de_productos_vendidos/?Id=' + Get_Id; // url donde voy a mandar los datos
@@ -3469,23 +3478,47 @@ new Vue({
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.listaProductosVendidos = response.data
-                //console.log(this.listaProductosVendidos.length)
+                this.listaProductosVendidos = response.data;
+                console.log(this.listaProductosVendidos)
 
                 /// Realizar suma del costo de todos los productos vendidos
                 this.precioVentaTotal = 0;
-                for (let index = 0; index < this.listaProductosVendidos.length; index++) {
+                for ( let index = 0; index < this.listaProductosVendidos.length; index++ ) {
                     /* console.log(this.listaProductosVendidos[index].Precio_USD) */
 
-                    var precioVenta = this.listaProductosVendidos[index].Precio_USD;
+                    var precioVenta = parseInt(this.listaProductosVendidos[index].Precio_venta);
+                    var cantidad = parseInt(this.listaProductosVendidos[index].Cantidad);
 
                     if (precioVenta == null) { precioVenta = 0 }
 
-                    this.precioVentaTotal = this.precioVentaTotal + parseInt(precioVenta);
+                    this.precioVentaTotal = this.precioVentaTotal + (precioVenta * cantidad);
                 }
             });
         },
 
+        /// VENTA | Mostrando el precio guardado del producto, de la lista de propios
+        actualizarPrecioProducto: function (Producto_id) {
+            
+            var precio;
+            var actualizado;
+            
+            this.listaProductos.map( 
+                function (producto) {
+                    if(producto.Id === Producto_id){
+
+                        if(producto.Precio_venta != null){
+
+                            precio = producto.Precio_venta;
+                            actualizado = producto.Fecha_ultima_mod;
+                            
+                        }
+                    }
+                }
+            )
+            this.productoData.Precio_venta_producto = precio; 
+            this.productoData.Fecha_ultima_mod = actualizado; 
+
+        },
 
         /// PASO A PASO PRODUCTO | Abrir modal
         editarPasoProducto: function (Producto_id, Estado) {
@@ -3526,7 +3559,7 @@ new Vue({
         },
 
         //// VENTAS | CAMBIAR ESTADO DE LA VENTA
-        cambiar_estado_venta: function () {
+        cambiar_estado_venta: function ( monto_cobrado) {
             var url = base_url + 'ventas/cambiar_estado_venta'; // url donde voy a mandar los datos
 
             var opcion = confirm("¿Esta seguro que quiere avanzar el lote a la siguiente estación?");
@@ -3534,7 +3567,8 @@ new Vue({
                 axios.post(url, {
                     token: token,
                     Venta_id: Get_Id,
-                    Estado: this.ventaDatos.Estado
+                    Estado: this.ventaDatos.Estado,
+                    Monto_cobrado: monto_cobrado
                 }).then(response => {
 
                     toastr.success('Proceso realizado correctamente', 'Ventas')
@@ -3728,17 +3762,20 @@ new Vue({
         //// SUMAR PRODUCTOS   
         sumarProductos: function (items) {
 
-            /// SUMAR LOS ENTREGADOS
             var Total = 0;
+
             if (items.length > 0) {
                 for (var i = 0; i < items.length; i++) {
                     var item = 0;
+                    var cantidad = 0;
 
                     if (isFinite(items[i].Precio_venta_producto)) {
                         item = parseInt(items[i].Precio_venta_producto);
+                        cantidad = parseInt(items[i].Cantidad);
+                        
                     }
 
-                    Total = Total + item;
+                    Total = Total + (item * cantidad);
                 }
                 return Total
             }
@@ -3791,11 +3828,8 @@ new Vue({
             });
         },
 
-        limpiarFormularioMovimiento: function () {
-            this.movimientoDatos = {};
-        },
 
-        //// MOVIMIENTOS | CREAR O EDITAR EN EFECTIVO
+        //// PAGOS | CREAR O EDITAR EN EFECTIVO
         crear_movimiento: function () {
             var url = base_url + 'finanzas/cargar_movimiento'; // url donde voy a mandar los datos
 
@@ -3846,9 +3880,10 @@ new Vue({
         },
 
         //// SUMAR PRODUCTOS   
-        calcularMontosVentas: function (n1, n2, n3, n4, n5) {
+        calcularMontosVentas: function (PP, Logis, Inst, PR, Pagos, Rec, Desc) {
 
-            var Total = parseInt(n1) + parseInt(n2) + parseInt(n3) +  parseInt(n4) - parseInt(n5);
+            
+            var Total = parseInt(PP) + parseInt(Logis) + parseInt(Inst) + parseInt(PR) - parseInt(Pagos) + parseInt(Rec) - parseInt(Desc);
 
             return Total;
         },
@@ -3856,30 +3891,32 @@ new Vue({
 
         //// PRODUCTOS DE REVENTA |   MOSTRAR LISTADO
         getListadoProductosReventaLote: function () {
-            var url = base_url + 'stock/obtener_movimientos_v2/?Id=' + Get_Id; // url donde voy a mandar los datos
+            var url = base_url + 'stock/obtener_movimientos_ventas_prod_reventa/?Id=' + Get_Id; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token,
-                Tipo_movimiento: 2
 
             }).then(response => {
+
                 this.listaProductosReventaLote = response.data
-        
+            
+                //console.log(this.listaProductosReventaLote);
+
             }).catch(error => {
                 console.log(error.response); //alert("mal");
                 console.log(error.response.data)
-
             });
         },
 
         //// PRODUCTOS DE REVENTA |  MOSTRAR LISTADO DE CATEGORIAS
         getListadoProductosReventa: function (categoria) {
-            var url = base_url + 'stock/obtener_listado_de_stock?categoria=' + categoria; // url donde voy a mandar los datos
+            var url = base_url + 'stock/obtener_listado_de_stock?tipo=3&categoria=' + categoria; // url donde voy a mandar los datos
 
             axios.post(url, {
                 token: token
             }).then(response => {
-                this.listaProductosReventa = response.data
+                this.listaProductosReventa = response.data;
+                //console.log(this.listaProductosReventa);
             });
         },
 
@@ -3890,12 +3927,12 @@ new Vue({
 
             axios.post(url, {
                 token: token,
-                Id: this.egresoDato.Id,
+                Id: this.egresoDato.Producto_id,
                 Cantidad: this.egresoDato.Cantidad,
                 Descripcion: this.egresoDato.Descripcion_egreso,
                 Proceso_id: Get_Id,
                 Precio_venta_producto: this.egresoDato.Precio_venta_producto,
-                Tipo_movimiento: 2
+                Tipo_movimiento: this.tipoMovimiento
             }).then(response => {
 
                 toastr.success('Proceso realizado correctamente', 'Stock')
@@ -3912,6 +3949,77 @@ new Vue({
         //// PRODUCTOS DE REVENTA | EDITAR UN PRODUCTO AGREGADO
         editarFormularioProductosReventa: function (dato) {
             this.egresoDato = dato;
+            this.egresoDato.Producto_id = dato.Stock_id;
+            this.tipoMovimiento = 0;
+            //this.egresoDato.Cantidad = 0;
+
+            console.log(this.egresoDato);
+        },
+
+
+        //// LIMPIAR FORMULARIO SEGUIMIENTO
+        limpiarFormularioProductos: function () {
+            
+            this.productoData = { 'Cantidad': 1, 'Precio_venta_producto':0, 'Fecha_ultima_mod': null};
+            this.egresoDato = { 'Cantidad': 1, 'Precio_venta_producto':0, 'Fecha_ultima_mod': null};
+            this.texto_boton = "Cargar";
+            this.tipoMovimiento = 2;
+
+            /* console.log('Egreso dato');
+            console.log(this.egresoDato);
+            console.log('Producto dato');
+            console.log(this.productoData); */
+        },
+
+
+         //// LIMPIAR FORMULARIO MOVIMIENTOS
+        limpiarFormularioMovimiento: function () {
+            this.movimientoDatos = {};
+        },
+
+        
+        /// VENTA | Mostrando el precio guardado del producto, de la lista de reventa
+        actualizarPrecioProductoReventa: function (Producto_id) {
+
+            
+            
+            var precio;
+            var actualizado;
+            
+            this.listaProductosReventa.map( 
+                function (producto) {
+                    if(producto.Id === Producto_id){
+
+                        //console.log(producto.Id);
+                        //console.log(producto.Precio_venta);
+
+                        if(producto.Precio_venta != null){
+
+                            precio = producto.Precio_venta;
+                            actualizado = producto.Fecha_ultima_mod;
+                            
+                        }
+                    }
+                    /* else{
+                        console.log("no encontro coincidencia");
+                    } */
+                }
+            )
+            this.egresoDato.Precio_venta_producto = precio; 
+            this.egresoDato.Fecha_ultima_mod = actualizado; 
+                console.log("precio");
+                console.log(precio);
+        },
+
+        /// VENTAS  | ALERTA EN PRODUCCIONES ATRAZADAS
+        classAlerta: function (valor) {
+            
+            if (valor < 0) {
+                return 'text-danger'
+            }
+            else {
+                return ''
+            }
         },
 
     },
@@ -4115,6 +4223,7 @@ new Vue({
 
         //// DATOS SOBRE EL ARCHIVO SELECCIONADO EN CASO QUE QUIERA CARGAR ALGUNA ARCHIVO
         archivoSeleccionado(event) {
+            //console.log(event);
             this.Archivo = event.target.files[0]
             //this.texto_boton = "Actualizar"
         },
@@ -4172,6 +4281,7 @@ new Vue({
         /// EDITAR UN SEGUIMIENTO
         editarFormularioarchivo: function (dato) {
             this.archivoData = dato;
+            console.log(dato);
         },
 
         //// LIMPIAR FORMULARIO SEGUIMIENTO
@@ -4209,7 +4319,7 @@ new Vue({
                 token: token,
             }).then(response => {
                 this.listaInsumos = response.data;
-                
+
             });
         },
 

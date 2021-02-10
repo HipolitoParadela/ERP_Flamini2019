@@ -71,7 +71,7 @@ include "menusidebar.php";
                             </div>
                         </div>
                         <div class="table-responsive table-responsive-data2">
-                            <table class="table table-data2">
+                            <table class="table table-data2" style="overflow-x:scroll;">
                                 <thead>
                                     <tr>
                                         <th>Identificador</th>

@@ -201,6 +201,9 @@ class ventas extends CI_Controller
                     'Valor_logistica' => 	            $this->datosObtenidos->Data->Valor_logistica,
                     'Valor_instalacion' => 	            $this->datosObtenidos->Data->Valor_instalacion,
 
+                    'Descuento' => 	            $this->datosObtenidos->Data->Descuento,
+                    'Recargo' => 	            $this->datosObtenidos->Data->Recargo,
+
                     'Prioritario'                => $this->datosObtenidos->Data->Prioritario,
                     'Observaciones_venta'=>         $this->datosObtenidos->Data->Observaciones_venta,
 					'Usuario_id' => 	            $this->session->userdata('Id'),
@@ -252,13 +255,21 @@ class ventas extends CI_Controller
 
         ///// ANALIZAR ACA SI PONGO DIRECTAMENTE EL ID A MANO O LE BUSCO OTRA MANERA, POR EL MOMENTO A MANO VA A FUNCIONAR BIEN, SI ALGUN DIA TIENEN MAS DE UN RESPONSABLE, LO TENDRAN QUE ELEGIR DE UN LISTADO
         
-        $estado = $this->datosObtenidos->Estado + 1;    
+        $estado = $this->datosObtenidos->Estado + 1;
+        $Monto_cobrado = $this->datosObtenidos->Monto_cobrado;
         
-        $Fecha_finalizada = null;   if($estado == 10){  $Fecha_finalizada = date("Y-m-d"); }
+
+        //// DEL ESTADO 8 AL 9, SE DA POR ENTREGADO E INSTALADO, SOLO FALTANDO COBRAR
+            // aca debe tomar el monto completo de la venta y llenar el campo Monto_cobrado
+            if($estado == 9){   }
+
+        //// DEL ESTADO 9 AL 10, SE CIERRA LA VENTA COMPLETAMENTE, INCLUSO LA COBRANZA
+        $Fecha_finalizada = null; 
+        if($estado == 10){  $Fecha_finalizada = date("Y-m-d"); }
         
         $data = array(
-                        
-                        'Fecha_finalizada'  => $Fecha_finalizada,            
+                        'Fecha_finalizada'  => $Fecha_finalizada,
+                        'Monto_cobrado'     => $Monto_cobrado,         
                         'Estado'            => $estado,
                 );
 
@@ -303,7 +314,7 @@ class ventas extends CI_Controller
         }
     }
     
-//// VENTAS 	    | OBTENER DATOS DE UNA VENTA
+//// VENTAS 	  | OBTENER DATOS DE UNA VENTA
     public function obtener_datos_venta()
     {
 
@@ -322,7 +333,16 @@ class ventas extends CI_Controller
 
         $this->db->select(' tbl_ventas.*,
                             tbl_empresas.Nombre_empresa,
-                            tbl_clientes.*,
+                            tbl_clientes.Id as Cliente_id,
+                            tbl_clientes.Nombre_cliente,
+                            tbl_clientes.CUIT_CUIL,
+                            tbl_clientes.Cond_iva,
+                            tbl_clientes.Direccion,
+                            tbl_clientes.Localidad,
+                            tbl_clientes.Provincia,
+                            tbl_clientes.Telefono,
+                            tbl_clientes.Email,
+                            tbl_clientes.Nombre_persona_contacto,
                             tbl_vendedor.Nombre as Nombre_vendedor,
                             tbl_resp_1.Nombre as Nombre_resp_1,
                             tbl_resp_2.Nombre as Nombre_resp_2,
@@ -782,9 +802,28 @@ class ventas extends CI_Controller
         
             
         if ($insert_id >= 0) {
-            echo json_encode(array("Id" => $insert_id));
+            
+
+            //// ACTUALIZA EL VALOR DEL PRODUCTO EN TBL_FABRICACIÓN
+            $data = array(
+                        
+                'Precio_venta' => $this->datosObtenidos->Datos->Precio_venta_producto,
+                'Ult_usuario' =>  $this->session->userdata('Id')
+                 
+            );
+            /// 'Ultimo_editor_id' => 		$this->session->userdata('Id')
+
+            $this->load->model('App_model');
+            $actualizacion_producto_insert_id = $this->App_model->insertar($data, $this->datosObtenidos->Datos->Producto_id, 'tbl_fabricacion');
+
+            echo json_encode(array(
+                "Id" => $insert_id,
+                "Actualizacion_producto_id" => $actualizacion_producto_insert_id
+                ));
+
         } else {
-            echo json_encode(array("Id" => 0));
+            echo json_encode(array("Id" => 0,
+                                "msg" => "No se cargo el producto"));
         }
     }
     
@@ -809,7 +848,7 @@ class ventas extends CI_Controller
         $this->db->select(' tbl_ventas_productos.*,
                             tbl_fabricacion.Nombre_producto,
                             tbl_fabricacion.Imagen,
-                            tbl_fabricacion.Precio_USD,
+                            tbl_fabricacion.Precio_venta,
                             tbl_fabricacion.Codigo_interno');
         
         $this->db->from('tbl_ventas_productos');
@@ -1090,7 +1129,7 @@ class ventas extends CI_Controller
                                 tbl_fabricacion.Codigo_interno,
                                 tbl_fabricacion.Imagen,
                                 tbl_fabricacion.Id as Producto_id,
-                                tbl_fabricacion.Precio_USD');
+                                tbl_fabricacion.Precio_venta');
             
             $this->db->from('tbl_ventas_productos');
 

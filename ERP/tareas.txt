@@ -1,3 +1,20 @@
+
+Cobranzas
+
+Controlar cuando termina el proceso de una venta, si es en el paso 10 0 9, y en ventas solo mostrar hasta el paso previo a ventas, cuando todo esta listo 
+hasta antes de la cobranza, dejarse de mostrar en ventas, pero si en cobranzas. Y desde cobranzas poder ingresar a la venta. 
+
+
+*******
+AL ENTREGARSE EL PEDIDO, DEBE LLENAR EL Monto_cobrado Y GUIARSE DE ESE MONTO DE AHI EN ADELANTE, porque si el pago demora, y se actualizan los productos se va a descompaginar lo que debe realmente.
+*******
+¿consultar que pasa en estos casos, y en que momento se cierra la venta realmente?
+
+
+En la lista de todas las cobranzas poner los datos del cliente. Como  un modal, que incluso tambièn pueda enviar un mail directo y whatsapp.
+
+-_________________
+
 Stock 
 
 - Listado de productos faltantes en stock, creo que esta en el de nico
@@ -13,7 +30,20 @@ Cobranzas
 - Hablar yohana para ver como implementarlo
 
 
+si no hay stock de reventa q no te muestre y q diga la cantidad.
 
+q si no hay, q te lo deje cargar igual y q avise q hay q comprar.
+
+
+Proveedor condicion iva
+
+_________________
+
+Ver como es el tema cuando se anula un producto a donde se va
+
+Modulo de presupuestos
+
+Proveedores que se listen por cantidad de ventas realizadas
 _________________
 
 Yohana
@@ -27,3 +57,9 @@ IMU2021--
 Belén Gaido
 33670854
 ..Compras2021
+
+jaqui
+
+jasmin 
+
+ale gaido

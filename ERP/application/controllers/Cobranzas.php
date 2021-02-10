@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class clientes extends CI_Controller
+class cobranzas extends CI_Controller
 {
 
 //// CLIENTES       | VISTA | LISTADO
@@ -13,13 +13,12 @@ class clientes extends CI_Controller
 
             if ($this->session->userdata('Rol_acceso') > 3  || $this->session->userdata('Id') == 6  || $this->session->userdata('Id') == 5)
             { 
-                $this->load->view('clientes_listado');
+                $this->load->view('cobranzas_listado');
             } 
             else 
             {
                 header("Location: " . base_url() . "login"); /// enviar a pagina de error
             }
-
         }
     }
 

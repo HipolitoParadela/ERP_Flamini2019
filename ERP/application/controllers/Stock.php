@@ -49,7 +49,7 @@ class Stock extends CI_Controller
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
             //if (plan_contratado() > 3) {}
 
-            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7) 
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7 || $this->session->userdata('Id') == 3) 
             {
                 $this->load->view('stock_productos_reventa');
                 
@@ -62,24 +62,24 @@ class Stock extends CI_Controller
 
 
 //// STOCK          | VISTA | PAÑOL | DATOS
-public function panol()
-{
-    if ($this->session->userdata('Login') != true) {
-        header("Location: " . base_url() . "login"); /// enviar a pagina de error
-    } else {
-        ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
-        //if (plan_contratado() > 3) {}
-
-        if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7) 
-        {
-            $this->load->view('stock_panol');
-            
-        } else {
+    public function panol()
+    {
+        if ($this->session->userdata('Login') != true) {
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
-        }
+        } else {
+            ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
+            //if (plan_contratado() > 3) {}
 
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7 || $this->session->userdata('Id') == 3) 
+            {
+                $this->load->view('stock_panol');
+                
+            } else {
+                header("Location: " . base_url() . "login"); /// enviar a pagina de error
+            }
+
+        }
     }
-}
 
 //// STOCK 	        | OBTENER LISTADO STOCK
 	public function obtener_listado_de_stock()
@@ -105,7 +105,7 @@ public function panol()
         $this->db->where('tbl_stock.Visible', 1);
 
         if($categoria > 0) { $this->db->where('tbl_stock.Categoria_id', $categoria); }
-        if( $tipo > 0 )         { $this->db->where('tbl_stock.Tipo', $tipo); }
+        if( $tipo > 0 )    { $this->db->where('tbl_stock.Tipo', $tipo); }
 
 		$this->db->order_by("tbl_stock_movimientos.Fecha_hora", "desc");
         $query = $this->db->get();
@@ -288,7 +288,7 @@ public function panol()
         $Stock_id = $this->datosObtenidos->Id;
         $Cantidad = $this->datosObtenidos->Cantidad;
         $Precio_venta_producto = $this->datosObtenidos->Precio_venta_producto;
-        $Descripcion = $this->datosObtenidos->Descripcion;
+        $Descripcion = null;   if( isset($this->datosObtenidos->Descripcion)) {  $Descripcion = $this->datosObtenidos->Descripcion; }
 
         $Proceso_id = $this->datosObtenidos->Proceso_id;                // Se refiere al Id, de la orden de trabajo, o de la Compra
         $Tipo_movimiento = $this->datosObtenidos->Tipo_movimiento;      // Recibe un Número: 1 Equivale a compras, 2 a Ordenes de trabajo
@@ -310,7 +310,7 @@ public function panol()
         if ($insert_id >= 0) // SI SE CARGO BIEN DEBE ACTUALIZAR LA TABLA tbl_stock, con el calculod de stock actual y el Id de la última actualización
         {
             /// consultar stock en cuestión y obtener la cantidad hasta ese momento
-                $this->db->select('Cant_actual');
+                $this->db->select('Cant_actual, Precio_costo, Precio_venta');
                 $this->db->from('tbl_stock');
                 $this->db->where('Id', $Stock_id);
                 $query = $this->db->get();
@@ -319,10 +319,16 @@ public function panol()
                 if ($query->num_rows() > 0) // si encontro alguna fila previa, hace el calculo
                 {
                     /// SEGUN EL TIPO DE MOVIMIENTO VA A SUMAR O RESTAR LA CANTIDAD INDICADA
-                    if      ($Tipo_movimiento == 1)    {$cant_actual = $result[0]["Cant_actual"] + $Cantidad;} // suma cantidad7
-                    else if ($Tipo_movimiento == null) {$cant_actual = $result[0]["Cant_actual"] + $Cantidad;} // SI VIENE NULO, TOMA EL SIGNO QUE TRAE LA VARIABLE
-
+                    if      ($Tipo_movimiento == 1)     {$cant_actual = $result[0]["Cant_actual"] + $Cantidad;} // suma cantidad7
+                    else if ($Tipo_movimiento == null)  {$cant_actual = $result[0]["Cant_actual"] + $Cantidad;} // SI VIENE NULO, TOMA EL SIGNO QUE TRAE LA VARIABLE
                     else                                { $cant_actual = $result[0]["Cant_actual"] - $Cantidad;} // resta cantidad
+
+                    /// CONTROLO SI CAMBIO EL PRECIO DE COSTO O DE VENTA
+                    if( isset( $this->datosObtenidos->Precio_venta_producto)){
+                        $Precio_venta = $this->datosObtenidos->Precio_venta_producto;
+                    } else {
+                        $Precio_venta = $result[0]["Precio_venta"];
+                    }
                 }
                 else // de lo contrario la cantidad actual será la primera reportada
                 {
@@ -338,6 +344,7 @@ public function panol()
                 $data = array(
                     'Ult_modificacion_id' => $insert_id,
                     'Cant_actual' => $cant_actual,
+                    'Precio_venta' => $Precio_venta,
                 );
 
                 $this->load->model('App_model');
@@ -443,22 +450,22 @@ public function panol()
             exit("No coinciden los token");
         }
 
-        //$Id = $this->usuario_existe($this->datosObtenidos->Data->DNI);
-
-		if(isset($this->datosObtenidos->Data->Id))
-        {
-            $Id = $this->datosObtenidos->Data->Id;
-		}
+        if(isset($this->datosObtenidos->Data->Id)) { $Id = $this->datosObtenidos->Data->Id; }
+        if(isset($this->datosObtenidos->Data->Precio_venta)) { $Precio_venta = $this->datosObtenidos->Data->Precio_venta; }
+        if(isset($this->datosObtenidos->Data->Precio_costo)) { $Precio_costo = $this->datosObtenidos->Data->Precio_costo; }
 	
 		$data = array(
                         
                     'Tipo' => 		        $this->datosObtenidos->Tipo,
                     'Nombre_item' => 		$this->datosObtenidos->Data->Nombre_item,
+                    'Categoria_id' => 		$this->datosObtenidos->Data->Categoria_id,
+                    'Descripcion' => 		$this->datosObtenidos->Data->Descripcion,
                     'Unidad_medida'=>       $this->datosObtenidos->Data->Unidad_medida,
                     'Cant_actual' => 		$this->datosObtenidos->Data->Cant_actual,
-					'Categoria_id' => 		$this->datosObtenidos->Data->Categoria_id,
-					'Descripcion' => 		$this->datosObtenidos->Data->Descripcion,
-                    'Cant_ideal' => 		$this->datosObtenidos->Data->Cant_ideal,
+					'Cant_ideal' => 		$this->datosObtenidos->Data->Cant_ideal,
+					'Precio_costo' => 		$Precio_costo,
+                    'Precio_venta' => 		$Precio_venta,
+                    'Ult_usuario_id' =>     $this->session->userdata('Id'),
                      
                 );
                 /// 'Ultimo_editor_id' => 		$this->session->userdata('Id')
@@ -544,7 +551,10 @@ public function panol()
 		$token = @$CI->db->token;
 
 		$this->db->select('*');
-		$this->db->from('tbl_stock_categorias');
+        $this->db->from('tbl_stock_categorias');
+        
+        $this->db->where('Tipo', $_GET["categoria_tipo"]);
+
 		$this->db->order_by("Nombre_categoria", "asc");
         $query = $this->db->get();
 		$result = $query->result_array();
@@ -571,10 +581,16 @@ public function panol()
             $Id = $this->datosObtenidos->Data->Id;
         }
 
+        $Tipo = null;
+        if (isset($this->datosObtenidos->Data->Tipo)) {
+            $Tipo = $this->datosObtenidos->Data->Tipo;
+        }
+
         $data = array(
 
             'Nombre_categoria' => $this->datosObtenidos->Data->Nombre_categoria,
             'Descripcion' => $this->datosObtenidos->Data->Descripcion,
+            'Tipo' => $Tipo,
 
         );
 
@@ -783,7 +799,91 @@ public function panol()
         }
     }
     
+//// PRODUCTOS DE REVENTA 	| OBTENER MOVIMIENTOS
+    public function obtener_movimientos_ventas_prod_reventa()
+    {
 
+        //Esto siempre va es para instanciar la base de datos
+        $CI = &get_instance();
+        $CI->load->database();
+        
+        ///Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
+
+        $Id = $_GET["Id"];
+        
+        // Armando array de productos
+            $this->db->select(' tbl_stock_movimientos.*,
+                                tbl_stock.Id as Stock_id,
+                                tbl_stock.Imagen,
+                                tbl_stock.Nombre_item');
+        
+            $this->db->from('tbl_stock_movimientos');
+            
+            $this->db->join('tbl_stock', 'tbl_stock.Id = tbl_stock_movimientos.Stock_id', 'left');
+            $this->db->where('tbl_stock_movimientos.Proceso_id', $Id);
+            $this->db->group_by('tbl_stock.Id');
+
+            $query = $this->db->get();
+            $array_productos = $query->result_array();
+        
+            $Datos = array();
+           
+           
+
+        /// Sumando movimientos
+        foreach ($array_productos as $producto) 
+        {
+            $cantidad = 0;
+
+            $this->db->select('Stock_id, Cantidad, Tipo_movimiento');
+            $this->db->from('tbl_stock_movimientos');
+            $this->db->where('tbl_stock_movimientos.Proceso_id', $Id);
+            $this->db->where('tbl_stock_movimientos.Stock_id', $producto["Stock_id"]);
+
+            $query = $this->db->get();
+            $array_movimientos_producto = $query->result_array();
+            
+            foreach ($array_movimientos_producto as $movimiento) 
+            {   
+                // El 1 resta del stock, pero suma en la venta ya que son productos que salen de stock para irse en la venta al cliente
+                if($movimiento["Tipo_movimiento"] == 1 ){
+                    $cantidad = $cantidad + $movimiento["Cantidad"];
+                }
+                else {
+                    $cantidad = $cantidad - $movimiento["Cantidad"];
+                }
+            }
+
+            $producto["Cantidad"] = $cantidad * (-1); // cambio el signo necesariamente porque lo que hago con respecto al stock es inverso
+            
+            /*$datos_producto = array(
+
+                 Cantidad: 0
+                Descripcion: "Probando quitar"
+                Fecha_hora: "2021-02-08 14:17:21"
+                Id: "21"
+                Nombre_item: "Producto de prueba Hipolito"
+                Precio_venta_producto: "1"
+                Proceso_id: "4"
+                Producto_id: "129"
+                Stock_id: "129"
+                Tipo_movimiento: "2"
+                Usuario_id: "10"
+            ); */
+            
+            array_push($Datos, $producto);
+        }
+        
+
+        echo json_encode($Datos);
+            
+    }
 
     ///// fin documento
 }

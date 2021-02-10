@@ -107,6 +107,60 @@ class Fabricacion extends CI_Controller
 		echo json_encode($result);
 		
     }
+
+//// FABRICACIÓN        | OBTENER LISTADO PARA VENTAS
+    public function obtener_listado_de_productos_ventas()
+    {
+            
+        //Esto siempre va es para instanciar la base de datos
+        $CI =& get_instance();
+        $CI->load->database();
+        
+        //Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+        //$estado = $_GET["estado"];
+        /* $categoria = $_GET["categoria"];
+        $empresa = $_GET["empresa"];
+
+        $this->db->select('	tbl_fabricacion.*,
+                            tbl_fabricacion_categorias.Nombre_categoria,
+                            tbl_empresas.Nombre_empresa'); */
+
+        $this->db->select('	Codigo_interno,
+                            Fecha_ultima_mod,
+                            Id,
+                            Nombre_producto,
+                            Precio_venta
+            '); 
+
+        $this->db->from('tbl_fabricacion');/* 
+
+        $this->db->join('tbl_fabricacion_categorias', 'tbl_fabricacion_categorias.Id = tbl_fabricacion.Categoria_fabricacion_id','left');
+        $this->db->join('tbl_empresas', 'tbl_empresas.Id = tbl_fabricacion.Empresa_id','left'); */
+
+        $this->db->where('tbl_fabricacion.Visible', 1);
+
+        /* if($categoria > 0)
+        {
+            $this->db->where('tbl_fabricacion.Categoria_fabricacion_id', $categoria);
+        }
+        if($empresa > 0)
+        {
+            $this->db->where('tbl_fabricacion.Empresa_id', $empresa);
+        } */
+
+        $this->db->order_by("tbl_fabricacion.Nombre_producto", "asc");
+        $query = $this->db->get();
+        $result = $query->result_array();
+
+        echo json_encode($result);
+        
+    }
     
 //// FABRICACIÓN        | OBTENER Datos del item
     public function obtener_datos_id()
@@ -226,8 +280,8 @@ class Fabricacion extends CI_Controller
         $data = array(
 
             'Producto_id'       => $this->datosObtenidos->Producto_id,
-            'Nombre_archivo'    => $Cantidad = $this->datosObtenidos->Datos->Nombre_archivo,
-            'Descripcion'       => $Cantidad = $this->datosObtenidos->Datos->Descripcion,
+            'Nombre_archivo'    => $this->datosObtenidos->Datos->Nombre_archivo,
+            'Descripcion'       => $this->datosObtenidos->Datos->Descripcion,
             'Usuario_id'        => $this->session->userdata('Id'),
         );
 
@@ -322,22 +376,21 @@ class Fabricacion extends CI_Controller
         { 
             exit("No coinciden los token");
         }
-
-		if(isset($this->datosObtenidos->Data->Id))
-        {
-            $Id = $this->datosObtenidos->Data->Id;
-		}
+        
+        $Id = null;
+		if(isset($this->datosObtenidos->Data->Id)) { $Id = $this->datosObtenidos->Data->Id; }
 		
 		$data = array(
-                        
-                    'Codigo_interno' => 		        $this->datosObtenidos->Data->Codigo_interno,
+                    
                     'Empresa_id' => 		            $this->datosObtenidos->Data->Empresa_id,
+                    'Codigo_interno' => 		        $this->datosObtenidos->Data->Codigo_interno,
 					'Categoria_fabricacion_id' => 	    $this->datosObtenidos->Data->Categoria_fabricacion_id,
                     'Nombre_producto' => 		        $this->datosObtenidos->Data->Nombre_producto,
-                    'Precio_USD' => 		            $this->datosObtenidos->Data->Precio_USD,
+                    'Precio_venta' => 		            $this->datosObtenidos->Data->Precio_venta,
                     'Descripcion_publica_corta' => 		$this->datosObtenidos->Data->Descripcion_publica_corta,
                     'Descripcion_publica_larga' => 		$this->datosObtenidos->Data->Descripcion_publica_larga,
-                    'Descripcion_tecnica_privada' => 	$this->datosObtenidos->Data->Descripcion_tecnica_privada
+                    'Descripcion_tecnica_privada' => 	$this->datosObtenidos->Data->Descripcion_tecnica_privada,
+                    'Ult_usuario' =>                    $this->session->userdata('Id')
                      
                 );
                 /// 'Ultimo_editor_id' => 		$this->session->userdata('Id')

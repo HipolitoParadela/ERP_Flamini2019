@@ -22,6 +22,13 @@ include "menusidebar.php";
 
                         <div class="table-data__tool">
                             <div class="table-data__tool-left">
+                                <div class="rs-select2--light">
+                                    <select class="form-control-sm form-control" v-model="filtro_categoria" v-on:change="getListadoStock(stock_tipo, filtro_categoria)">
+                                        <option selected="selected" v-bind:value="0">Todas las categorías</option>
+                                        <option v-for="categoriaSeleccionada in listaCategorias" v-bind:value="categoriaSeleccionada.Id">{{categoriaSeleccionada.Nombre_categoria}}</option>
+                                    </select>
+                                    <div class="dropDownSelect2"></div>
+                                </div>
                                 <div class="rs-select2--light rs-select2--sm">
                                     <input type="text" class="form-control-sm form-control" placeholder="Buscar item" v-model="buscar">
                                 </div>
@@ -30,6 +37,9 @@ include "menusidebar.php";
                             <div class="table-data__tool-right">
                                 <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" data-target="#stockmodal" v-on:click="limpiarFormularioStock()">
                                     <i class="zmdi zmdi-plus"></i>Nuevo producto
+                                </button>
+                                <button class="au-btn au-btn-icon au-btn--blue au-btn--small" data-toggle="modal" data-target="#categoriaModal" v-on:click="limpiarFormularioCategoria()">
+                                    <!--<i class="zmdi zmdi-plus"></i>-->Categorias
                                 </button>
                             </div>
                         </div>
@@ -42,7 +52,10 @@ include "menusidebar.php";
                                         <th>Categoría</th>
                                         <th>Cant. Actual</th>
                                         <th>Cant. Ideal</th>
+                                        
                                         <th>Medida</th>
+                                        <th>Precio Costo</th>
+                                        <th>Precio Venta</th>
                                         <!-- <th>Añadir a una venta</th> -->
                                         <th>Última Modificación</th>
                                         <th>
@@ -77,6 +90,8 @@ include "menusidebar.php";
                                         </td>
                                         <td align="center">{{stock.Cant_ideal}}</td>
                                         <td>{{stock.Unidad_medida}}</td>
+                                        <td>${{stock.Precio_costo | Moneda}}</td>
+                                        <td>${{stock.Precio_venta | Moneda}}</td>
                                         <!--<td width= "500" bgcolor="#F2F2F2">
                                                     <div class="input-group">
                                                         <input size="6" type="number" class="form-control" v-model="cantMovimientoStock[index]">
@@ -91,7 +106,7 @@ include "menusidebar.php";
                                                 <i class="fa fa-chevron-circle-down"></i>
                                             </button>
                                         </td> -->
-                                        <td>{{stock.Fecha_hora | FechaTimestampBaseDatos}}</td>
+                                        <td>{{stock.Fecha_hora | FechaTimeBD}}</td>
                                         <td>
                                             <div class="table-data-feature">
 
@@ -120,7 +135,7 @@ include "menusidebar.php";
             </div>
         </div>
     </div>
-    <!-- modal stock -->
+    <!-- MODAL CARGAR PRODUCTO -->
     <div class="modal fade" id="stockmodal" tabindex="-1" role="dialog" aria-labelledby="scrollmodalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -134,37 +149,63 @@ include "menusidebar.php";
                     <div class="modal-body">
                         <div class="horizontal-form">
                             <div class="form-group">
-                                <label class=" form-control-label">Nombre del item</label> <input type="text" class="form-control" placeholder="" v-model="stockDato.Nombre_item">
+                                <label class=" form-control-label">Nombre del producto</label> <input type="text" class="form-control" placeholder="" v-model="stockDato.Nombre_item">
                             </div>
-                            <!-- <div class="form-group">
-                                <label class="control-label">Categoría</label>
-                                <select class="form-control" v-model="stockDato.Categoria_id">
-                                    <option value="0">Sin categoría</option>
-                                    <option v-for="categoria in listaCategorias" v-bind:value="categoria.Id">{{categoria.Nombre_categoria}}</option>
-                                </select>
-                            </div> -->
-                            <div class="form-group">
-                                <label class="control-label">Unidad de medida</label>
-                                <select class="form-control" v-model="stockDato.Unidad_medida">
-                                    <option value="Un.">Unidad</option>
-                                    <option value="Packs">Pack</option>
-                                    <option value="Cajas">Cajas</option>
-                                    <option value="Mtrs">Metros</option>
-                                    <option value="Cms">Centimetros</option>
-                                    <option value="Litro">Litro</option>
-                                    <option value="Grs">Gramos</option>
-                                    <option value="Kgs">Kilogramos</option>
+                            <div class="row">
+                                <div class="col-md-6">
 
-                                </select>
+                                    <div class="form-group">
+                                        <label class="control-label">Categoría</label>
+                                        <select class="form-control" v-model="stockDato.Categoria_id">
+                                            <option value="0">Sin categoría</option>
+                                            <option v-for="categoria in listaCategorias" v-bind:value="categoria.Id">{{categoria.Nombre_categoria}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" v-if="stockDato.Id">
+                                        <label class="control-label">Tipo de producto</label>
+                                        <select class="form-control" v-model="stockDato.Tipo">
+                                            <option value="2">Materia Prima</option>
+                                            <option value="1">Pañol</option>
+                                            <option value="3">Producto de reventa</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Unidad de medida</label>
+                                        <select class="form-control" v-model="stockDato.Unidad_medida">
+                                            <option value="Un.">Unidad</option>
+                                            <option value="Packs">Pack</option>
+                                            <option value="Cajas">Cajas</option>
+                                            <option value="Mtrs">Metros</option>
+                                            <option value="Cms">Centimetros</option>
+                                            <option value="Litro">Litro</option>
+                                            <option value="Grs">Gramos</option>
+                                            <option value="Kgs">Kilogramos</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class=" form-control-label">Precio Costo</em></label>
+                                        <input type="number" class="form-control" placeholder="" v-model="stockDato.Precio_costo"> <!-- :disabled="stockDato.Id" -->
+                                    </div>
+                                    <div class="form-group">
+                                        <label class=" form-control-label">Precio Venta</label>
+                                        <input type="number" class="form-control" placeholder="" v-model="stockDato.Precio_venta">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class=" form-control-label">Cantidad inicial</em></label>
+                                        <input type="number" class="form-control" placeholder="" v-model="stockDato.Cant_actual"> <!-- :disabled="stockDato.Id" -->
+                                    </div>
+                                    <div class="form-group">
+                                        <label class=" form-control-label">Cantidad ideal</label>
+                                        <input type="number" class="form-control" placeholder="" v-model="stockDato.Cant_ideal">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label class=" form-control-label">Cantidad inicial</em></label>
-                                <input type="number" class="form-control" placeholder="" v-model="stockDato.Cant_actual"> <!-- :disabled="stockDato.Id" -->
-                            </div>
-                            <div class="form-group">
-                                <label class=" form-control-label">Cantidad ideal</label>
-                                <input type="number" class="form-control" placeholder="" v-model="stockDato.Cant_ideal">
-                            </div>
+
+
+
                             <div class="form-group">
                                 <label class=" form-control-label">Descripción</label>
                                 <textarea class="form-control" placeholder="" v-model="stockDato.Descripcion"></textarea>
@@ -172,7 +213,7 @@ include "menusidebar.php";
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         <button type="submit" class="btn btn-primary">{{texto_boton}}</button>
                     </div>
                 </form>
@@ -222,7 +263,7 @@ include "menusidebar.php";
         </div>
     </div>
     <!-- /.modal -->
-    <!-- modal categorias -->
+    <!-- MODAL CATEGORIAS -->
     <div class="modal fade" id="categoriaModal" tabindex="-1" role="dialog" aria-labelledby="scrollmodalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
 

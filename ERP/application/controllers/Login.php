@@ -44,8 +44,7 @@ class Login extends CI_Controller
                 } 
                 else /// si no es admin
                 {
-                    if ($fila->Presencia == 1) /// si tiene activo el control de presencia y con un rol distinto a 1 y a 5
-                    {
+                    
                         $data = array(
                             'Nombre' => $fila->Nombre,
                             'Id' => $fila->Id,
@@ -57,11 +56,7 @@ class Login extends CI_Controller
                         $this->session->set_userdata($data);
 
                         header("Location: " . base_url() . "dashboard");
-                    } 
-                    else /// si tiene NO esta activo el control de presencia
-                    {
-                        header("Location: " . base_url() . "login?Error=3");
-                    }
+                    
                 }
             } 
             else /// si la contraseña NO es correcta

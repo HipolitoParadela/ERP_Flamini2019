@@ -44,9 +44,6 @@ include "menusidebar.php";
 										<a class="nav-link" v-bind:class="{ active: mostrar == 1 }" href="#" v-on:click="mostrar = 1">Ficha</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" v-bind:class="{ active: mostrar == 2 }" href="#" v-on:click="mostrar = 2">Archivos e historial</a>
-									</li>
-									<li class="nav-item">
 										<a class="nav-link" v-bind:class="{ active: mostrar == 3 }" href="#" v-on:click="mostrar = 3">Ventas de este producto</a>
 									</li>
                                     <li class="nav-item">
@@ -56,7 +53,7 @@ include "menusidebar.php";
                                            
                                 <!-- SECCION DATOS EDITABLES DEL cliente -->
                                 <div class="row" v-show="mostrar == '1'">
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-4">
                                         <div class="card">
                                             <div class="card-header">
                                                 <strong>Ficha: {{productoDatos.Nombre_producto}}</strong>
@@ -87,8 +84,8 @@ include "menusidebar.php";
                                                             <input type="text" class="form-control" placeholder="" v-model="productoDatos.Codigo_interno">
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class=" form-control-label">Precio en Dolares</label>
-                                                            <input type="number" class="form-control" placeholder="" v-model="productoDatos.Precio_USD">
+                                                            <label class=" form-control-label">Precio de venta</label>
+                                                            <input type="number" class="form-control" placeholder="" v-model="productoDatos.Precio_venta">
                                                         </div>
                                                         <div class="form-group">
                                                             <label  class=" form-control-label">Descripción Pública Corta</label>
@@ -108,12 +105,8 @@ include "menusidebar.php";
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                    
-                                <!-- SECCION DATOS DE SEGUIMIENTO -->
-                                <div class="row" v-show="mostrar == '2'">              
-                                    <div class="col-lg-12">
+                                    </div>            
+                                    <div class="col-lg-8">
                                         <div class="card">
                                             <div class="card-header">
                                                 <strong>Archivos e historial sobre {{productoDatos.Nombre_producto}}</strong>
@@ -284,7 +277,7 @@ include "menusidebar.php";
                                             <label class="control-label">Descripción</label>
                                             <textarea class="form-control" rows="5" placeholder="" v-model="archivoData.Descripcion"></textarea>
                                         </div>
-                                        <div class="form-group" v-show="archivoData.Id != null">
+                                        <div class="form-group" v-show="archivoData.Url_archivo == null">
                                             <div class="col-sm-12">
                                                 <input @change="archivoSeleccionado" type="file" class="form-control" name="Imagen">
                                             </div>

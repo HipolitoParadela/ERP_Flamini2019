@@ -11,7 +11,7 @@ class Usuarios extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
 
-            if ($this->session->userdata('Rol_acceso') > 3) 
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 5 ) 
             {
                 $this->load->view('usuarios_listado');
             } 
@@ -32,7 +32,7 @@ class Usuarios extends CI_Controller
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
             //if (plan_contratado() > 3) {}
 
-            if ($this->session->userdata('Rol_acceso') > 3) 
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 5 ) 
             {
                 $this->load->view('usuarios_datos');
                 
@@ -52,7 +52,7 @@ class Usuarios extends CI_Controller
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
             //if (plan_contratado() > 3) {}
 
-            if ($this->session->userdata('Rol_acceso') > 3) 
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 5 ) 
             {
                 $this->load->view('usuarios_resumen_puntajes');
                 
@@ -141,6 +141,80 @@ class Usuarios extends CI_Controller
         echo json_encode($result);
 
     }
+
+//// USUARIOS 	    | CARGAR O EDITAR USUARIOS
+public function cargar_Usuarios()
+{
+    $CI =& get_instance();
+    $CI->load->database();
+    
+    $token = @$CI->db->token;
+    $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+    if ($this->datosObtenidos->token != $token)
+    { 
+        exit("No coinciden los token");
+    }
+
+    //$Id = $this->usuario_existe($this->datosObtenidos->usuarioData->DNI);
+
+    if(isset($this->datosObtenidos->usuarioData->Id))
+    {
+        $Id = $this->datosObtenidos->usuarioData->Id;
+    }
+    
+    /*$Activo = 1;
+    if(isset($this->datosObtenidos->usuarioData->Activo))
+    {
+        $Activo = $this->datosObtenidos->usuarioData->Activo;
+    }*/
+
+    $fecha = date("Y-m-d");
+
+    $data = array(
+                    
+                'Nombre' => 			$this->datosObtenidos->usuarioData->Nombre,
+                'DNI' => 				$this->datosObtenidos->usuarioData->DNI,
+                'CUIT_CUIL' => 			$this->datosObtenidos->usuarioData->CUIT_CUIL,
+                'Pass' => 				$this->datosObtenidos->usuarioData->Pass,
+                'Rol_acceso' => 			$this->datosObtenidos->usuarioData->Rol_acceso,
+                'Empresa_id' => 		$this->datosObtenidos->usuarioData->Empresa_id,
+                'Puesto_Id' => 			$this->datosObtenidos->usuarioData->Puesto_Id,
+                'Telefono' => 			$this->datosObtenidos->usuarioData->Telefono,
+                'Fecha_nacimiento' => 	$this->datosObtenidos->usuarioData->Fecha_nacimiento,
+                'Domicilio' => 			$this->datosObtenidos->usuarioData->Domicilio,
+                'Nacionalidad' => 		$this->datosObtenidos->usuarioData->Nacionalidad,
+                'Genero' => 			$this->datosObtenidos->usuarioData->Genero,
+                'Email' => 				$this->datosObtenidos->usuarioData->Email,
+                'Obra_social' => 		$this->datosObtenidos->usuarioData->Obra_social,
+                'Numero_obra_social' => $this->datosObtenidos->usuarioData->Numero_obra_social,
+                'Hijos' => 				$this->datosObtenidos->usuarioData->Hijos,
+                'Estado_civil' => 		$this->datosObtenidos->usuarioData->Estado_civil,
+                'Datos_persona_contacto' => 	$this->datosObtenidos->usuarioData->Datos_persona_contacto,
+                'Datos_bancarios' => 			$this->datosObtenidos->usuarioData->Datos_bancarios,
+                'Periodo_liquidacion_sueldo' => $this->datosObtenidos->usuarioData->Periodo_liquidacion_sueldo,
+                'Horario_laboral' => 			$this->datosObtenidos->usuarioData->Horario_laboral,
+                'Lider' => 				    $this->datosObtenidos->usuarioData->Lider,
+                'Superior_inmediato' => 		$this->datosObtenidos->usuarioData->Superior_inmediato,
+                'Observaciones' => 		    $this->datosObtenidos->usuarioData->Observaciones,
+                'Fecha_alta' => 		    $this->datosObtenidos->usuarioData->Fecha_alta,
+                'Activo' => 			    1,
+                'Ultima_actualizacion' =>   $fecha,
+                'Ultimo_editor_id' => 		$this->session->userdata('Id') 
+                
+            );
+
+    $this->load->model('App_model');
+    $insert_id = $this->App_model->insertar($data, $Id, 'tbl_usuarios');
+            
+    if ($insert_id >=0 ) 
+    {   
+        echo json_encode(array("Id" => $insert_id));         
+    } 
+    else 
+    {
+        echo json_encode(array("Id" => 0));
+    }
+}
 
 //// FORMACIONES 	| OBTENER FORMACIONES
     public function obtener_formaciones()
@@ -260,80 +334,7 @@ class Usuarios extends CI_Controller
 
     }
 
-//// USUARIOS 	    | CARGAR O EDITAR USUARIOS
-	public function cargar_Usuarios()
-    {
-        $CI =& get_instance();
-		$CI->load->database();
-		
-		$token = @$CI->db->token;
-        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
-        if ($this->datosObtenidos->token != $token)
-        { 
-            exit("No coinciden los token");
-        }
 
-        //$Id = $this->usuario_existe($this->datosObtenidos->usuarioData->DNI);
-
-		if(isset($this->datosObtenidos->usuarioData->Id))
-        {
-            $Id = $this->datosObtenidos->usuarioData->Id;
-		}
-		
-		/*$Activo = 1;
-		if(isset($this->datosObtenidos->usuarioData->Activo))
-        {
-            $Activo = $this->datosObtenidos->usuarioData->Activo;
-        }*/
-
-        $fecha = date("Y-m-d");
-
-		$data = array(
-                        
-					'Nombre' => 			$this->datosObtenidos->usuarioData->Nombre,
-                    'DNI' => 				$this->datosObtenidos->usuarioData->DNI,
-                    'CUIT_CUIL' => 			$this->datosObtenidos->usuarioData->CUIT_CUIL,
-					'Pass' => 				$this->datosObtenidos->usuarioData->Pass,
-                    'Rol_acceso' => 			$this->datosObtenidos->usuarioData->Rol_acceso,
-                    'Empresa_id' => 		$this->datosObtenidos->usuarioData->Empresa_id,
-                    'Puesto_Id' => 			$this->datosObtenidos->usuarioData->Puesto_Id,
-					'Telefono' => 			$this->datosObtenidos->usuarioData->Telefono,
-					'Fecha_nacimiento' => 	$this->datosObtenidos->usuarioData->Fecha_nacimiento,
-					'Domicilio' => 			$this->datosObtenidos->usuarioData->Domicilio,
-					'Nacionalidad' => 		$this->datosObtenidos->usuarioData->Nacionalidad,
-					'Genero' => 			$this->datosObtenidos->usuarioData->Genero,
-					'Email' => 				$this->datosObtenidos->usuarioData->Email,
-					'Obra_social' => 		$this->datosObtenidos->usuarioData->Obra_social,
-					'Numero_obra_social' => $this->datosObtenidos->usuarioData->Numero_obra_social,
-					'Hijos' => 				$this->datosObtenidos->usuarioData->Hijos,
-					'Estado_civil' => 		$this->datosObtenidos->usuarioData->Estado_civil,
-					'Datos_persona_contacto' => 	$this->datosObtenidos->usuarioData->Datos_persona_contacto,
-					'Datos_bancarios' => 			$this->datosObtenidos->usuarioData->Datos_bancarios,
-					'Periodo_liquidacion_sueldo' => $this->datosObtenidos->usuarioData->Periodo_liquidacion_sueldo,
-					'Horario_laboral' => 			$this->datosObtenidos->usuarioData->Horario_laboral,
-					'Lider' => 				    $this->datosObtenidos->usuarioData->Lider,
-					'Superior_inmediato' => 		$this->datosObtenidos->usuarioData->Superior_inmediato,
-					'Fecha_alta' => 		    $this->datosObtenidos->usuarioData->Fecha_alta,
-                    'Observaciones' => 		    $this->datosObtenidos->usuarioData->Observaciones,
-                    'Presencia' => 1,
-                    'Activo' => 			    1,
-                    'Ultima_actualizacion' =>   $fecha,
-                    'Ultimo_editor_id' => 		$this->session->userdata('Id') 
-                    
-				);
-
-        $this->load->model('App_model');
-        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_usuarios');
-                
-		if ($insert_id >=0 ) 
-		{   
-            echo json_encode(array("Id" => $insert_id));         
-		} 
-		else 
-		{
-            echo json_encode(array("Id" => 0));
-        }
-    }
 
 //// USUARIOS 	    | DESACTIVAR USUARIO
 	public function desactivar_usuario()

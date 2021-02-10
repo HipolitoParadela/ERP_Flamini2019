@@ -170,17 +170,20 @@ class finanzas extends CI_Controller
         }
 
         $data = array(
-                        
+                    
+                    'Planificacion_id' =>   $this->datosObtenidos->Planificacion_id,
+                    'Empresa_id' =>    $this->datosObtenidos->Empresa_id,
+                    'Identificador_factura' =>    $this->datosObtenidos->Identificador_factura,
+                    'Modalidad_pago' =>     $this->datosObtenidos->Datos->Modalidad_pago,
                     'Origen_movimiento' => 	$this->datosObtenidos->Origen_movimiento,
                     'Fila_movimiento' =>    $this->datosObtenidos->Fila_movimiento,
-                    'Modalidad_pago' =>     $this->datosObtenidos->Datos->Modalidad_pago,
-                    'Monto' => 	            $this->datosObtenidos->Datos->Monto,
                     'Op' =>                 $this->datosObtenidos->Op,
-                    'Planificacion_id' =>   $this->datosObtenidos->Planificacion_id,
+                    'Monto' => 	            $this->datosObtenidos->Datos->Monto,
                     'Fecha_ejecutado' => 	$this->datosObtenidos->Datos->Fecha_ejecutado,
+                    'Observaciones' =>      $this->datosObtenidos->Datos->Observaciones,               
                     'Fecha_cargado' => 	    $fecha,
                     'Usuario_id' => 		$this->session->userdata('Id'),
-                    'Observaciones' =>      $this->datosObtenidos->Datos->Observaciones,                    
+                         
                 );
 
         $this->load->model('App_model');
