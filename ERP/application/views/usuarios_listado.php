@@ -87,7 +87,7 @@ include "menusidebar.php";
                                             <div class="round-img">
                                                 <a href="#modalUsuariosFoto" data-toggle="modal" v-on:click="editarFormulariousuarioFoto(usuario)">
                                                     <img v-if="usuario.Imagen != null" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+usuario.Imagen" width="60px">
-                                                    <img v-else src="https://freeiconshop.com/wp-content/uploads/edd/person-flat.png" width="50px" alt="">
+                                                    <img v-else src="<?php echo base_url(); ?>uploads/imagenes/usuario.png" width="50px" alt="">
                                                 </a>
                                             </div>
                                         </td>
@@ -225,7 +225,7 @@ include "menusidebar.php";
                 <div class="modal-body">
                     <p align="center">
                         <img v-if="usuarioFoto.Imagen != null" class="avatar_grande" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+usuarioFoto.Imagen" alt="">
-                        <img v-else class="avatar_grande" src="<?php echo base_url(); ?>uploads/imagenes/addimagen.jpg" alt="">
+                        <img v-else class="avatar_grande" src="<?php echo base_url(); ?>uploads/imagenes/usuario.png" alt="">
                     </p>
                     <hr>
                     <div class="horizontal-form">

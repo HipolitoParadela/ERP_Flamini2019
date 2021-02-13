@@ -162,25 +162,30 @@ class finanzas extends CI_Controller
 
         $Id = null;
         $fecha = date("Y-m-d");
+        $Observaciones = 'Sin observaciones'; 
+        if(isset($this->datosObtenidos->Datos->Observaciones))
+        {
+            $Observaciones = $this->datosObtenidos->Datos->Observaciones;
+        }
 
         if(isset($this->datosObtenidos->Datos->Id))
         {
             $Id =       $this->datosObtenidos->Datos->Id;
-            $fecha =    $this->datosObtenidos->Datos->Fecha_creado;
+            $fecha =    $this->datosObtenidos->Datos->Fecha_cargado;
         }
 
         $data = array(
                     
                     'Planificacion_id' =>   $this->datosObtenidos->Planificacion_id,
-                    'Empresa_id' =>    $this->datosObtenidos->Empresa_id,
-                    'Identificador_factura' =>    $this->datosObtenidos->Identificador_factura,
+                    'Empresa_id' =>         $this->datosObtenidos->Datos->Empresa_id,
+                    'Identificador_factura' =>    $this->datosObtenidos->Datos->Identificador_factura,
                     'Modalidad_pago' =>     $this->datosObtenidos->Datos->Modalidad_pago,
                     'Origen_movimiento' => 	$this->datosObtenidos->Origen_movimiento,
                     'Fila_movimiento' =>    $this->datosObtenidos->Fila_movimiento,
                     'Op' =>                 $this->datosObtenidos->Op,
                     'Monto' => 	            $this->datosObtenidos->Datos->Monto,
                     'Fecha_ejecutado' => 	$this->datosObtenidos->Datos->Fecha_ejecutado,
-                    'Observaciones' =>      $this->datosObtenidos->Datos->Observaciones,               
+                    'Observaciones' =>      $Observaciones,               
                     'Fecha_cargado' => 	    $fecha,
                     'Usuario_id' => 		$this->session->userdata('Id'),
                          
@@ -237,294 +242,7 @@ class finanzas extends CI_Controller
 
         echo json_encode($Datos);
     }
-
-//// MOVIMIENTOS       | CARGAR EFECTIVO
-    public function cargar_movimiento_efectivo()
-    {
-        $CI =& get_instance();
-        $CI->load->database();
-        
-        ///Seguridad
-        $token = @$CI->db->token;
-        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
-        if ($this->datosObtenidos->token != $token)
-        { 
-            exit("No coinciden los token");
-        }
-
-        $Id = null;
-        $fecha = date("Y-m-d");
-
-        if(isset($this->datosObtenidos->Datos->Id))
-        {
-            $Id =       $this->datosObtenidos->Datos->Id;
-            $fecha =    $this->datosObtenidos->Datos->Fecha_creado;
-        }
-
-        $data = array(
-                        
-                    'Origen_movimiento' => 	$this->datosObtenidos->Origen_movimiento,
-                    'Fila_movimiento' =>    $this->datosObtenidos->Fila_movimiento,
-                    'Monto' => 	            $this->datosObtenidos->Datos->Monto,
-                    'Op' =>                 $this->datosObtenidos->Op,
-                    'Periodo_id' =>         $this->datosObtenidos->Periodo_id,
-                    'Fecha_ejecutado' => 	$this->datosObtenidos->Datos->Fecha_ejecutado,
-                    'Fecha_cargado' => 	    $fecha,
-                    'Usuario_id' => 		$this->session->userdata('Id'),
-                    'Observaciones' =>      $this->datosObtenidos->Datos->Observaciones,                    
-                );
-
-        $this->load->model('App_model');
-        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_dinero_efectivo');
-                
-        if ($insert_id >=0 ) 
-        {   
-            echo json_encode(array("Id" => $insert_id));         
-        } 
-        else 
-        {
-            echo json_encode(array("Id" => 0));
-        }
-    }
-
-//// MOVIMIENTOS       | OBTENER MOVIMIENTOS EFECTIVO
-	public function obtener_movimientos_efectivo()
-    {
-        //Esto siempre va es para instanciar la base de datos
-        $CI =& get_instance();
-        $CI->load->database();
-        
-        ///Seguridad
-        $token = @$CI->db->token;
-        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
-        if ($this->datosObtenidos->token != $token) { exit("No coinciden los token"); }
-
-        //// Condicional para saber setear el origen del movimiento
-        $Origen_movimiento  = $this->datosObtenidos->Origen_movimiento;
-        $Fila_movimiento    = $this->datosObtenidos->Fila_movimiento;
-
-        $this->db->select('*');
-
-        $this->db->from('tbl_dinero_efectivo');
-
-        $this->db->where('Origen_movimiento', $Origen_movimiento);
-        $this->db->where('Fila_movimiento', $Fila_movimiento);
-        $this->db->where('Visible', 1);
-        
-        $query = $this->db->get();
-		$result = $query->result_array();
-        
-        /////  SUMAR MONTOS
-        $Total = 0;
-        foreach ($result as $cheque) 
-        {
-            $Total = $Total + $cheque["Monto"];
-        }
-        
-        $Datos = array("Datos"=> $result, "Total" => $Total);
-
-        echo json_encode($Datos);
-    }
-
-
-//// MOVIMIENTOS       | CARGAR TRANSFERENCIA  
-    public function cargar_movimiento_transferencia()
-    {
-        $CI =& get_instance();
-        $CI->load->database();
-        
-        ///Seguridad
-        $token = @$CI->db->token;
-        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
-        if ($this->datosObtenidos->token != $token)
-        { 
-            exit("No coinciden los token");
-        }
-
-        $Id = null;
-        $fecha = date("Y-m-d");
-
-        if(isset($this->datosObtenidos->Datos->Id))
-        {
-            $Id =       $this->datosObtenidos->Datos->Id;
-            $fecha =    $this->datosObtenidos->Datos->Fecha_creado;
-        }
-
-        $data = array(
-                        
-                    'Origen_movimiento' => 	$this->datosObtenidos->Origen_movimiento,
-                    'Periodo_id' =>         $this->datosObtenidos->Periodo_id,
-                    'Fila_movimiento' =>    $this->datosObtenidos->Fila_movimiento,
-                    'Op' =>                 $this->datosObtenidos->Op,
-                    'Monto_bruto' => 	            $this->datosObtenidos->Datos->Monto_bruto,
-                    'Debito_fiscal_iva_basico' => 	0,
-                    'Comision_resumen_cuenta' => 	0,
-                    'Retencion_ing_brutos' => 	    0,
-                    'Fecha_ejecutado' => 	$this->datosObtenidos->Datos->Fecha_ejecutado,
-                    'Fecha_cargado' => 	    $fecha,
-                    'Usuario_id' => 		$this->session->userdata('Id'),
-                    'Observaciones' =>      $this->datosObtenidos->Datos->Observaciones,                    
-                );
-
-        $this->load->model('App_model');
-        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_dinero_transferencias');
-                
-        if ($insert_id >=0 ) 
-        {   
-            echo json_encode(array("Id" => $insert_id));         
-        } 
-        else 
-        {
-            echo json_encode(array("Id" => 0));
-        }
-    }
-
-//// MOVIMIENTOS       | OBTENER MOVIMIENTOS TRANSFERENCIAS
-    public function obtener_movimientos_transferencia()
-    {
-        //Esto siempre va es para instanciar la base de datos
-        $CI =& get_instance();
-        $CI->load->database();
-        
-        ///Seguridad
-        $token = @$CI->db->token;
-        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
-        if ($this->datosObtenidos->token != $token) { exit("No coinciden los token"); }
-
-        //// Condicional para saber setear el origen del movimiento
-        $Origen_movimiento  = $this->datosObtenidos->Origen_movimiento;
-        $Fila_movimiento    = $this->datosObtenidos->Fila_movimiento;
-
-        $this->db->select('*');
-
-        $this->db->from('tbl_dinero_transferencias');
-
-        $this->db->where('Origen_movimiento', $Origen_movimiento);
-        $this->db->where('Fila_movimiento', $Fila_movimiento);
-        $this->db->where('Visible', 1);
-        
-        $query = $this->db->get();
-        $result = $query->result_array();
-        
-        /////  SUMAR MONTOS
-        $Total = 0;
-        foreach ($result as $cheque) 
-        {
-            $Total = $Total + $cheque["Monto_bruto"] - $cheque["Debito_fiscal_iva_basico"] -$cheque["Comision_resumen_cuenta"] -$cheque["Retencion_ing_brutos"];
-        }
-        
-        $Datos = array("Datos"=> $result, "Total" => $Total);
-
-        echo json_encode($Datos);
-    }
-
-//// MOVIMIENTOS       | CARGAR MOVIMIENTO CHEQUES  
-    public function cargar_movimiento_cheques()
-    {
-        $CI =& get_instance();
-        $CI->load->database();
-        
-        ///Seguridad
-        $token = @$CI->db->token;
-        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
-        if ($this->datosObtenidos->token != $token)
-        { 
-            exit("No coinciden los token");
-        }
-
-        $Id = null;
-        $fecha = date("Y-m-d");
-
-        if(isset($this->datosObtenidos->Datos->Id))
-        {
-            $Id =       $this->datosObtenidos->Datos->Id;
-            $fecha =    $this->datosObtenidos->Datos->Fecha_creado;
-        }
-
-        $data = array(
-                        
-                    'Origen_movimiento' => 	$this->datosObtenidos->Origen_movimiento,
-                    'Fila_movimiento' =>    $this->datosObtenidos->Fila_movimiento,
-                    'Cheque_id' => 	        $this->datosObtenidos->Datos->Cheque_id,
-                    'Periodo_id' =>         $this->datosObtenidos->Periodo_id,
-                    'Op' =>                 $this->datosObtenidos->Op,
-                    'Fecha_ejecutado' => 	$this->datosObtenidos->Datos->Fecha_ejecutado,
-                    'Fecha_cargado' => 	    $fecha,
-                    'Usuario_id' => 		$this->session->userdata('Id'),
-                    'Observaciones' =>      $this->datosObtenidos->Datos->Observaciones,                    
-                );
-
-        $this->load->model('App_model');
-        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_dinero_cheques');
-                
-        if ($insert_id >=0) 
-        {   
-           /// FUNCION PARA MARCAR COMO CHEQUE QUE INGRESA O EGRESA... Setear según el origen para definir si entra o sale
-            if($this->datosObtenidos->Op == 1)
-            {
-                 $data = array(
-                        
-                'Estado' => 2,                  
-                );
-
-                $this->load->model('App_model');
-                $insert_id2 = $this->App_model->insertar($data, $this->datosObtenidos->Datos->Cheque_id, 'tbl_cheques');
-                        
-                if ($insert_id2 >=0 ) 
-                {   
-                    //echo json_encode(array("Id" => $insert_id2));         
-                } 
-            }
-            
-            echo json_encode(array("Id" => $insert_id));
-            
-        } 
-        else 
-        {
-            echo json_encode(array("Id" => 0));
-        }
-    }
-
-//// MOVIMIENTOS       | OBTENER MOVIMIENTOS CHEQUES
-    public function obtener_movimientos_cheques()
-    {
-        //Esto siempre va es para instanciar la base de datos
-        $CI =& get_instance();
-        $CI->load->database();
-        
-        ///Seguridad
-        $token = @$CI->db->token;
-        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
-        if ($this->datosObtenidos->token != $token) { exit("No coinciden los token"); }
-
-        //// Condicional para saber setear el origen del movimiento
-        $Origen_movimiento  = $this->datosObtenidos->Origen_movimiento;
-        $Fila_movimiento    = $this->datosObtenidos->Fila_movimiento;
-
-        $this->db->select(' tbl_dinero_cheques.*,
-                            tbl_cheques.*');
-
-        $this->db->from('tbl_dinero_cheques');
-        $this->db->join('tbl_cheques', 'tbl_cheques.Id = tbl_dinero_cheques.Cheque_id', 'left');
-
-        $this->db->where('tbl_dinero_cheques.Origen_movimiento', $Origen_movimiento);
-        $this->db->where('tbl_dinero_cheques.Fila_movimiento', $Fila_movimiento);
-        $this->db->where('tbl_dinero_cheques.Visible', 1);
-        
-        $query = $this->db->get();
-        $result = $query->result_array();
-
-        /////  SUMAR MONTOS
-        $Total_cheques = 0;
-        foreach ($result as $cheque) 
-        {
-            $Total_cheques = $Total_cheques + $cheque["Monto"];
-        }
-        
-        $Datos = array("Datos"=> $result, "Total_cheques" => $Total_cheques);
-
-        echo json_encode($Datos);
-    }
+    
 
 //// CHEQUES      | CARGAR
     public function cargar_cheques()

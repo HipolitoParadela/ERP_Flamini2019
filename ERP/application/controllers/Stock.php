@@ -248,6 +248,7 @@ class Stock extends CI_Controller
             
             $this->db->where('tbl_stock_movimientos.Tipo_movimiento', $Tipo_movimiento);
             $this->db->where('tbl_stock_movimientos.Proceso_id', $Id);
+            $this->db->where('tbl_stock_movimientos.Visible', 1);
 
             $query = $this->db->get();
             $result = $query->result_array();
@@ -286,6 +287,7 @@ class Stock extends CI_Controller
         }
 
         $Stock_id = $this->datosObtenidos->Id;
+        $Modulo = $this->datosObtenidos->Modulo;
         $Cantidad = $this->datosObtenidos->Cantidad;
         $Precio_venta_producto = $this->datosObtenidos->Precio_venta_producto;
         $Descripcion = null;   if( isset($this->datosObtenidos->Descripcion)) {  $Descripcion = $this->datosObtenidos->Descripcion; }
@@ -295,6 +297,7 @@ class Stock extends CI_Controller
         
         $data = array(
 
+            'Modulo'                => $Modulo,
             'Stock_id'              => $Stock_id,
             'Cantidad'              => $Cantidad,
             'Precio_venta_producto' => $Precio_venta_producto,
@@ -305,12 +308,14 @@ class Stock extends CI_Controller
         );
 
         $this->load->model('App_model');
-        $insert_id = $this->App_model->insertar($data, Null, 'tbl_stock_movimientos');
+        $insert_id_stock_movimientos = $this->App_model->insertar($data, Null, 'tbl_stock_movimientos');
 
-        if ($insert_id >= 0) // SI SE CARGO BIEN DEBE ACTUALIZAR LA TABLA tbl_stock, con el calculod de stock actual y el Id de la última actualización
+        if ($insert_id_stock_movimientos >= 0) // SI SE CARGO BIEN DEBE ACTUALIZAR LA TABLA tbl_stock, con el calculod de stock actual y el Id de la última actualización
         {
             /// consultar stock en cuestión y obtener la cantidad hasta ese momento
-                $this->db->select('Cant_actual, Precio_costo, Precio_venta');
+                $this->db->select(' Cant_actual, 
+                                    Precio_costo, 
+                                    Precio_venta');
                 $this->db->from('tbl_stock');
                 $this->db->where('Id', $Stock_id);
                 $query = $this->db->get();
@@ -342,16 +347,19 @@ class Stock extends CI_Controller
 
             /// Actualizo tbl_stock con los datos nuevos
                 $data = array(
-                    'Ult_modificacion_id' => $insert_id,
+                    'Ult_modificacion_id' => $insert_id_stock_movimientos,
                     'Cant_actual' => $cant_actual,
                     'Precio_venta' => $Precio_venta,
                 );
 
                 $this->load->model('App_model');
-                $insert_id_2 = $this->App_model->insertar($data, $Stock_id, 'tbl_stock');
+                $insert_id_actualizacion_stock = $this->App_model->insertar($data, $Stock_id, 'tbl_stock');
 
-                if ($insert_id_2 >= 0) {
-                    echo json_encode(array("Id" => $insert_id));
+                if ($insert_id_actualizacion_stock >= 0) {
+                    echo json_encode(array( 
+                                            "Id" => $insert_id_stock_movimientos,
+                                            "Stock_modificado_id" => $insert_id_actualizacion_stock,
+                                            "Stock_id" => $Stock_id));
                 } 
                 else 
                 {
@@ -392,6 +400,7 @@ class Stock extends CI_Controller
         $this->db->join('tbl_stock', 'tbl_stock.Id = tbl_stock_movimientos.Stock_id', 'left');
         
         //$this->db->where('Stock_id', $Id);
+        $this->db->where('tbl_stock_movimientos.Visible', 1);
         $this->db->order_by("tbl_stock_movimientos.Id", "desc");
         $this->db->limit($limit, $start);
 
@@ -461,6 +470,7 @@ class Stock extends CI_Controller
                     'Categoria_id' => 		$this->datosObtenidos->Data->Categoria_id,
                     'Descripcion' => 		$this->datosObtenidos->Data->Descripcion,
                     'Unidad_medida'=>       $this->datosObtenidos->Data->Unidad_medida,
+                    'Cant_comercial'=>       $this->datosObtenidos->Data->Cant_comercial,
                     'Cant_actual' => 		$this->datosObtenidos->Data->Cant_actual,
 					'Cant_ideal' => 		$this->datosObtenidos->Data->Cant_ideal,
 					'Precio_costo' => 		$Precio_costo,
@@ -827,6 +837,8 @@ class Stock extends CI_Controller
             
             $this->db->join('tbl_stock', 'tbl_stock.Id = tbl_stock_movimientos.Stock_id', 'left');
             $this->db->where('tbl_stock_movimientos.Proceso_id', $Id);
+            $this->db->where('tbl_stock_movimientos.Visible', 1);
+            $this->db->where('Modulo', "Ventas");
             $this->db->group_by('tbl_stock.Id');
 
             $query = $this->db->get();
@@ -841,10 +853,13 @@ class Stock extends CI_Controller
         {
             $cantidad = 0;
 
-            $this->db->select('Stock_id, Cantidad, Tipo_movimiento');
+            $this->db->select('Cantidad, Tipo_movimiento, Precio_venta_producto');
             $this->db->from('tbl_stock_movimientos');
-            $this->db->where('tbl_stock_movimientos.Proceso_id', $Id);
-            $this->db->where('tbl_stock_movimientos.Stock_id', $producto["Stock_id"]);
+            $this->db->where('Proceso_id', $Id);
+            $this->db->where('Stock_id', $producto["Stock_id"]);
+            $this->db->where('Modulo', "Ventas");
+            $this->db->where('Visible', 1);
+            $this->db->order_by("Id", "asc");
 
             $query = $this->db->get();
             $array_movimientos_producto = $query->result_array();
@@ -861,21 +876,7 @@ class Stock extends CI_Controller
             }
 
             $producto["Cantidad"] = $cantidad * (-1); // cambio el signo necesariamente porque lo que hago con respecto al stock es inverso
-            
-            /*$datos_producto = array(
-
-                 Cantidad: 0
-                Descripcion: "Probando quitar"
-                Fecha_hora: "2021-02-08 14:17:21"
-                Id: "21"
-                Nombre_item: "Producto de prueba Hipolito"
-                Precio_venta_producto: "1"
-                Proceso_id: "4"
-                Producto_id: "129"
-                Stock_id: "129"
-                Tipo_movimiento: "2"
-                Usuario_id: "10"
-            ); */
+            $producto["Precio_venta_producto"] = $movimiento["Precio_venta_producto"]; // trato de que quede el ùltimo precio de venta registrado por ID
             
             array_push($Datos, $producto);
         }
@@ -885,5 +886,57 @@ class Stock extends CI_Controller
             
     }
 
-    ///// fin documento
+//// PRODUCTOS DE REVENTA 	| ELIMINAR MOVIMIENTOS
+    public function eliminarProductoReventa()
+    {
+        $CI =& get_instance();
+        $CI->load->database();
+        
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
+        
+        $Stock_id = $this->datosObtenidos->Stock_id;
+        $Venta_id = $_GET["Venta_id"];
+
+        $data = array(
+                        
+                'Visible' => 0,
+
+                );
+        
+        /// BUSCAR TODAS LOS MOVIMIENTOS QUE TENGAN QUE VER CON
+            $this->db->select('Id');
+            $this->db->from('tbl_stock_movimientos');
+            $this->db->where('Proceso_id', $Venta_id);
+            $this->db->where('Stock_id', $Stock_id);
+            $this->db->where('Modulo', "Ventas");
+            $this->db->order_by("Id", "asc");
+
+        $query = $this->db->get();
+        $array_movimientos_producto = $query->result_array();
+        $MovimientosEliminados = array();
+            
+        foreach ($array_movimientos_producto as $movimiento) {
+            
+            $this->load->model('App_model');
+            $insert_id = $this->App_model->insertar($data, $movimiento["Id"], 'tbl_stock_movimientos');
+
+            array_push($MovimientosEliminados, $insert_id);
+        }
+                
+        if ($insert_id >=0 ) 
+        {   
+            echo json_encode( array( "Movimientos_eliminados" => $MovimientosEliminados ) );         
+        } 
+        else 
+        {
+            echo json_encode(array("Id" => 0));
+        }
+    }
+
+///// fin documento
 }

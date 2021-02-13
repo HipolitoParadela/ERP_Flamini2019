@@ -124,7 +124,16 @@
                                 <div class="account-wrap">
                                     <div class="account-item clearfix js-item-menu">
                                         <div class="image">
-                                            <img src="<?= base_url();?>uploads/imagenes/<?= $this->session->userdata('Imagen'); ?>" alt="<?= $this->session->userdata('Nombre'); ?>" />
+                                            <?php 
+                                                if( $this->session->userdata('Imagen') != null ){
+
+                                                    echo '<img src="'.base_url().'uploads/imagenes/'. $this->session->userdata("Imagen").'" width="50px"/>';
+                                                }else{
+                                                    echo '<img src="'.base_url().'uploads/imagenes/usuario.png" width="50px">';
+                                                }
+                                            ?>
+                                            
+                                            
                                         </div>
                                         <div class="content">
                                             <a class="js-acc-btn" href="#"><?= $this->session->userdata('Nombre'); ?></a>

@@ -13,6 +13,11 @@
                             </a>
                         </li>
                         <li>
+                            <a href="<?= base_url(); ?>cobranzas">
+                                <i class="fa fa-briefcase"></i>Cobranzas
+                            </a>
+                        </li>
+                        <li>
                             <a href="<?= base_url(); ?>compras">
                                 <i class="fas fa-shopping-cart"></i>Compras
                             </a>
@@ -97,6 +102,11 @@
                             <li>
                                 <a href="<?= base_url(); ?>ventas">
                                     <i class="fa fa-tags"></i>Ventas
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<?= base_url(); ?>cobranzas">
+                                    <i class="fa fa-briefcase"></i>Cobranzas
                                 </a>
                             </li>
                             <li>

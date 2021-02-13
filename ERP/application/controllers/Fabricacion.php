@@ -689,7 +689,10 @@ class Fabricacion extends CI_Controller
                         
 					'Fabricacion_id' =>     $Fabricacion_id,
 					'Stock_id' => 	        $this->datosObtenidos->Datos->Stock_id,
-					'Cantidad' => 		    $this->datosObtenidos->Datos->Cantidad,
+                    'Cantidad' => 	        $this->datosObtenidos->Datos->Cantidad,
+                    'Dimension' => 	        $this->datosObtenidos->Datos->Dimension,
+					'Posicion' => 		    $this->datosObtenidos->Datos->Posicion,
+                    'Subconjunto' => 		    $this->datosObtenidos->Datos->Subconjunto,
                     'Observaciones' => 		$this->datosObtenidos->Datos->Observaciones,
                      
                 );
@@ -727,7 +730,9 @@ class Fabricacion extends CI_Controller
         $Fabricacion_id = $_GET["Fabricacion_id"];
 
         $this->db->select('	tbl_fabricacion_insumos_producto.*,
-                            tbl_stock.Nombre_item');
+                            tbl_stock.Nombre_item,
+                            tbl_stock.Unidad_medida,
+                            tbl_stock.Cant_comercial');
 
         $this->db->from('tbl_fabricacion_insumos_producto');
 
@@ -743,6 +748,75 @@ class Fabricacion extends CI_Controller
 
         echo json_encode($result);
         
+    }
+
+
+//// FABRICACIÓN 	| OBTENER CANTIDADES DE PRODUCTOS A COMPRAR
+    public function obtener_lista_total_productos_comprar()
+    {
+
+        //Esto siempre va es para instanciar la base de datos
+        $CI = &get_instance();
+        $CI->load->database();
+        
+        ///Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
+
+        $Fabricacion_id = $_GET["Fabricacion_id"];
+        $Datos = array();
+        
+        $this->db->select('	tbl_fabricacion_insumos_producto.*,
+                            tbl_stock.Nombre_item,
+                            tbl_stock.Unidad_medida,
+                            tbl_stock.Cant_comercial');
+
+        $this->db->from('tbl_fabricacion_insumos_producto');
+
+        $this->db->join('tbl_stock', 'tbl_stock.Id = tbl_fabricacion_insumos_producto.Stock_id','left');
+
+        $this->db->where('tbl_fabricacion_insumos_producto.Visible', 1);
+        $this->db->where('tbl_fabricacion_insumos_producto.Fabricacion_id', $Fabricacion_id);
+        $this->db->group_by('tbl_fabricacion_insumos_producto.Stock_id');
+
+        $this->db->order_by("tbl_stock.Nombre_item", "asc");
+
+        $query = $this->db->get();
+        $array_materias_primas = $query->result_array();        
+
+        /// Sumando cantidades
+        foreach ($array_materias_primas as $producto) 
+        {
+            
+            $this->db->select('Cantidad, Dimension');
+            $this->db->from('tbl_fabricacion_insumos_producto');
+            $this->db->where('Fabricacion_id', $Fabricacion_id);
+            $this->db->where('Stock_id', $producto["Stock_id"]);
+            $this->db->where('Visible', 1);
+            $query = $this->db->get();
+            $array_cantidades = $query->result_array();            
+            
+            $Total_cantidad_requerida = 0;
+
+            foreach ($array_cantidades as $movimiento) 
+            {   
+                
+                $Total_cantidad_requerida = $Total_cantidad_requerida + ( $movimiento["Cantidad"] * $movimiento["Dimension"] );
+
+            }
+
+            $producto["Total_cantidad"] = $Total_cantidad_requerida;
+            
+            array_push($Datos, $producto);
+        }
+        
+
+        echo json_encode($Datos);
+            
     }
 
 //// PRODUCTOS VENDIDOS 	| ANULAR PRODUCTO

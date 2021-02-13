@@ -24,7 +24,7 @@ include "menusidebar.php";
                             <div class="card-body">
                                 <div class="user-photo m-b-30">
                                     <img v-if="usuario.Imagen != null" width="420px" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+usuario.Imagen" alt="">
-                                    <img v-else src="https://freeiconshop.com/wp-content/uploads/edd/person-flat.png" alt="">
+                                    <img v-else src="<?php echo base_url(); ?>uploads/imagenes/usuario.png" alt="">
                                 </div>
                                 <h4 class="text-sm-center mt-2 mb-1">{{usuario.Nombre}}</h4>
                                 <div class="location text-sm-center">

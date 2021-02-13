@@ -4,14 +4,12 @@ Cobranzas
 Controlar cuando termina el proceso de una venta, si es en el paso 10 0 9, y en ventas solo mostrar hasta el paso previo a ventas, cuando todo esta listo 
 hasta antes de la cobranza, dejarse de mostrar en ventas, pero si en cobranzas. Y desde cobranzas poder ingresar a la venta. 
 
-
-*******
-AL ENTREGARSE EL PEDIDO, DEBE LLENAR EL Monto_cobrado Y GUIARSE DE ESE MONTO DE AHI EN ADELANTE, porque si el pago demora, y se actualizan los productos se va a descompaginar lo que debe realmente.
-*******
-¿consultar que pasa en estos casos, y en que momento se cierra la venta realmente?
-
-
 En la lista de todas las cobranzas poner los datos del cliente. Como  un modal, que incluso tambièn pueda enviar un mail directo y whatsapp.
+
+
+Columnas
+
+Venta Cliente Estado_Actual Monto_venta Monto_pagado_IMU Monto_pagado_Junior Saldo | Ult.pag.registrado(hace 4 días) Fecha_inicio(hace 50 días) Fecha_entregado(hace 30 días) 
 
 -_________________
 

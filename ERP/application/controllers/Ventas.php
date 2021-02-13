@@ -141,7 +141,7 @@ class ventas extends CI_Controller
             $this->db->where('tbl_ventas.Estado <', 10);
         }
         
-		$this->db->order_by('tbl_ventas.Fecha_estimada_entrega', 'asc');
+		$this->db->order_by('tbl_ventas.Fecha_venta', 'desc');
         
         $query = $this->db->get();
 		$result = $query->result_array();
@@ -261,15 +261,17 @@ class ventas extends CI_Controller
 
         //// DEL ESTADO 8 AL 9, SE DA POR ENTREGADO E INSTALADO, SOLO FALTANDO COBRAR
             // aca debe tomar el monto completo de la venta y llenar el campo Monto_cobrado
-            if($estado == 9){   }
+        $Fecha_entregado = null; 
+        if($estado == 9){  $Fecha_entregado = date("Y-m-d"); }
 
         //// DEL ESTADO 9 AL 10, SE CIERRA LA VENTA COMPLETAMENTE, INCLUSO LA COBRANZA
         $Fecha_finalizada = null; 
         if($estado == 10){  $Fecha_finalizada = date("Y-m-d"); }
         
-        $data = array(
+        $data = array(  
+                        'Fecha_entregado'  => $Fecha_entregado,
                         'Fecha_finalizada'  => $Fecha_finalizada,
-                        'Monto_cobrado'     => $Monto_cobrado,         
+                        'Monto_cobrado'     => $Monto_cobrado,      
                         'Estado'            => $estado,
                 );
 
@@ -293,11 +295,11 @@ class ventas extends CI_Controller
             
             $data = array(
 
-            'Venta_id' =>               $venta_insert_id,
-            'Categoria_seguimiento' =>  $Categoria,
-            'Descripcion' =>            $descripcion_seguimiento,
-            'Usuario_id' =>             $this->session->userdata('Id'),
-            'Visible' =>                1
+                'Venta_id' =>               $venta_insert_id,
+                'Categoria_seguimiento' =>  $Categoria,
+                'Descripcion' =>            $descripcion_seguimiento,
+                'Usuario_id' =>             $this->session->userdata('Id'),
+                'Visible' =>                1
             );
 
             $this->load->model('App_model');
@@ -1123,7 +1125,7 @@ class ventas extends CI_Controller
 
         $Id = $_GET["Id"];
 
-        /// ARMO UN ARRAY CON LOS PRODUCTOS VENDITOS, AGRUPANDOLOS
+        /// ARMO UN ARRAY CON LOS PRODUCTOS VENDIDOS, AGRUPANDOLOS
             $this->db->select(' tbl_ventas_productos.*,
                                 tbl_fabricacion.Nombre_producto,
                                 tbl_fabricacion.Codigo_interno,
@@ -1176,6 +1178,334 @@ class ventas extends CI_Controller
 
 		echo json_encode($Datos);
 
+    }
+
+
+//// COBRANZAS 	| OBTENER LISTADO 
+    public function obtener_listado_ventas_cobranzas()
+    {
+        //Esto siempre va es para instanciar la base de datos
+        $CI =& get_instance();
+        $CI->load->database();
+        
+        //Seguridad
+        $token = @$CI->db->token;
+        
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+        
+        ///Filtros
+        $Empresa_id         = $_GET["Empresa_id"];
+        $Vendedor_id        = $_GET["Vendedor_id"];
+        $Cliente_id         = $_GET["Cliente_id"];
+        $Planificacion_id   = $_GET["Planificacion_id"];
+        $Estado             = $_GET["Estado"];
+
+        $this->db->select(' tbl_ventas.*,
+                            tbl_usuarios.Nombre as Nombre_vendedor,
+                            tbl_clientes.Nombre_cliente,
+                            tbl_planificaciones.Nombre_planificacion');
+        
+        $this->db->from('tbl_ventas');
+
+        $this->db->join('tbl_clientes',   'tbl_clientes.Id    = tbl_ventas.Cliente_id', 'left');
+        $this->db->join('tbl_usuarios',   'tbl_usuarios.Id    = tbl_ventas.Vendedor_id', 'left');
+        $this->db->join('tbl_planificaciones',   'tbl_planificaciones.Id    = tbl_ventas.Planificacion_id', 'left');
+
+        if($Vendedor_id > 0)    { $this->db->where('tbl_ventas.Vendedor_id', $Vendedor_id); }
+        if($Cliente_id > 0)     { $this->db->where('tbl_ventas.Cliente_id', $Cliente_id); }
+        if($Empresa_id > 0)     { $this->db->where('tbl_ventas.Empresa_id', $Empresa_id); }
+        if($Planificacion_id > 0)     { $this->db->where('tbl_ventas.Planificacion_id', $Planificacion_id); }
+
+        $this->db->where('tbl_ventas.Visible', 1);
+        
+        if($Estado == 10) /// esto es porque si necesito la lista completa sin discriminar por estado, Mando un valor 4 al estado
+        {
+            $this->db->where('tbl_ventas.Estado', 10);
+        }
+        else {
+            $this->db->where('tbl_ventas.Estado <', 10);
+        }
+        
+        $this->db->order_by('tbl_ventas.Fecha_estimada_entrega', 'asc');
+        
+        $query = $this->db->get();
+        $array_ventas = $query->result_array();
+
+        $Datos = array();
+        $Total_monto_venta = 0;
+        $Total_cobros_IMU = 0;
+        $Total_cobrosSJunior = 0;
+        $Total_saldo = 0;
+
+
+        /// RECORRER CADA VENTA
+        foreach ($array_ventas as $venta) {
+
+            $Venta_id = $venta["Id"];
+    
+            /// BUSCAR PAGOS
+
+                $this->db->select('Monto, Fecha_ejecutado, Empresa_id');
+                $this->db->from('tbl_cobros');
+                $this->db->where('Origen_movimiento', "Ventas");
+                $this->db->where('Fila_movimiento', $Venta_id);
+                $this->db->where('Visible', 1);
+                $this->db->order_by('Id', 'desc');
+                $query = $this->db->get();
+                $array_pagos = $query->result_array();
+
+                // Pagos IMU
+                $Cobros_IMU = 0;
+                // Pagos Junior
+                $CobrosSJunior = 0;
+                // Ultimo Pago Registrado
+                $Fecha_ult_cobro = null;
+
+                foreach ($array_pagos as $pago) {
+
+                    if($pago["Empresa_id"] == 1){
+                        $Cobros_IMU = $Cobros_IMU + $pago["Monto"];
+                    }
+                    else if($pago["Empresa_id"] == 2){
+                        $CobrosSJunior = $CobrosSJunior + $pago["Monto"];
+                    }
+                        
+                    $Fecha_ult_cobro = $pago["Fecha_ejecutado"];
+                }
+
+
+            /// PRODUCTOS VENDIDOS
+                    
+                $Monto_ventas = $venta["Valor_logistica"] + $venta["Valor_instalacion"] + $venta["Recargo"] - $venta["Descuento"];
+                
+                // Productos propios
+                    $this->db->select('Cantidad, Precio_venta_producto');
+                    $this->db->from('tbl_ventas_productos');
+                    $this->db->where('Venta_id', $Venta_id);
+                    $this->db->where('Visible', 1);
+                    
+                    
+                    $query = $this->db->get();
+                    $array_productos_venta = $query->result_array();
+
+                    foreach ($array_productos_venta as $producto) {
+
+                        $Monto_ventas = $Monto_ventas + ( $producto["Precio_venta_producto"] * $producto["Cantidad"]);
+
+                    }
+
+                // Productos reventa
+
+                    // Armando array de productos
+                    $this->db->select(' tbl_stock_movimientos.Stock_id,
+                                        tbl_stock.Id as Stock_id');
+
+                    $this->db->from('tbl_stock_movimientos');
+
+                    $this->db->join('tbl_stock', 'tbl_stock.Id = tbl_stock_movimientos.Stock_id', 'left');
+                    $this->db->where('tbl_stock_movimientos.Proceso_id', $Venta_id);
+                    $this->db->where('tbl_stock_movimientos.Modulo', 'Ventas');
+                    $this->db->where('tbl_stock_movimientos.Visible', 1);
+                    $this->db->group_by('tbl_stock.Id');
+
+                    $query = $this->db->get();
+                    $array_productos_reventa = $query->result_array();
+
+                    // Total productos reventa
+                    $Total_prod_reventa = 0;
+                    
+                    /// Sumando movimientos
+                    foreach ($array_productos_reventa as $producto) 
+                    {
+                        $cantidad = 0;
+                        $monto_producto_reventa = 0;
+
+                        $this->db->select('Cantidad, Tipo_movimiento, Precio_venta_producto');
+                        $this->db->from('tbl_stock_movimientos');
+                        $this->db->where('Modulo', 'Ventas');
+                        $this->db->where('Proceso_id', $Venta_id);
+                        $this->db->where('Stock_id', $producto["Stock_id"]);
+                        $this->db->where('Visible', 1);
+                        $this->db->order_by("Id", "asc");
+
+                        $query = $this->db->get();
+                        $array_movimientos_producto = $query->result_array();
+
+                        foreach ($array_movimientos_producto as $movimiento) 
+                        {   
+                            $movCantidad = 0;
+                            $precioVentaProducto = 0;
+
+                            if (is_numeric($movimiento["Cantidad"])) { $movCantidad = $movimiento["Cantidad"]; } 
+                            if (is_numeric($movimiento["Precio_venta_producto"])) { $precioVentaProducto = $movimiento["Precio_venta_producto"]; } 
+
+                            // El 1 resta del stock, pero suma en la venta ya que son productos que salen de stock para irse en la venta al cliente
+                            if($movimiento["Tipo_movimiento"] == 1 ){
+                                
+                                
+                                $cantidad = $cantidad + $movCantidad;
+                            }
+                            else {
+                                $cantidad = $cantidad - $movCantidad;
+                            }
+
+                            $monto_producto_reventa = $cantidad * $precioVentaProducto * (-1);
+                        }
+
+                        $Total_prod_reventa = $Total_prod_reventa + $monto_producto_reventa;
+                    }
+                    
+                    
+            /// Calculando el total de las ventas
+                $Monto_ventas = $Monto_ventas + $Total_prod_reventa;
+
+                $Saldo = $Monto_ventas - $Cobros_IMU - $CobrosSJunior;
+
+                $Total_monto_venta =    $Total_monto_venta + $Monto_ventas;
+                $Total_cobros_IMU =     $Total_cobros_IMU + $Cobros_IMU;
+                $Total_cobrosSJunior =  $Total_cobrosSJunior + $CobrosSJunior;
+                $Total_saldo =          $Total_saldo + $Saldo;
+
+
+
+            /// ARMANDO ARRAY FINAL
+            $datosVenta = array(
+                "Id"                    => $Venta_id,
+                "Identificador_venta"   => $venta["Identificador_venta"],
+                "Nombre_cliente"        => $venta["Nombre_cliente"],
+                "Estado"                => $venta["Estado"],
+
+                "Monto_venta"           => $Monto_ventas,
+                "Cobros_IMU"            => $Cobros_IMU,
+                "CobrosSJunior"         => $CobrosSJunior,
+                "Saldo"                 => $Saldo,
+
+                "Fecha_ult_cobro"       => $Fecha_ult_cobro,
+                "Fecha_venta"           => $venta["Fecha_venta"],
+                "Fecha_entregado"       => $venta["Fecha_entregado"],
+                "Nombre_vendedor"       => $venta["Nombre_vendedor"],
+                "Total_prod_reventa" => $Total_prod_reventa,
+            );
+
+            array_push($Datos, $datosVenta);
+        }
+        
+        $Datos_generales = array(
+                        "Datos" => $Datos,
+                        "Total_monto_venta" => $Total_monto_venta,
+                        "Total_cobros_IMU" => $Total_cobros_IMU,
+                        "Total_cobrosSJunior" => $Total_cobrosSJunior,
+                        "Total_saldo" => $Total_saldo,
+        );
+        echo json_encode($Datos_generales);
+        
+    }
+
+
+//// COBRANZAS  | OBTENER MOVIMIENTOS
+    public function obtener_listado_cobros()
+    {
+        //Esto siempre va es para instanciar la base de datos
+        $CI =& get_instance(); 
+        $CI->load->database();
+        
+        ///Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) { exit("No coinciden los token"); }
+
+        $Desde = $this->datosObtenidos->Fecha_inicio;
+		$Hasta = $this->datosObtenidos->Fecha_fin;
+
+        if($Desde == NULL) 
+		{ 
+			$fecha = date('Y-m-d');
+			$Desde = strtotime ( '-30 day' , strtotime ( $fecha ) ) ;
+			$Desde = date ( 'Y-m-d' , $Desde );
+		}
+		if($Hasta == NULL) 
+		{ 
+			$Hasta = date('Y-m-d');
+		}
+
+
+        //// 
+        $this->db->select(' tbl_cobros.*, 
+                            tbl_usuarios.Nombre as Nombre_vendedor,
+                            tbl_clientes.Nombre_cliente,
+                            tbl_ventas.Id as Venta_id,
+                            tbl_ventas.Identificador_venta');
+
+        $this->db->from('tbl_cobros');
+        $this->db->join('tbl_usuarios', 'tbl_usuarios.Id = tbl_cobros.Usuario_id', 'left');
+        $this->db->join('tbl_ventas', 'tbl_ventas.Id = tbl_cobros.Fila_movimiento', 'left');
+        $this->db->join('tbl_clientes', 'tbl_clientes.Id = tbl_ventas.Cliente_id', 'left');
+
+        $this->db->where('tbl_cobros.Visible', 1);
+        $this->db->where('tbl_cobros.Origen_movimiento', 'Ventas');
+        
+        $this->db->where("DATE_FORMAT(tbl_cobros.Fecha_ejecutado,'%Y-%m-%d') >=", $Desde);
+        $this->db->where("DATE_FORMAT(tbl_cobros.Fecha_ejecutado,'%Y-%m-%d') <=", $Hasta);
+            
+        $this->db->order_by("tbl_cobros.Id", "desc");
+
+        $query = $this->db->get();
+        $array_cobros = $query->result_array();
+        
+        $Datos = array();
+        
+        /////  SUMAR MONTOS
+        $Cobros_IMU = 0;
+        $Cobro_sJunior = 0;
+        
+
+        foreach ($array_cobros as $cobro) 
+        {   
+            $Cobro_columna_imu = 0;
+            $Cobro_columna_sJunior = 0;
+
+            if($cobro["Empresa_id"] == 1)
+            {
+                $Cobros_IMU = $Cobros_IMU + $cobro["Monto"];
+                $Cobro_columna_imu = $cobro["Monto"];  
+            }
+            else if($cobro["Empresa_id"] == 2)
+            {
+                $Cobro_sJunior = $Cobro_sJunior + $cobro["Monto"];
+                $Cobro_columna_sJunior = $cobro["Monto"];
+            }
+
+            $Total = $Cobro_columna_imu + $Cobro_columna_sJunior;
+
+            $Datos_venta = array(   "Venta_id"          => $cobro["Venta_id"],
+                                    "Identificador_venta"     => $cobro["Identificador_venta"],
+                                    "Nombre_cliente"     => $cobro["Nombre_cliente"],
+                                    "Cobro_IMU"         => $Cobro_columna_imu,
+                                    "Cobro_sJunior"     => $Cobro_columna_sJunior,
+                                    "Total"             => $Total,
+                                    "Fecha_ejecutado"   => $cobro["Fecha_ejecutado"],
+                                    "Modalidad_pago"    => $cobro["Modalidad_pago"],
+                                    "Observaciones"     => $cobro["Observaciones"],
+                                    "Nombre_vendedor"   => $cobro["Nombre_vendedor"]
+                    );
+        
+            array_push($Datos, $Datos_venta);
+        
+        }
+
+        $Total_tabla = $Cobros_IMU + $Cobro_sJunior;
+        
+        echo json_encode(
+            array(
+                'Datos'         => $Datos,
+                'Cobros_IMU'    => $Cobros_IMU,
+                'Cobros_sJunior' => $Cobro_sJunior,
+                'Total' => $Total_tabla,
+            )
+        );
     }
 
     

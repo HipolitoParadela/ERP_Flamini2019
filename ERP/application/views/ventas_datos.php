@@ -97,7 +97,7 @@ include "menusidebar.php";
                             <li class="nav-item">
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 6 }" href="#" v-on:click="getListadoSeguimiento(4, 6)">Instalación</a>
                             </li>
-                            <li class="nav-item" v-if="Usuario_id == '5' || Usuario_id == '9' || Usuario_id == 10 || Usuario_id == 4">
+                            <li class="nav-item" v-if="Usuario_id == '5' || Usuario_id == '6' || Usuario_id == 10 || Usuario_id == 4">
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 7 }" href="#" v-on:click="getListadoSeguimiento(5,7)">Cobranza</a>
                             </li>
                         </ul>
@@ -231,11 +231,11 @@ include "menusidebar.php";
                                                     <div class="col-sm-2">
                                                         <div class="form-group">
                                                             <label class=" form-control-label">Recargo</label>
-                                                            <input type="int" class="form-control" v-model="ventaDatos.Descuento">
+                                                            <input type="int" class="form-control" v-model="ventaDatos.Recargo">
                                                         </div>
                                                         <div class="form-group">
                                                             <label class=" form-control-label">Descuento</label>
-                                                            <input type="int" class="form-control" v-model="ventaDatos.Recargo">
+                                                            <input type="int" class="form-control" v-model="ventaDatos.Descuento">
                                                         </div>
                                                         <p class="text-info">Al editar estos campos, reportar en la ficha de Historial las razones del descuento/recargo aplicado. </p>
                                                     </div>
@@ -449,8 +449,14 @@ include "menusidebar.php";
                                                             <table id="table2excel" class="table table-striped" style="overflow-x: visible;">
                                                                 <thead>
                                                                     <tr>
-                                                                        <td></td>
-                                                                        <td></td>
+                                                                        <td colspan="2">
+                                                                            <h2>
+                                                                                <a v-if="ventaDatos.Estado < 7" href="#modalProductos" data-toggle="modal" class="btn btn-success btn-flat btn-addon" v-on:click="limpiarFormularioProductos()">
+                                                                                    <i class="ti-plus"></i> +
+                                                                                </a>
+                                                                            </h2>
+                                                                        </td>
+
                                                                         <th>Producto</th>
                                                                         <th>Código</th>
                                                                         <th>Cantidad</th>
@@ -463,9 +469,7 @@ include "menusidebar.php";
                                                                         <th>Rotulación</th>
                                                                         <th>Empaque</th>
                                                                         <th>
-                                                                            <a v-if="ventaDatos.Estado < 2" href="#modalProductos" data-toggle="modal" class="btn btn-success btn-flat btn-addon" v-on:click="limpiarFormularioProductos()">
-                                                                                <i class="ti-plus"></i> Añadir productos
-                                                                            </a>
+
                                                                         </th>
                                                                     </tr>
                                                                 </thead>
@@ -602,24 +606,31 @@ include "menusidebar.php";
                                                             <table id="table2excel" class="table table-striped">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th></th>
+                                                                        <th>
+                                                                            <h2>
+                                                                                <a v-if="ventaDatos.Estado < 7" href="#productosreventaModal" data-toggle="modal" class="btn btn-success btn-flat btn-addon" v-on:click="limpiarFormularioProductos()">
+                                                                                    <i class="ti-plus"></i> +
+                                                                                </a>
+                                                                            </h2>
+                                                                        </th>
                                                                         <th>Producto</th>
                                                                         <th>Cantidad</th>
                                                                         <th>P. Venta</th>
                                                                         <th>Subtotal</th>
+                                                                        <th>Descripción</th>
                                                                         <th>
-                                                                            <a v-if="ventaDatos.Estado < 2" href="#productosreventaModal" data-toggle="modal" class="btn btn-success btn-flat btn-addon" v-on:click="limpiarFormularioProductos()">
-                                                                                <i class="ti-plus"></i> Añadir productos
-                                                                            </a>
+
                                                                         </th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <tr v-for="productoReventa in listaProductosReventaLote">
-                                                                        <div class="round-img">
-                                                                            <!-- <img v-if="productoReventa.Imagen != null" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+productoReventa.Imagen" width="60px"> -->
-                                                                            <!-- <img v-else src="https://freeiconshop.com/wp-content/uploads/edd/person-flat.png" width="50px" alt=""> -->
-                                                                        </div>
+                                                                        <td>
+                                                                            <div class="round-img">
+                                                                                <!-- <img v-if="productoReventa.Imagen != null" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+productoReventa.Imagen" width="60px"> -->
+                                                                                <!-- <img v-else src="https://freeiconshop.com/wp-content/uploads/edd/person-flat.png" width="50px" alt=""> -->
+                                                                            </div>
+                                                                        </td>
                                                                         <td>
                                                                             <h4> {{productoReventa.Nombre_item}}</h4>
                                                                         </td>
@@ -632,14 +643,15 @@ include "menusidebar.php";
                                                                         <td>
                                                                             <h4> ${{productoReventa.Precio_venta_producto * productoReventa.Cantidad| Moneda}}</h4>
                                                                         </td>
+                                                                        <td> {{ productoReventa.Descripcion }} </td>
                                                                         <td>
-                                                                            <div class="table-data-feature">
+                                                                            <div class="table-data-feature" v-if="ventaDatos.Estado < 7">
                                                                                 <button class="item" v-on:click="editarFormularioProductosReventa(productoReventa)" data-toggle="modal" data-target="#productosreventaModal" data-placement="top" title="Editar">
                                                                                     <i class="zmdi zmdi-edit"></i>
                                                                                 </button>
-                                                                                <!-- <button class="item" v-on:click="anularProductoReventa(productoReventa)" title="Anular este producto. Al hacerlo debe eliminar el movimiento y reacomodar el valor original">
+                                                                                <button v-show="productoReventa.Cantidad == 0" class="item" v-on:click="eliminarProductoReventa(productoReventa.Stock_id)">
                                                                                     <i class="fa fa-ban"></i>
-                                                                                </button> -->
+                                                                                </button>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
@@ -767,9 +779,7 @@ include "menusidebar.php";
                                         <h3>{{ventaDatos.Info_instalaciones}}</h3>
                                     </div>
                                     <div v-if="ventaDatos.Estado == 8" class="card-body">
-                                        <a  href="#" 
-                                            class="btn btn-warning" 
-                                            v-on:click="cambiar_estado_venta( 
+                                        <a href="#" class="btn btn-warning" v-on:click="cambiar_estado_venta( 
                                                             calcularMontosVentas(
                                                                 sumarProductos(listaProductosVendidos), 
                                                                 ventaDatos.Valor_logistica, 
@@ -777,7 +787,8 @@ include "menusidebar.php";
                                                                 sumarProductos(listaProductosReventaLote), 
                                                                 listaMovimientos.Total,
                                                                 ventaDatos.Recargo, 
-                                                                ventaDatos.Descuento 
+                                                                ventaDatos.Descuento
+                                                            )
                                         )">
                                             INSTALACIÓN FINALIZADA
                                         </a>
@@ -880,7 +891,17 @@ include "menusidebar.php";
                                                 <h3 align="center">{{ventaDatos.Info_cobranza}}</h3>
                                             </div>
                                             <div v-if="ventaDatos.Estado == 9" class="card-body">
-                                                <a href="#" class="btn btn-warning " v-on:click="cambiar_estado_venta(0)">
+                                                <a href="#" class="btn btn-warning " v-on:click="cambiar_estado_venta(cambiar_estado_venta( 
+                                                            calcularMontosVentas(
+                                                                sumarProductos(listaProductosVendidos), 
+                                                                ventaDatos.Valor_logistica, 
+                                                                ventaDatos.Valor_instalacion, 
+                                                                sumarProductos(listaProductosReventaLote), 
+                                                                listaMovimientos.Total,
+                                                                ventaDatos.Recargo, 
+                                                                ventaDatos.Descuento
+                                                            ))
+                                        )">
                                                     COBRANZA FINALIZADA
                                                 </a>
                                             </div>
@@ -948,7 +969,7 @@ include "menusidebar.php";
                                             </div>
                                             <div class="card-body">
                                                 <h3 align="center">
-                                                    $ {{
+                                                    ${{
                                                         calcularMontosVentas(
                                                             sumarProductos(listaProductosVendidos), 
                                                             ventaDatos.Valor_logistica, 
@@ -1118,16 +1139,16 @@ include "menusidebar.php";
                                                                         <i class="zmdi zmdi-delete"></i>
                                                                     </button>
                                                                 </td>
-                                                                <td>$ {{movimiento.Monto | Moneda}}</td>
+                                                                <td>${{movimiento.Monto | Moneda}}</td>
                                                                 <td>{{movimiento.Fecha_ejecutado | Fecha}}</td>
-                                                                <td>$ {{movimiento.Modalidad_pago}}</td>
+                                                                <td>{{movimiento.Modalidad_pago}}</td>
                                                                 <td>{{movimiento.Observaciones}}</td>
                                                             </tr>
                                                         </tbody>
                                                         <tfoot>
                                                             <th></th>
                                                             <th>
-                                                                <h4>{{listaMovimientos.Total | Moneda}}</h4>
+                                                                <h3>${{listaMovimientos.Total | Moneda}}</h3>
                                                             </th>
                                                             <th></th>
                                                             <th></th>
@@ -1215,7 +1236,7 @@ include "menusidebar.php";
                                                                     <td><a v-if="seguimiento.Url_archivo != null" target="_blank" v-bind:href="'<?php echo base_url(); ?>uploads/imagenes/'+seguimiento.Url_archivo"> Ver archivo</a></td>
                                                                     <td>{{seguimiento.Nombre}}</td>
                                                                     <td>
-                                                                        <a href="#modalSeguimiento" data-toggle="modal" v-on:click="editarFormularioSeguimiento(seguimiento)">
+                                                                        <a v-if="" href="#modalSeguimiento" data-toggle="modal" v-on:click="editarFormularioSeguimiento(seguimiento)">
                                                                             <i class="fa fa-edit"></i>
                                                                         </a>
                                                                     </td>
