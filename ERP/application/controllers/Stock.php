@@ -109,10 +109,53 @@ class Stock extends CI_Controller
 
 		$this->db->order_by("tbl_stock_movimientos.Fecha_hora", "desc");
         $query = $this->db->get();
-		$result = $query->result_array();
+		$array_stock = $query->result_array();
 
-		echo json_encode($result);
-		
+        $Datos = array();
+		//// SI ES IGUAL A 3, O SEA CATEGORIA PRODUCTOS DE REVENTA, REALIZA UN PROCESO ADICIONAL BUSCANDO PEDIDOS DE VENTAS
+        if($tipo == 3)
+        {
+            /// Sumando movimientos
+            foreach ($array_stock as $producto) 
+            {
+                $cantidad = 0;
+
+                $this->db->select('Cantidad, Tipo_movimiento');
+
+                $this->db->from('tbl_stock_movimientos');
+
+                $this->db->where('Stock_id', $producto["Id"]);
+                $this->db->where('Modulo', 'Ventas');
+                $this->db->where('Entregado', 0);
+                $this->db->where('Visible', 1);
+
+                $query = $this->db->get();
+                $array_movimientos_producto = $query->result_array();
+                
+                foreach ($array_movimientos_producto as $movimiento) 
+                {   
+                    // El 1 resta del stock, pero suma en la venta ya que son productos que salen de stock para irse en la venta al cliente
+                    if($movimiento["Tipo_movimiento"] == 1 ){
+                        $cantidad = $cantidad + $movimiento["Cantidad"];
+                    }
+                    else {
+                        $cantidad = $cantidad - $movimiento["Cantidad"];
+                    }
+                }
+
+                $producto["Cant_pedido"] = $cantidad * (-1); // cambio el signo necesariamente porque lo que hago con respecto al stock es inverso
+                
+                array_push($Datos, $producto );
+            }
+            
+
+            echo json_encode($Datos);
+        }
+
+        else
+        {
+            echo json_encode($array_stock);
+        }
     }
     
 //// STOCK 	        | OBTENER Datos del item
@@ -274,7 +317,7 @@ class Stock extends CI_Controller
     }
 
 //// MOVIMIENTOS 	| CARGAR NUEVO MOVIMIENTO V2
-    public function cargar_movimiento()
+    public function cargar_movimiento_stock()
     {
         $CI = &get_instance();
         $CI->load->database();
@@ -459,6 +502,13 @@ class Stock extends CI_Controller
             exit("No coinciden los token");
         }
 
+        if($this->datosObtenidos->Data->Nombre_item == null){
+            echo json_encode(array(
+                                "Id" => 0,
+                                "err" => 'No se cargó el nombre del producto')); 
+                                exit;
+        }
+
         if(isset($this->datosObtenidos->Data->Id)) { $Id = $this->datosObtenidos->Data->Id; }
         if(isset($this->datosObtenidos->Data->Precio_venta)) { $Precio_venta = $this->datosObtenidos->Data->Precio_venta; }
         if(isset($this->datosObtenidos->Data->Precio_costo)) { $Precio_costo = $this->datosObtenidos->Data->Precio_costo; }
@@ -563,7 +613,10 @@ class Stock extends CI_Controller
 		$this->db->select('*');
         $this->db->from('tbl_stock_categorias');
         
-        $this->db->where('Tipo', $_GET["categoria_tipo"]);
+        if($_GET["categoria_tipo"] > 0 ){
+            $this->db->where('Tipo', $_GET["categoria_tipo"]);
+        }
+        
 
 		$this->db->order_by("Nombre_categoria", "asc");
         $query = $this->db->get();
@@ -829,7 +882,6 @@ class Stock extends CI_Controller
         
         // Armando array de productos
             $this->db->select(' tbl_stock_movimientos.*,
-                                tbl_stock.Id as Stock_id,
                                 tbl_stock.Imagen,
                                 tbl_stock.Nombre_item');
         
@@ -853,13 +905,19 @@ class Stock extends CI_Controller
         {
             $cantidad = 0;
 
-            $this->db->select('Cantidad, Tipo_movimiento, Precio_venta_producto');
+            $this->db->select('
+                                Id,
+                                Cantidad, 
+                                Tipo_movimiento, 
+                                Precio_venta_producto, 
+                                Entregado,
+                                Fecha_entregado');
             $this->db->from('tbl_stock_movimientos');
             $this->db->where('Proceso_id', $Id);
             $this->db->where('Stock_id', $producto["Stock_id"]);
             $this->db->where('Modulo', "Ventas");
             $this->db->where('Visible', 1);
-            $this->db->order_by("Id", "asc");
+            $this->db->order_by("Id", "asc"); /// es ascendente, para que el último me dé los datos que necesito
 
             $query = $this->db->get();
             $array_movimientos_producto = $query->result_array();
@@ -873,10 +931,14 @@ class Stock extends CI_Controller
                 else {
                     $cantidad = $cantidad - $movimiento["Cantidad"];
                 }
+                $producto["Id"] = $movimiento["Id"]; // trato de que quede el ùltimo precio de venta registrado por ID
+                $producto["Precio_venta_producto"] = $movimiento["Precio_venta_producto"]; // trato de que quede el ùltimo precio de venta registrado por ID
+                $producto["Entregado"] = $movimiento["Entregado"]; // trato de que quede el ùltimo precio de venta registrado por ID
+                $producto["Fecha_entregado"] = $movimiento["Fecha_entregado"]; // trato de que quede el ùltimo precio de venta registrado por ID
             }
 
             $producto["Cantidad"] = $cantidad * (-1); // cambio el signo necesariamente porque lo que hago con respecto al stock es inverso
-            $producto["Precio_venta_producto"] = $movimiento["Precio_venta_producto"]; // trato de que quede el ùltimo precio de venta registrado por ID
+            
             
             array_push($Datos, $producto);
         }
@@ -936,6 +998,58 @@ class Stock extends CI_Controller
         {
             echo json_encode(array("Id" => 0));
         }
+    }
+
+//// PRODUCTGOS DE REVENTA    | Marcar como entregados
+    public function prodReventaEntregado()
+    {
+        $CI =& get_instance();
+        $CI->load->database();
+        
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
+
+        //// BUSCAR EN MOVIMIENTOS
+
+            $Stock_id = $this->datosObtenidos->Stock_id;
+            $Proceso_id = $this->datosObtenidos->Proceso_id;
+            $Fecha = date("Y-m-d");
+            $data = array(
+                'Entregado' => 	1,
+                'Fecha_entregado' => $Fecha
+            );
+            $movimientos_editados = array();
+
+            /// TODOS LOS MOVIMIENTOS - Segundo Proceso_id, Modulo: Ventas, Stock_id...
+            $this->db->select('Id');
+            $this->db->from('tbl_stock_movimientos');
+            $this->db->where('Proceso_id', $Proceso_id);
+            $this->db->where('Stock_id', $Stock_id);
+            $this->db->where('Modulo', "Ventas");
+            $this->db->where('Visible', 1);
+
+            $query = $this->db->get();
+            $array_movimientos_producto = $query->result_array();
+            
+            /// lo recorro para setearlos como ya entregados
+            foreach ($array_movimientos_producto as $movimiento) 
+            {  
+            
+                $this->load->model('App_model');
+                $insert_id = $this->App_model->insertar($data, $movimiento["Id"], 'tbl_stock_movimientos');
+                        
+                if ($insert_id >=0 ) 
+                {   
+                    array_push($movimientos_editados, $insert_id);
+                } 
+
+            } 
+            
+            echo json_encode(array("Ids" => $movimientos_editados));   
     }
 
 ///// fin documento

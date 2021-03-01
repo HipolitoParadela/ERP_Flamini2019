@@ -76,7 +76,7 @@ include "menusidebar.php";
                         </div>
                         <div class="row">
                             <div class="col-lg-12">
-                                <div class="table-responsive table--no-card m-b-40">
+                                <div class="table-responsive">
                                     <table class="table table-borderless table-striped table-earning">
                                         <thead>
                                             <tr>
@@ -87,7 +87,7 @@ include "menusidebar.php";
                                                 <th>Monto Venta</th>
                                                 <th>Cob. IMU</th>
                                                 <th>Cob. S.Junior</th>
-                                                <th>Saldo</th>
+                                                <th style="background-color:darkseagreen;">Saldo</th>
 
                                                 <th>Ult. Cobro</th>
                                                 <th>Iniciado</th>
@@ -104,7 +104,7 @@ include "menusidebar.php";
                                                 <th><h3 style="color:white" align="right">$ {{ listaCobranzas.Total_monto_venta | Moneda }}</h3></th>
                                                 <th><h3 style="color:white" align="right">$ {{ listaCobranzas.Total_cobros_IMU | Moneda }}</h3></th>
                                                 <th><h3 style="color:white" align="right">$ {{ listaCobranzas.Total_cobrosSJunior | Moneda }}</h3></th>
-                                                <th><h1 style="color:white" align="right">$ {{ listaCobranzas.Total_saldo | Moneda }}</h1></th>
+                                                <th style="background-color:darkseagreen;"><h1 style="color:white" align="right">$ {{ listaCobranzas.Total_saldo | Moneda }}</h1></th>
 
                                                 <th></th>
                                                 <th></th>
@@ -146,8 +146,8 @@ include "menusidebar.php";
                                                 <td>
                                                     <h4 align="right">$ {{venta.CobrosSJunior | Moneda}}</h4>
                                                 </td>
-                                                <td>
-                                                    <h4 align="right">$ {{venta.Saldo | Moneda}}</h4>
+                                                <td style="background-color:darkseagreen;">
+                                                    <h3 align="right">$ {{venta.Saldo | Moneda}}</h3>
                                                 </td>
 
                                                 <td>{{venta.Fecha_ult_cobro | Fecha }} ( {{ venta.Fecha_ult_cobro | DiasTranscurridos}} )</td>

@@ -1,15 +1,37 @@
+Productos de reventa en ventas
+
+Deben poder confirmar si tienen stock disponible para el cliente
+    luego cuando se entrega
+    y cuendo se instala
+
+Tengo que también generar un listado de productos solicitados para una venta .
+    por ejemplo hay pedido para ventas 15 luminarias Jely
+        tiene que ser una tabla parecida a la de producción
+            cantidad actual - cantidad requerida para ventas - faltante 
+
+            para obtener la cant_requerida_ventas debo buscar todos los movimientos de ventas, que esten en estado de "No entregados". y agruparlos para obtener el Id individual de cada uno.
+                luego volver a hacer la busqueda id por id, sumando las cantidades requeridas y rearmando el array...
+                    de ahi ya tomo cantidad actual - cantidad para ventas = luminarias a comprar
+
+
+______
+
+Ahora el descuento del stock en productos de reventa, recien lo deberia hacer cuando marque como entregado
+    para esto deberia analizar como trabaja el descuento de stock y hacer que se active solamente cuando se entrega el producto 
+        lo que seria un doloron de bolas...
+
+    esta parte se suplantaria con la lista de arriba - aunq no se si es lo ideal.
+
+    puedo solucionarlo agregando un nuevo campo en tbl_stock_movimientos "Entregado", si es 1 lo toma para hacer el calculo de restar o sumar, si dice 0, no lo calcula. 
+        registra el movimiento pero no lo usa en los calculos
+            luego con la funcion entregado, termina de realizar el calculo y actualiza la cantidad real en deposito. 
+
+_________________
+
 
 Cobranzas
 
-Controlar cuando termina el proceso de una venta, si es en el paso 10 0 9, y en ventas solo mostrar hasta el paso previo a ventas, cuando todo esta listo 
-hasta antes de la cobranza, dejarse de mostrar en ventas, pero si en cobranzas. Y desde cobranzas poder ingresar a la venta. 
-
 En la lista de todas las cobranzas poner los datos del cliente. Como  un modal, que incluso tambièn pueda enviar un mail directo y whatsapp.
-
-
-Columnas
-
-Venta Cliente Estado_Actual Monto_venta Monto_pagado_IMU Monto_pagado_Junior Saldo | Ult.pag.registrado(hace 4 días) Fecha_inicio(hace 50 días) Fecha_entregado(hace 30 días) 
 
 -_________________
 

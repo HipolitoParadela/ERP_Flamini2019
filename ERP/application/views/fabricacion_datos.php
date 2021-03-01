@@ -292,6 +292,9 @@ include "menusidebar.php";
                                                                 <a href="#modalInsumos" data-toggle="modal" v-on:click="editarFormularioInsumo(insumo)">
                                                                     <i class="fa fa-edit"></i>
                                                                 </a>
+                                                                <button v-on:click="desactivarAlgo(insumo.Id, 'tbl_fabricacion_insumos_producto')" class="item" title="Eliminar">
+                                                                    <i class="zmdi zmdi-delete"></i>
+                                                                </button>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -420,6 +423,7 @@ include "menusidebar.php";
                     <div class="horizontal-form">
                         <form class="form-horizontal" action="post" v-on:submit.prevent="cargarInsumo()">
                             <!--   -->
+                            <h3 v-if="insumoDatos.Id != null"> {{insumoDatos.Nombre_item}} </h3><br>
                             <div class="form-group" v-if="insumoDatos.Id == null">
                                 <label class="control-label">Materia Prima</label>
                                 <input list="productos" class="form-control" v-model="insumoDatos.Stock_id" required>
@@ -431,7 +435,7 @@ include "menusidebar.php";
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class=" form-control-label">Dimensión x pieza</label>
-                                        <input type="number" step="0.01" class="form-control" placeholder="" v-model="insumoDatos.Dimension">
+                                        <input type="number" step="0.001" class="form-control" placeholder="" v-model="insumoDatos.Dimension">
                                     </div>
                                 </div>
                                 <div class="col-md-6">

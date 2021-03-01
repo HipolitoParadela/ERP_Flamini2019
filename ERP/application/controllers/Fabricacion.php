@@ -271,18 +271,16 @@ class Fabricacion extends CI_Controller
             exit("No coinciden los token");
         }
 
-        $Id = null;
-        if (isset($this->datosObtenidos->Datos->Id)) 
-        {
-            $Id = $this->datosObtenidos->Datos->Id;
-        }
+        $Id = null; if (isset($this->datosObtenidos->Datos->Id))  {  $Id = $this->datosObtenidos->Datos->Id; }
+        $Descripcion = "Sin descripción";     if(isset($this->datosObtenidos->Data->Descripcion)) { $Descripcion = $this->datosObtenidos->Data->Descripcion; }
 
         $data = array(
 
             'Producto_id'       => $this->datosObtenidos->Producto_id,
             'Nombre_archivo'    => $this->datosObtenidos->Datos->Nombre_archivo,
-            'Descripcion'       => $this->datosObtenidos->Datos->Descripcion,
+            'Descripcion'       => $Descripcion,
             'Usuario_id'        => $this->session->userdata('Id'),
+            'Visible'           => 1,
         );
 
         $this->load->model('App_model');
@@ -342,13 +340,11 @@ class Fabricacion extends CI_Controller
             exit("No coinciden los token");
         }
 
-		if(isset($this->datosObtenidos->Data->Id))
-        {
-            $Id = $this->datosObtenidos->Data->Id;
-		}
+        $Id = null;     if(isset($this->datosObtenidos->Data->Id)) { $Id = $this->datosObtenidos->Data->Id; }
+        $Descripcion = "Sin descripción";     if(isset($this->datosObtenidos->Data->Descripcion)) { $Descripcion = $this->datosObtenidos->Data->Descripcion; }
 
 		$data = array(
-					'Descripcion' => 		$this->datosObtenidos->Data->Descripcion,
+					'Descripcion' => $Descripcion,
                 );
 
         $this->load->model('App_model');
@@ -550,7 +546,7 @@ class Fabricacion extends CI_Controller
 		if ($status != "error")
 		{
 			$config['upload_path'] = './uploads/imagenes';
-			$config['allowed_types'] = 'jpg|jpeg|doc|docx|xlsx|pdf|dwg';
+			$config['allowed_types'] = 'jpg|jpeg|doc|docx|xlsx|xls|pdf|dwg|rar';
 			$config['max_size'] = 0;
 			$config['encrypt_name'] = TRUE;
 	
@@ -741,7 +737,7 @@ class Fabricacion extends CI_Controller
         $this->db->where('tbl_fabricacion_insumos_producto.Visible', 1);
         $this->db->where('tbl_fabricacion_insumos_producto.Fabricacion_id', $Fabricacion_id);
 
-        $this->db->order_by("tbl_stock.Nombre_item", "asc");
+        $this->db->order_by("tbl_fabricacion_insumos_producto.Posicion", "asc");
 
         $query = $this->db->get();
         $result = $query->result_array();

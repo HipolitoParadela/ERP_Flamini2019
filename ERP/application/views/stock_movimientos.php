@@ -97,7 +97,7 @@ include "menusidebar.php";
                                                                 <span v-show="movimiento.Tipo_movimiento == '1'"><i class="fa fa-chevron-circle-up"></i></span>
                                                             </td>
                                                             <td>
-                                                                <h4 v-bind:class="{'text-danger': movimiento.Tipo_movimiento == '2' }" align="center"> {{movimiento.Cantidad}} </h4>
+                                                                <h4 v-bind:class="{'text-danger': movimiento.Tipo_movimiento == '2' }" align="center"> {{movimiento.Cantidad | Decimales}} </h4>
                                                             </td>
                                                             <td>{{movimiento.Descripcion}}</td>
                                                             <td>{{formatoFecha_hora(movimiento.Fecha_hora)}}</td>

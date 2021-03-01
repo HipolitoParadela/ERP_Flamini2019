@@ -41,8 +41,7 @@
     <script src="<?php echo base_url(); ?>Plantilla/vendor/circle-progress/circle-progress.min.js"></script>
     <script src="<?php echo base_url(); ?>Plantilla/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
     <script src="<?php echo base_url(); ?>Plantilla/vendor/chartjs/Chart.bundle.min.js"></script>
-    <script src="<?php echo base_url(); ?>Plantilla/vendor/select2/select2.min.js">
-    </script>
+    <script src="<?php echo base_url(); ?>Plantilla/vendor/select2/select2.min.js"> </script>
 
 <!-- Main JS-->
     <script src="<?php echo base_url(); ?>Plantilla/js/main.js"></script>
@@ -54,3 +53,5 @@
                 document.getElementById("tabla").value = x; /// lo paso al input
             }
     </script>
+
+    

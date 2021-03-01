@@ -29,7 +29,7 @@
                         </li>
                         <li>
                             <a href="<?= base_url(); ?>fabricacion">
-                                <i class="fas fa-barcode"></i>Productos propios
+                                <i class="fas fa-barcode"></i>Depto. Técnico
                             </a>
                         </li>
                         <li>
@@ -116,7 +116,7 @@
                             </li>
                             <li>
                                 <a href="<?= base_url(); ?>fabricacion">
-                                    <i class="fas fa-barcode"></i>Productos propios
+                                    <i class="fas fa-barcode"></i>Depto. Técnico
                                 </a>
                             </li>
                             <li>

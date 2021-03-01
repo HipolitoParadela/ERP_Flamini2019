@@ -57,7 +57,9 @@ include "menusidebar.php";
                                 <div class="rs-select2--light">
                                     <select class="form-control form-control" v-model="filtro_estado" v-on:change="getListadoVentas(filtro_vendedor, filtro_empresa ,filtro_cliente, filtro_estado, filtro_planificacion)">
                                         <option selected="selected" v-bind:value="1">Ventas en proceso</option>
+                                        <option selected="selected" v-bind:value="9">Ventas entregadas</option>
                                         <option selected="selected" v-bind:value="10">Ventas cerradas</option>
+                                        <option selected="selected" v-bind:value="0">Ventas anuladas</option>
                                     </select>
                                     <div class="dropDownSelect2"></div>
                                 </div>
@@ -70,8 +72,8 @@ include "menusidebar.php";
                                     <!--<i class="zmdi zmdi-plus"></i>-->Gestionar Planificaciones</button>
                             </div>
                         </div>
-                        <div class="table-responsive table-responsive-data2">
-                            <table class="table table-data2" style="overflow-x:scroll;">
+                        <div class="table-responsive table-responsive-data2" style="overflow-x: scroll;">
+                            <table class="table table-borderless table-striped table-earning">
                                 <thead>
                                     <tr>
                                         <th>Identificador</th>
@@ -101,8 +103,8 @@ include "menusidebar.php";
                                             </a>
                                         </td>
                                         <!-- Seteando Estados -->
-                                        <td v-if="venta.Estado == 1"><b>Compras</b></td>
-                                        <td v-if="venta.Estado == 2"><b>Proceso de materiales</b></td>
+                                        <td v-if="venta.Estado == 1"><b>Ctrl. Stock</b></td>
+                                        <td v-if="venta.Estado == 2"><b>P. de materiales</b></td>
                                         <td v-if="venta.Estado == 3"><b>Soldadura</b></td>
                                         <td v-if="venta.Estado == 4"><b>Pintura</b></td>
                                         <td v-if="venta.Estado == 5"><b>Rotulación</b></td>

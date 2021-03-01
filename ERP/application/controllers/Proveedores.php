@@ -52,6 +52,7 @@ class proveedores extends CI_Controller
 		$this->db->select('*');
 		$this->db->from('tbl_proveedores');
         $this->db->where('Visible',1);
+        $this->db->order_by("Destacado", "desc");
 		$this->db->order_by("Nombre_proveedor", "asc");
         $query = $this->db->get();
 		$result = $query->result_array();
@@ -60,7 +61,7 @@ class proveedores extends CI_Controller
 		
     }
     
-//// PROVEEDORES 	| OBTENER 
+//// PROVEEDORES 	| OBTENER Datos de un proveedor
     public function obtener_datos_proveedor()
     {
 
@@ -164,7 +165,8 @@ class proveedores extends CI_Controller
 
 		$data = array(
                         
-					'Nombre_proveedor' => 			$this->datosObtenidos->Datos->Nombre_proveedor,
+                    'Nombre_proveedor' => 			$this->datosObtenidos->Datos->Nombre_proveedor, 
+                    'Destacado' => 			        $this->datosObtenidos->Datos->Destacado,
 					'Producto_servicio' => 			$this->datosObtenidos->Datos->Producto_servicio,
                     'Direccion' => 				    $this->datosObtenidos->Datos->Direccion,
                     'CUIT_CUIL' => 			        $this->datosObtenidos->Datos->CUIT_CUIL,
@@ -530,7 +532,7 @@ class proveedores extends CI_Controller
             exit("No coinciden los token");
         }
 
-        
+        $Id = null;
         $Id_stock = $this->datosObtenidos->Id;
 
         $Proveedor_id = $this->datosObtenidos->Proveedor_id;

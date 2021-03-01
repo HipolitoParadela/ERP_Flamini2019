@@ -50,7 +50,9 @@ include "menusidebar.php";
                                         <th></th>
                                         <th>Nombre</th>
                                         <th>Categoría</th>
-                                        <th>Cant. Actual</th>
+                                        <th>Pedidos</th>
+                                        <th>Cant. Teórica</th>
+                                        <th>Cant. Física</th>
                                         <th>Cant. Ideal</th>
                                         
                                         <th>Medida</th>
@@ -84,11 +86,20 @@ include "menusidebar.php";
                                             </a>
                                         </td>
                                         <td>{{stock.Nombre_categoria}}</td>
-
                                         <td>
-                                            <h2 v-bind:class="classAlertaStock(stock.Cant_actual, stock.Cant_ideal)" align="center">{{stock.Cant_actual}}</h2>
+                                            <h3 class="text-info" align="right">
+                                            {{stock.Cant_pedido}}
+                                            </h3>
                                         </td>
-                                        <td align="center">{{stock.Cant_ideal}}</td>
+                                        <td>
+                                            <h2 v-bind:class="classAlertaStock(stock.Cant_actual, stock.Cant_ideal)" align="right">{{stock.Cant_actual | Decimales}}</h2>
+                                        </td>
+                                        <td>
+                                            <h3 class="" align="right">
+                                            {{ sumarStock(stock.Cant_actual, stock.Cant_pedido)}}
+                                            </h3>
+                                        </td>
+                                        <td align="center">{{stock.Cant_ideal | Decimales}}</td>
                                         <td>{{stock.Unidad_medida}}</td>
                                         <td>${{stock.Precio_costo | Moneda}}</td>
                                         <td>${{stock.Precio_venta | Moneda}}</td>
@@ -176,6 +187,7 @@ include "menusidebar.php";
                                             <option value="Packs">Pack</option>
                                             <option value="Cajas">Cajas</option>
                                             <option value="Mtrs">Metros</option>
+                                            <option value="M2">M2</option>
                                             <option value="Cms">Centimetros</option>
                                             <option value="Litro">Litro</option>
                                             <option value="Grs">Gramos</option>

@@ -64,9 +64,6 @@ include "menusidebar.php";
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 1 }" href="#" v-on:click="mostrar = 1">Ficha</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" v-bind:class="{ active: mostrar == 2 }" href="#" v-on:click="mostrar = 2">Seguimiento</a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 3 }" href="#" v-on:click="mostrar = 3">Productos</a>
                             </li>
                             <li class="nav-item">
@@ -76,7 +73,7 @@ include "menusidebar.php";
 
                         <!-- SECCION DATOS EDITABLES DEL cliente -->
                         <div class="row" v-show="mostrar == '1'">
-                            <div class="col-lg-12">
+                            <div class="col-lg-5">
                                 <div class="card">
                                     <div class="card-header">
                                         <strong>Ficha: {{proveedoresDatos.Nombre_proveedor}}</strong>
@@ -125,6 +122,13 @@ include "menusidebar.php";
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
+                                                            <label class="control-label">Proveedor destacado</label>
+                                                            <select class="form-control" v-model="proveedoresDatos.Destacado">
+                                                                <option value="1">Si</option>
+                                                                <option value="0">No</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
                                                             <label class="control-label">Email</label>
                                                             <input type="email" class="form-control" placeholder="" v-model="proveedoresDatos.Email">
                                                         </div>
@@ -161,11 +165,8 @@ include "menusidebar.php";
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- SECCION DATOS DE SEGUIMIENTO -->
-                        <div class="row" v-show="mostrar == '2'">
-                            <div class="col-lg-12">
+                            <div class="col-lg-7">
                                 <div class="card">
                                     <div class="card-header">
                                         <strong>Seguimiento</strong>

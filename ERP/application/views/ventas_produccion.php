@@ -15,6 +15,18 @@ include "menusidebar.php";
     <div class="main-content">
         <div class="section__content section__content--p30">
             <div class="container-fluid">
+                <h3>Producción</h3>
+                <div class="table-data__tool">
+                    <div class="table-data__tool-left">
+                        <div class="rs-select2--light">
+                            <select class="form-control form-control" v-model="filtro_planificacion" v-on:change="mostrarListadosProduccion()">
+                                <option selected="selected" v-bind:value="0">Todas las planificaciones</option>
+                                <option v-for="planificacion in listaPlanificaciones" v-bind:value="planificacion.Id">{{planificacion.Nombre_planificacion}}</option>
+                            </select>
+                            <div class="dropDownSelect2"></div>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
 
                     <!-- SECCION FICHA cliente -->
@@ -24,7 +36,7 @@ include "menusidebar.php";
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 1 }" href="#" v-on:click="mostrar = 1">Control Stock</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" v-bind:class="{ active: mostrar == 2 }" href="#" v-on:click="mostrar = 2">Proceso materiales</a>
+                                <a class="nav-link" v-bind:class="{ active: mostrar == 2 }" href="#" v-on:click="mostrar = 2">Proceso</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 3 }" href="#" v-on:click="mostrar = 3">Soldadura</a>
@@ -37,6 +49,12 @@ include "menusidebar.php";
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 6 }" href="#" v-on:click="mostrar = 6">Empaque</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" v-bind:class="{ active: mostrar == 7 }" href="#" v-on:click="mostrar = 7">Logística</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" v-bind:class="{ active: mostrar == 8 }" href="#" v-on:click="mostrar = 8">Instalación</a>
                             </li>
                         </ul>
 
@@ -51,20 +69,24 @@ include "menusidebar.php";
                                         <div class="bootstrap-data-table-panel col-lg-12">
                                             <div class="table-responsive">
                                                 <div class="table-responsive">
-                                                    <table id="table2excel" class="table table-striped">
+                                                    <table id="exportExcelSotck" class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th></th>
+                                                                <th>
+                                                                    <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" data-target="#puestosmodal" id="excelBottom" v-on:click="exportarExcel('exportExcelSotck', 'stockProduccion')">
+                                                                        Excel
+                                                                    </button>
+                                                                </th>
                                                                 <th>Cantidad</th>
-                                                                <th>Entrega <br> estimada en</th>
+                                                                <th>Entrega</th>
                                                                 <th>Tipo</th>
                                                                 <th>Producto</th>
                                                                 <th>Venta</th>
                                                                 <th>Cliente</th>
                                                                 <th>Requerimentos</th>
-                                                                <th>Ingreso<br>a esta etapa</th>
-                                                                <th>Egreso<br>de esta etapa</th>
-                                                                <th>Tiempo <br>en esta etapa</th>
+                                                                <th>Ingreso</th>
+                                                                <th>Egreso</th>
+                                                                <th>Tiempo</th>
                                                                 <th>Observaciones</th>
                                                                 <th></th>
                                                             </tr>
@@ -124,26 +146,30 @@ include "menusidebar.php";
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <strong>Listado de productos en etapa de PROCESO DE MATERIALES</strong>
+                                        <strong>Listado de productos en etapa de PROCESO</strong>
                                     </div>
                                     <div class="card-body">
                                         <div class="bootstrap-data-table-panel col-lg-12">
                                             <div class="table-responsive">
                                                 <div class="table-responsive">
-                                                    <table id="table2excel" class="table table-striped">
+                                                    <table id="exportExcelProceso" class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th></th>
+                                                                <th>
+                                                                    <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" data-target="#puestosmodal" id="excelBottom" v-on:click="exportarExcel('exportExcelProceso', 'stockProduccion')">
+                                                                        Excel
+                                                                    </button>
+                                                                </th>
                                                                 <th>Cantidad</th>
-                                                                <th>Entrega <br> estimada en</th>
+                                                                <th>Entrega</th>
                                                                 <th>Tipo</th>
                                                                 <th>Producto</th>
                                                                 <th>Venta</th>
                                                                 <th>Cliente</th>
                                                                 <th>Requerimentos</th>
-                                                                <th>Ingreso<br>a esta etapa</th>
-                                                                <th>Egreso<br>de esta etapa</th>
-                                                                <th>Transcurrido <br>en esta etapa</th>
+                                                                <th>Ingreso</th>
+                                                                <th>Egreso</th>
+                                                                <th>Transcurrido</th>
                                                                 <th>Observaciones</th>
                                                                 <th></th>
                                                             </tr>
@@ -210,20 +236,24 @@ include "menusidebar.php";
                                         <div class="bootstrap-data-table-panel col-lg-12">
                                             <div class="table-responsive">
                                                 <div class="table-responsive">
-                                                    <table id="table2excel" class="table table-striped">
+                                                    <table id="exportExcelSoldadura" class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th></th>
+                                                                <th>
+                                                                    <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" data-target="#puestosmodal" id="excelBottom" v-on:click="exportarExcel('exportExcelSoldadura', 'stockProduccion')">
+                                                                        Excel
+                                                                    </button>
+                                                                </th>
                                                                 <th>Cantidad</th>
-                                                                <th>Entrega <br> estimada en</th>
+                                                                <th>Entrega</th>
                                                                 <th>Tipo</th>
                                                                 <th>Producto</th>
                                                                 <th>Venta</th>
                                                                 <th>Cliente</th>
                                                                 <th>Requerimentos</th>
-                                                                <th>Ingreso<br>a esta etapa</th>
-                                                                <th>Egreso<br>de esta etapa</th>
-                                                                <th>Transcurrido <br>en esta etapa</th>
+                                                                <th>Ingreso</th>
+                                                                <th>Egreso</th>
+                                                                <th>Transcurrido</th>
                                                                 <th>Observaciones</th>
                                                                 <th></th>
                                                             </tr>
@@ -291,20 +321,24 @@ include "menusidebar.php";
                                         <div class="bootstrap-data-table-panel col-lg-12">
                                             <div class="table-responsive">
                                                 <div class="table-responsive">
-                                                    <table id="table2excel" class="table table-striped">
+                                                    <table id="exportExcelPintura" class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th></th>
+                                                                <th>
+                                                                    <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" data-target="#puestosmodal" id="excelBottom" v-on:click="exportarExcel('exportExcelPintura', 'stockProduccion')">
+                                                                        Excel
+                                                                    </button>
+                                                                </th>
                                                                 <th>Cantidad</th>
-                                                                <th>Entrega <br> estimada en</th>
+                                                                <th>Entrega</th>
                                                                 <th>Tipo</th>
                                                                 <th>Producto</th>
                                                                 <th>Venta</th>
                                                                 <th>Cliente</th>
                                                                 <th>Requerimentos</th>
-                                                                <th>Ingreso<br>a esta etapa</th>
-                                                                <th>Egreso<br>de esta etapa</th>
-                                                                <th>Transcurrido <br>en esta etapa</th>
+                                                                <th>Ingreso</th>
+                                                                <th>Egreso</th>
+                                                                <th>Transcurrido</th>
                                                                 <th>Observaciones</th>
                                                                 <th></th>
                                                             </tr>
@@ -372,20 +406,24 @@ include "menusidebar.php";
                                         <div class="bootstrap-data-table-panel col-lg-12">
                                             <div class="table-responsive">
                                                 <div class="table-responsive">
-                                                    <table id="table2excel" class="table table-striped">
+                                                    <table id="exportExcelRotulacion" class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th></th>
+                                                                <th>
+                                                                    <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" data-target="#puestosmodal" id="excelBottom" v-on:click="exportarExcel('exportExcelRotulacion', 'stockProduccion')">
+                                                                        Excel
+                                                                    </button>
+                                                                </th>
                                                                 <th>Cantidad</th>
-                                                                <th>Entrega <br> estimada en</th>
+                                                                <th>Entrega</th>
                                                                 <th>Tipo</th>
                                                                 <th>Producto</th>
                                                                 <th>Venta</th>
                                                                 <th>Cliente</th>
                                                                 <th>Requerimentos</th>
-                                                                <th>Ingreso<br>a esta etapa</th>
-                                                                <th>Egreso<br>de esta etapa</th>
-                                                                <th>Transcurrido <br>en esta etapa</th>
+                                                                <th>Ingreso</th>
+                                                                <th>Egreso</th>
+                                                                <th>Transcurrido</th>
                                                                 <th>Observaciones</th>
                                                                 <th></th>
                                                             </tr>
@@ -452,20 +490,24 @@ include "menusidebar.php";
                                         <div class="bootstrap-data-table-panel col-lg-12">
                                             <div class="table-responsive">
                                                 <div class="table-responsive">
-                                                    <table id="table2excel" class="table table-striped">
+                                                    <table id="exportExcelEmpaque" class="table table-striped">
                                                         <thead>
                                                             <tr>
-                                                                <th></th>
+                                                                <th>
+                                                                    <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" data-target="#puestosmodal" id="excelBottom" v-on:click="exportarExcel('exportExcelEmpaque', 'stockProduccion')">
+                                                                        Excel
+                                                                    </button>
+                                                                </th>
                                                                 <th>Cantidad</th>
-                                                                <th>Entrega <br> estimada en</th>
+                                                                <th>Entrega</th>
                                                                 <th>Tipo</th>
                                                                 <th>Producto</th>
                                                                 <th>Venta</th>
                                                                 <th>Cliente</th>
                                                                 <th>Requerimentos</th>
-                                                                <th>Ingreso<br>a esta etapa</th>
-                                                                <th>Egreso<br>de esta etapa</th>
-                                                                <th>Transcurrido <br>en esta etapa</th>
+                                                                <th>Ingreso</th>
+                                                                <th>Egreso</th>
+                                                                <th>Transcurrido</th>
                                                                 <th>Observaciones</th>
                                                                 <th></th>
                                                             </tr>
@@ -506,6 +548,178 @@ include "menusidebar.php";
                                                                 <td> {{producto_6.S_6_Fecha_finalizado | Fecha}} </td>
                                                                 <td> {{diferenciasEntre_fechas(producto_6.S_5_Fecha_finalizado, producto_6.S_6_Fecha_finalizado)}} días </td>
                                                                 <td> {{producto_6.S_6_Observaciones}} </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p align="center">
+                                    <span class="text-secondary"><i class="fa fa-circle"></i> Normal</span>
+                                    <span class="text-warning"><i class="fa fa-circle"></i> Reclamo</span>
+                                    <span class="text-info"><i class="fa fa-circle"></i> Muestra</span>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- SECCION LOGÍSTICA -->
+                        <div class="row" v-show="mostrar == '7'">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <strong>Listado de productos en etapa de LOGÍSTICA</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="bootstrap-data-table-panel col-lg-12">
+                                            <div class="table-responsive">
+                                                <div class="table-responsive">
+                                                    <table id="exportExcelLogistica" class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>
+                                                                    <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" data-target="#puestosmodal" id="excelBottom" v-on:click="exportarExcel('exportExcelLogistica', 'stockProduccion')">
+                                                                        Excel
+                                                                    </button>
+                                                                </th>
+                                                                <th>Cantidad</th>
+                                                                <th>Entrega</th>
+                                                                <th>Tipo</th>
+                                                                <th>Producto</th>
+                                                                <th>Venta</th>
+                                                                <th>Cliente</th>
+                                                                <th>Requerimentos</th>
+                                                                <th>Ingreso</th>
+                                                                <th>Egreso</th>
+                                                                <th>Transcurrido</th>
+                                                                <th>Observaciones</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="producto_7 in listaEtapa_7">
+
+                                                                <!-- ESTO NO DEBERIA IR, CREO -->
+                                                                <td>
+                                                                    <div v-if="producto_7.Responsable_id_planif_final == Usuario_id || Rol_acceso > 1 || Usuario_id == '3'">
+                                                                        <a v-if="producto_7.Estado == 7" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_7.Id, 8)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_7.Fecha_estimada_entrega) < 0}, 
+                                                                        {'btn-warning' : diferenciasEntre_fechas(null, producto_7.Fecha_estimada_entrega) < 8}]">
+                                                                            <i class="ti-plus"></i> LISTO >>
+                                                                        </a>
+                                                                    </div>
+                                                                    <span v-if="producto_7.Estado > 7"> {{producto_7.S_7_Fecha_finalizado | Fecha}}</span>
+                                                                    <span v-if="producto_7.Estado < 7"> En etapa previa</span>
+
+                                                                </td>
+                                                                <td>
+                                                                    <h4 align="center">{{producto_7.Cantidad}}</h4>
+                                                                </td>
+                                                                <td v-if="diferenciasEntre_fechas(null, producto_7.Fecha_estimada_entrega) < 0">
+                                                                    {{ diferenciasEntre_fechas(null, producto_7.Fecha_estimada_entrega) * (-1) }} días de atrazo
+                                                                </td>
+                                                                <td v-else> {{ diferenciasEntre_fechas(null, producto_7.Fecha_estimada_entrega) }} días</td>
+                                                                <td>
+                                                                    <span v-if="producto_7.Tipo_produccion == 1" class="text-secondary"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_7.Tipo_produccion == 2" class="text-warning"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_7.Tipo_produccion == 3" class="text-info"> <i class="fa fa-circle"></i></span>
+                                                                </td>
+                                                                <td>
+                                                                    <h4> {{producto_7.Nombre_producto}}</h4>
+                                                                </td>
+                                                                <td> {{producto_7.Identificador_venta}} </td>
+                                                                <td> {{producto_7.Nombre_cliente}} </td>
+                                                                <td> {{producto_7.S_7_Requerimientos}} </td>
+                                                                <td> {{producto_7.S_6_Fecha_finalizado | Fecha}} </td>
+                                                                <td> {{producto_7.S_7_Fecha_finalizado | Fecha}} </td>
+                                                                <td> {{diferenciasEntre_fechas(producto_7.S_6_Fecha_finalizado, producto_7.S_7_Fecha_finalizado)}} días </td>
+                                                                <td> {{producto_7.S_7_Observaciones}} </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p align="center">
+                                    <span class="text-secondary"><i class="fa fa-circle"></i> Normal</span>
+                                    <span class="text-warning"><i class="fa fa-circle"></i> Reclamo</span>
+                                    <span class="text-info"><i class="fa fa-circle"></i> Muestra</span>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- SECCION INSTALACION -->
+                        <div class="row" v-show="mostrar == '8'">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <strong>Listado de productos en etapa de Instalación</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="bootstrap-data-table-panel col-lg-12">
+                                            <div class="table-responsive">
+                                                <div class="table-responsive">
+                                                    <table id="exportExcelInstalacion" class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>
+                                                                    <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" data-target="#puestosmodal" id="excelBottom" v-on:click="exportarExcel('exportExcelInstalacion', 'stockProduccion')">
+                                                                        Excel
+                                                                    </button>
+                                                                </th>
+                                                                <th>Cantidad</th>
+                                                                <th>Entrega</th>
+                                                                <th>Tipo</th>
+                                                                <th>Producto</th>
+                                                                <th>Venta</th>
+                                                                <th>Cliente</th>
+                                                                <th>Requerimentos</th>
+                                                                <th>Ingreso</th>
+                                                                <th>Egreso</th>
+                                                                <th>Transcurrido</th>
+                                                                <th>Observaciones</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="producto_8 in listaEtapa_8">
+
+                                                                <!-- ESTO NO DEBERIA IR, CREO -->
+                                                                <td>
+                                                                    <div v-if="producto_8.Responsable_id_planif_final == Usuario_id || Rol_acceso > 1 || Usuario_id == '3'">
+                                                                        <a v-if="producto_8.Estado == 8" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_8.Id, 9)" v-bind:class="[
+                                                                                            { 'btn-danger' : diferenciasEntre_fechas(null, producto_8.Fecha_estimada_entrega) < 0}, 
+                                                                                            {'btn-warning' : diferenciasEntre_fechas(null, producto_8.Fecha_estimada_entrega) < 9}
+                                                                                            ]">
+                                                                            <i class="ti-plus"></i> LISTO >>
+                                                                        </a>
+                                                                    </div>
+                                                                    <span v-if="producto_8.Estado > 8"> {{producto_8.S_8_Fecha_finalizado | Fecha}}</span>
+                                                                    <span v-if="producto_8.Estado < 8"> En etapa previa</span>
+
+                                                                </td>
+                                                                <td>
+                                                                    <h4 align="center">{{producto_8.Cantidad}}</h4>
+                                                                </td>
+                                                                <td v-if="diferenciasEntre_fechas(null, producto_8.Fecha_estimada_entrega) < 0">
+                                                                    {{ diferenciasEntre_fechas(null, producto_8.Fecha_estimada_entrega) * (-1) }} días de atrazo
+                                                                </td>
+                                                                <td v-else> {{ diferenciasEntre_fechas(null, producto_8.Fecha_estimada_entrega) }} días</td>
+                                                                <td>
+                                                                    <span v-if="producto_8.Tipo_produccion == 1" class="text-secondary"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_8.Tipo_produccion == 2" class="text-warning"> <i class="fa fa-circle"></i></span>
+                                                                    <span v-if="producto_8.Tipo_produccion == 3" class="text-info"> <i class="fa fa-circle"></i></span>
+                                                                </td>
+                                                                <td>
+                                                                    <h4> {{producto_8.Nombre_producto}}</h4>
+                                                                </td>
+                                                                <td> {{producto_8.Identificador_venta}} </td>
+                                                                <td> {{producto_8.Nombre_cliente}} </td>
+                                                                <td> {{producto_8.S_8_Requerimientos}} </td>
+                                                                <td> {{producto_8.S_7_Fecha_finalizado | Fecha}} </td>
+                                                                <td> {{producto_8.S_8_Fecha_finalizado | Fecha}} </td>
+                                                                <td> {{diferenciasEntre_fechas(producto_8.S_7_Fecha_finalizado, producto_8.S_8_Fecha_finalizado)}} días </td>
+                                                                <td> {{producto_8.S_8_Observaciones}} </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>

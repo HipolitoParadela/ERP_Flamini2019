@@ -25,14 +25,27 @@ include "menusidebar.php";
 
                             <div class="card-body">
                                 <h3 class="text-sm-center mt-2 mb-1"> {{ventaDatos.Identificador_venta}}</h3>
+                                <hr>
+                                <h4 class="text-sm-center mt-2 mb-1" v-if="ventaDatos.Estado == 1">Control de materiales recibidos</h4>
+                                <h4 class="text-sm-center mt-2 mb-1" v-if="ventaDatos.Estado == 2">Proceso de materiales</h4>
+                                <h4 class="text-sm-center mt-2 mb-1" v-if="ventaDatos.Estado == 3">Soldadura</h4>
+                                <h4 class="text-sm-center mt-2 mb-1" v-if="ventaDatos.Estado == 4">Pintura</h4>
+                                <h4 class="text-sm-center mt-2 mb-1" v-if="ventaDatos.Estado == 5">Rotulación</h4>
+                                <h4 class="text-sm-center mt-2 mb-1" v-if="ventaDatos.Estado == 6">Empaque</h4>
+                                <h4 class="text-sm-center mt-2 mb-1" v-if="ventaDatos.Estado == 7">Logística</h4>
+                                <h4 class="text-sm-center mt-2 mb-1" v-if="ventaDatos.Estado == 8">Instalación</h4>
+                                <h4 class="text-sm-center mt-2 mb-1" v-if="ventaDatos.Estado > 8">Producción Finalizada</h4>
+                                <hr>
+
+                                <p class="text-sm-center mt-2 mb-1"><b>Planificación:</b> {{ventaDatos.Nombre_planificacion}}</p>
                                 <p class="text-sm-center mt-2 mb-1"><b>Empresa:</b> {{ventaDatos.Nombre_empresa}}</p>
                                 <p class="text-sm-center mt-2 mb-1"><b>Cliente:</b> {{ventaDatos.Nombre_cliente}} </p>
                                 <p class="text-sm-center mt-2 mb-1"><b>Vendedor:</b> {{ventaDatos.Nombre_vendedor}} </p>
-                                <p class="text-sm-center mt-2 mb-1"><b>Resp. Plan. Inicial:</b> {{ventaDatos.Nombre_resp_1}}</p>
-                                <p class="text-sm-center mt-2 mb-1"><b>Resp. Plan. Final:</b> {{ventaDatos.Nombre_resp_2}}</p>
-                                <p class="text-sm-center mt-2 mb-1"><b>Resp. Logistica:</b> {{ventaDatos.Nombre_logistica}}</p>
-                                <p class="text-sm-center mt-2 mb-1"><b>Resp. Instalación:</b> {{ventaDatos.Nombre_instalacion}}</p>
-                                <p class="text-sm-center mt-2 mb-1"><b>Resp. Cobranza:</b> {{ventaDatos.Nombre_cobranza}}</p>
+                                <p class="text-sm-center mt-2 mb-1"><b>Plan. Inicial:</b> {{ventaDatos.Nombre_resp_1}}</p>
+                                <p class="text-sm-center mt-2 mb-1"><b>Plan. Final:</b> {{ventaDatos.Nombre_resp_2}}</p>
+                                <p class="text-sm-center mt-2 mb-1"><b>Logistica:</b> {{ventaDatos.Nombre_logistica}}</p>
+                                <p class="text-sm-center mt-2 mb-1"><b>Instalación:</b> {{ventaDatos.Nombre_instalacion}}</p>
+                                <p class="text-sm-center mt-2 mb-1"><b>Cobranza:</b> {{ventaDatos.Nombre_cobranza}}</p>
                             </div>
                         </div>
                         <div class="card">
@@ -46,6 +59,7 @@ include "menusidebar.php";
                                         <b> Finalización:</b>
                                         {{diferenciasEntre_fechas(null, ventaDatos.Fecha_estimada_entrega)}} días
                                     </p>
+                                    <p class="text-sm-center mt-2 mb-1">del {{ventaDatos.Fecha_venta | Fecha}} al {{ventaDatos.Fecha_estimada_entrega | Fecha}}</p>
                                 </div>
                                 <div v-if="ventaDatos.Estado == 10">
                                     <p class="text-sm-center mt-2 mb-1"><b>Finalizado el día </b>{{ventaDatos.Fecha_finalizada | Fecha}}. </p>
@@ -53,13 +67,14 @@ include "menusidebar.php";
                                     <p class="text-sm-center mt-2 mb-1">
                                         Diferencia entre finalizado y su estimación: <b>{{diferenciasEntre_fechas(ventaDatos.Fecha_finalizada, ventaDatos.Fecha_estimada_entrega)}}</b>
                                     </p>
+
                                 </div>
 
                             </div>
                         </div>
                         <!-- {{Usuario_id}} -->
 
-                        <div class="card" v-if="Usuario_id == '5' || Usuario_id == '9' || Usuario_id == 10">
+                        <div class="card" v-if="Usuario_id == '5' || Usuario_id == '6' || Usuario_id == 10 || Usuario_id == 4">
                             <div class="card-header">
                                 <h4>Datos contacto cliente</h4>
                             </div>
@@ -77,8 +92,11 @@ include "menusidebar.php";
 
 
                     <!-- NAVEGADOR PESTAÑAS -->
-                    <div class="col-lg-10">
-                        <ul class="nav nav-tabs">
+                    <div class="col-lg-10 ">
+                        <ul class="nav nav-tabs d-print-none">
+                            <li class="nav-item">
+                                <a class="nav-link" v-if="Usuario_id == '5' || Usuario_id == '6' || Usuario_id == 10 || Usuario_id == 4" v-bind:class="{ active: mostrar == 11 }" href="#" v-on:click="mostrar = 11">Informe General</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 1 }" href="#" v-on:click="mostrar = 1">Ficha</a>
                             </li>
@@ -101,6 +119,237 @@ include "menusidebar.php";
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 7 }" href="#" v-on:click="getListadoSeguimiento(5,7)">Cobranza</a>
                             </li>
                         </ul>
+
+
+
+                        <!-- SECCIÓN INFORME GENERAL -->
+                        <div class="row" v-show="mostrar == '11'">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <strong>Observaciones generales</strong>
+                                    </div>
+                                    <div class="card-body">
+
+
+                                        {{ventaDatos.Observaciones_venta}}
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">
+                                        <strong>Cobranza</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="col-lg-12">
+                                            <h4>
+                                                {{ventaDatos.Info_cobranza}}
+                                            </h4><br>
+
+                                            <table class="table table-striped">
+                                                <tr>
+                                                    <th>Total productos</th>
+                                                    <th>Logística</th>
+                                                    <th>Instalación</th>
+                                                    <th>Recargo</th>
+                                                    <th>Descuento</th>
+                                                    <th>Total a cobrar</th>
+                                                    <th>Total cobrado</th>
+                                                    <th>Saldo</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>${{ sumarProductos(listaProductosVendidos) + sumarProductos(listaProductosReventaLote) | Moneda}}</td>
+                                                    <td>${{ventaDatos.Valor_logistica | Moneda}}</td>
+                                                    <td>${{ventaDatos.Valor_instalacion | Moneda}}</td>
+                                                    <td>${{ventaDatos.Recargo | Moneda}}</td>
+                                                    <td>${{ventaDatos.Descuento | Moneda}}</td>
+                                                    <td>${{
+                                                        calcularMontosVentas(
+                                                            sumarProductos(listaProductosVendidos), 
+                                                            ventaDatos.Valor_logistica, 
+                                                            ventaDatos.Valor_instalacion, 
+                                                            sumarProductos(listaProductosReventaLote), 
+                                                            0, 
+                                                            ventaDatos.Recargo, 
+                                                            ventaDatos.Descuento
+                                                        )   | Moneda}}</td>
+                                                    <td> ${{listaMovimientos.Total | Moneda}}</td>
+                                                    <td>${{
+                                                        calcularMontosVentas(
+                                                            sumarProductos(listaProductosVendidos), 
+                                                            ventaDatos.Valor_logistica, 
+                                                            ventaDatos.Valor_instalacion, 
+                                                            sumarProductos(listaProductosReventaLote), 
+                                                            listaMovimientos.Total,
+                                                            ventaDatos.Recargo, 
+                                                            ventaDatos.Descuento
+                                                        ) | Moneda}}</td>
+                                                </tr>
+                                            </table><br>
+                                            <hr>
+                                            <p style="margin-bottom: 5px;"><b>Pagos registrados</b></p>
+                                            <div class="table-responsive">
+                                                <table id="table2excel" class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Monto</th>
+                                                            <th>Fecha</th>
+                                                            <th>Modalidad</th>
+                                                            <th>Observaciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="movimiento in listaMovimientos.Datos">
+                                                            <td>${{movimiento.Monto | Moneda}}</td>
+                                                            <td>{{movimiento.Fecha_ejecutado | Fecha}}</td>
+                                                            <td>{{movimiento.Modalidad_pago}}</td>
+                                                            <td>{{movimiento.Observaciones}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <th>
+                                                            <h3>${{listaMovimientos.Total | Moneda}}</h3>
+                                                        </th>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">
+                                        <strong>Producción</strong>
+                                    </div>
+                                    <div class="card-body">
+
+                                        <p style="margin-bottom: 5px;"><strong>PRODUCTOS PROPIOS</strong></p>
+                                        <table id="table2excel" class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Código</th>
+                                                    <th>Producto</th>
+
+                                                    <th>Cantidad</th>
+                                                    <th>Precio</th>
+                                                    <th>Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="productos in listaResumenProductos">
+                                                    <td>{{productos.Codigo_interno}}</td>
+                                                    <td>{{productos.Nombre_producto}}</td>
+
+                                                    <td align="center">{{productos.Cantidad}}</td>
+                                                    <td align="right">${{productos.Precio_venta | Moneda}}</td>
+                                                    <td align="right">${{productos.Precio_venta * productos.Cantidad | Moneda}}</td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th>
+                                                        <h4 align="right">${{sumarProductos(listaProductosVendidos) | Moneda}}</h4>
+                                                    </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        <br>
+                                        <p style="margin-bottom: 5px;"> <strong>PRODUCTOS DE REVENTA</strong></p>
+                                        <table id="table2excel" class="table table-striped">
+                                            <thead>
+                                                <tr>
+
+                                                    <th>Producto</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Precio</th>
+                                                    <th>Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="productosRev in listaProductosReventaLote">
+                                                    <td>{{productosRev.Nombre_item}}</td>
+
+                                                    <td align="right">{{productosRev.Cantidad}}</td>
+                                                    <td align="right">${{productosRev.Precio_venta_producto | Moneda}}</td>
+                                                    <td align="right">${{productosRev.Precio_venta_producto * productosRev.Cantidad | Moneda}}</td>
+                                                    <!-- <td>{{productosRev.Subtotal}}</td> -->
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th>
+                                                        <h4 align="right">${{sumarProductos(listaProductosReventaLote) | Moneda}}</h4>
+                                                    </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+
+                                        <hr>
+                                        <br>
+                                        <p style="margin-bottom: 5px;"> <strong>REQUERIMIENTOS PARA LOGÍSTICA</strong></p>
+                                        <P>{{ventaDatos.Info_logistica}}</P>
+                                        <hr>
+                                        <br>
+                                        <p style="margin-bottom: 5px;"> <strong>REQUERIMIENTOS PARA INSTALACIÓN</strong></p>
+                                        <P>{{ventaDatos.Instalacion}}</P>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">
+                                        <strong>Historial de Reportes</strong>
+                                    </div>
+                                    <div class="card-body">
+
+
+                                        <div class="bootstrap-data-table-panel col-lg-12">
+                                            <div class="table-responsive">
+                                                <table id="table2excel" class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Fecha</th>
+                                                            <th>Categoría</th>
+                                                            <th>Descripcion</th>
+                                                            <th>Archivo</th>
+                                                            <th>Autor</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="seguimiento in listaSeguimiento">
+                                                            <td>{{ seguimiento.Fecha | FechaTimeBD}}</td>
+
+                                                            <td v-if="seguimiento.Categoria_seguimiento == 0">Sin categoría</td>
+                                                            <td v-if="seguimiento.Categoria_seguimiento == 1">Compras</td>
+                                                            <td v-if="seguimiento.Categoria_seguimiento == 2">Producción</td>
+                                                            <td v-if="seguimiento.Categoria_seguimiento == 3">Logística</td>
+                                                            <td v-if="seguimiento.Categoria_seguimiento == 4">Instalación</td>
+                                                            <td v-if="seguimiento.Categoria_seguimiento == 5">Cobranza</td>
+
+                                                            <td>{{seguimiento.Descripcion}}</td>
+                                                            <td><a v-if="seguimiento.Url_archivo != null" target="_blank" v-bind:href="'<?php echo base_url(); ?>uploads/imagenes/'+seguimiento.Url_archivo"> Ver archivo</a></td>
+                                                            <td>{{seguimiento.Nombre}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
 
 
                         <!-- SECCION DATOS EDITABLES DE LA VENTA -->
@@ -361,10 +610,12 @@ include "menusidebar.php";
                                                 <h1 v-if="ventaDatos.Estado == 4">Pintura</h1>
                                                 <h1 v-if="ventaDatos.Estado == 5">Rotulación</h1>
                                                 <h1 v-if="ventaDatos.Estado == 6">Empaque</h1>
-                                                <h1 v-if="ventaDatos.Estado > 6">Producción Finalizada</h1>
+                                                <h1 v-if="ventaDatos.Estado == 7">Logística</h1>
+                                                <h1 v-if="ventaDatos.Estado == 8">Instalación</h1>
+                                                <h1 v-if="ventaDatos.Estado > 8">Producción Finalizada</h1>
                                                 <hr>
                                                 <p>
-                                                    <a v-if="ventaDatos.Estado < 7" href="#" class="btn btn-warning " v-on:click="cambiar_estado_venta(0)">
+                                                    <a v-if="ventaDatos.Estado < 9" href="#" class="btn btn-warning " v-on:click="cambiar_estado_venta(0)">
                                                         Avanzar lote a siguiente etapa >>
                                                     </a>
                                                 </p>
@@ -467,6 +718,8 @@ include "menusidebar.php";
                                                                         <th>Soldadura</th>
                                                                         <th>Pintura</th>
                                                                         <th>Rotulación</th>
+                                                                        <th>Logística</th>
+                                                                        <th>Instalación</th>
                                                                         <th>Empaque</th>
                                                                         <th>
 
@@ -511,7 +764,7 @@ include "menusidebar.php";
 
                                                                         <td>
                                                                             <a v-if="productoFabricado.Estado == 2" href="#modalPasoapaso" data-toggle="modal" class="btn btn-info btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(productoFabricado.Id, 3)">
-                                                                                <i class="ti-plus"></i> Procesamiento completado >>
+                                                                                <i class="ti-plus"></i> Procesado >>
                                                                             </a>
                                                                             <span v-if="productoFabricado.Estado > 2">{{productoFabricado.S_2_Fecha_finalizado | Fecha}}</span>
                                                                             <span v-if="productoFabricado.Estado < 2">En espera</span>
@@ -522,7 +775,7 @@ include "menusidebar.php";
 
                                                                         <td>
                                                                             <a v-if="productoFabricado.Estado == 3" href="#modalPasoapaso" data-toggle="modal" class="btn btn-info btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(productoFabricado.Id, 4)">
-                                                                                <i class="ti-plus"></i> Soldadura completada >>
+                                                                                <i class="ti-plus"></i> Soldado >>
                                                                             </a>
                                                                             <span v-if="productoFabricado.Estado > 3">{{productoFabricado.S_3_Fecha_finalizado | Fecha}}</span>
                                                                             <span v-if="productoFabricado.Estado < 3">En espera</span>
@@ -533,7 +786,7 @@ include "menusidebar.php";
 
                                                                         <td>
                                                                             <a v-if="productoFabricado.Estado == 4" href="#modalPasoapaso" data-toggle="modal" class="btn btn-info btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(productoFabricado.Id, 5)">
-                                                                                <i class="ti-plus"></i> Pintura completada >>
+                                                                                <i class="ti-plus"></i> Pintado >>
                                                                             </a>
                                                                             <span v-if="productoFabricado.Estado > 4">{{productoFabricado.S_4_Fecha_finalizado | Fecha}}</span>
                                                                             <span v-if="productoFabricado.Estado < 4"> En espera</span>
@@ -544,7 +797,7 @@ include "menusidebar.php";
 
                                                                         <td>
                                                                             <a v-if="productoFabricado.Estado == 5" href="#modalPasoapaso" data-toggle="modal" class="btn btn-info btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(productoFabricado.Id, 6)">
-                                                                                <i class="ti-plus"></i> Rotulación completada >>
+                                                                                <i class="ti-plus"></i> Rotulado >>
                                                                             </a>
                                                                             <span v-if="productoFabricado.Estado > 5">{{productoFabricado.S_5_Fecha_finalizado | Fecha}}</span>
                                                                             <span v-if="productoFabricado.Estado < 5">En espera</span>
@@ -555,7 +808,7 @@ include "menusidebar.php";
 
                                                                         <td>
                                                                             <a v-if="productoFabricado.Estado == 6" href="#modalPasoapaso" data-toggle="modal" class="btn btn-info btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(productoFabricado.Id, 7)">
-                                                                                <i class="ti-plus"></i> Producto empacado >>
+                                                                                <i class="ti-plus"></i> Empacado >>
                                                                             </a>
                                                                             <span v-if="productoFabricado.Estado < 6">En espera</span>
                                                                             <span v-if="productoFabricado.Estado > 6">{{productoFabricado.S_6_Fecha_finalizado | Fecha}}</span>
@@ -563,6 +816,29 @@ include "menusidebar.php";
                                                                                 <i class="fa fa-exclamation-circle"></i>
                                                                             </button>
                                                                         </td>
+
+                                                                        <td>
+                                                                            <a v-if="productoFabricado.Estado == 7" href="#modalPasoapaso" data-toggle="modal" class="btn btn-info btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(productoFabricado.Id, 8)">
+                                                                                <i class="ti-plus"></i> Entregado >>
+                                                                            </a>
+                                                                            <span v-if="productoFabricado.Estado < 7">En espera</span>
+                                                                            <span v-if="productoFabricado.Estado > 7">{{productoFabricado.S_7_Fecha_finalizado | Fecha}}</span>
+                                                                            <button class="item" v-on:click="infoEtapa(productoFabricado.S_7_Requerimientos, productoFabricado.S_7_Observaciones)" data-toggle="modal" data-target="#modalDatosEtapa" data-placement="top" title="Info de esta etapa">
+                                                                                <i class="fa fa-exclamation-circle"></i>
+                                                                            </button>
+                                                                        </td>
+
+                                                                        <td>
+                                                                            <a v-if="productoFabricado.Estado == 8" href="#modalPasoapaso" data-toggle="modal" class="btn btn-info btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(productoFabricado.Id, 9)">
+                                                                                <i class="ti-plus"></i> Instalado >>
+                                                                            </a>
+                                                                            <span v-if="productoFabricado.Estado < 8">En espera</span>
+                                                                            <span v-if="productoFabricado.Estado > 8">{{productoFabricado.S_8_Fecha_finalizado | Fecha}}</span>
+                                                                            <button class="item" v-on:click="infoEtapa(productoFabricado.S_8_Requerimientos, productoFabricado.S_8_Observaciones)" data-toggle="modal" data-target="#modalDatosEtapa" data-placement="top" title="Info de esta etapa">
+                                                                                <i class="fa fa-exclamation-circle"></i>
+                                                                            </button>
+                                                                        </td>
+
                                                                         <td>
                                                                             <div class="table-data-feature">
                                                                                 <button class="item" v-on:click="editarFormularioProductos(productoFabricado)" data-toggle="modal" data-target="#modalProductos" data-placement="top" title="Editar">
@@ -618,6 +894,7 @@ include "menusidebar.php";
                                                                         <th>P. Venta</th>
                                                                         <th>Subtotal</th>
                                                                         <th>Descripción</th>
+                                                                        <th>Entrega</th>
                                                                         <th>
 
                                                                         </th>
@@ -627,7 +904,7 @@ include "menusidebar.php";
                                                                     <tr v-for="productoReventa in listaProductosReventaLote">
                                                                         <td>
                                                                             <div class="round-img">
-                                                                                <!-- <img v-if="productoReventa.Imagen != null" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+productoReventa.Imagen" width="60px"> -->
+                                                                                <img v-if="productoReventa.Imagen != null" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+productoReventa.Imagen" width="60px">
                                                                                 <!-- <img v-else src="https://freeiconshop.com/wp-content/uploads/edd/person-flat.png" width="50px" alt=""> -->
                                                                             </div>
                                                                         </td>
@@ -644,9 +921,22 @@ include "menusidebar.php";
                                                                             <h4> ${{productoReventa.Precio_venta_producto * productoReventa.Cantidad| Moneda}}</h4>
                                                                         </td>
                                                                         <td> {{ productoReventa.Descripcion }} </td>
+
+
                                                                         <td>
                                                                             <div class="table-data-feature" v-if="ventaDatos.Estado < 7">
-                                                                                <button class="item" v-on:click="editarFormularioProductosReventa(productoReventa)" data-toggle="modal" data-target="#productosreventaModal" data-placement="top" title="Editar">
+                                                                                <button v-if="productoReventa.Entregado == 0" class="btn" v-on:click="prodReventaEntregado(productoReventa.Stock_id)">
+                                                                                    <i class="ti-plus"></i> Marcar como entregado
+                                                                                </button>
+                                                                                <span v-if="productoReventa.Entregado == 1">{{productoReventa.Fecha_entregado | Fecha}}</span>
+                                                                            </div>
+
+                                                                        </td>
+
+
+                                                                        <td>
+                                                                            <div class="table-data-feature" v-if="ventaDatos.Estado < 7">
+                                                                                <button class="item" v-if="productoReventa.Entregado == 0" v-on:click="editarFormularioProductosReventa(productoReventa)" data-toggle="modal" data-target="#productosreventaModal" data-placement="top" title="Editar">
                                                                                     <i class="zmdi zmdi-edit"></i>
                                                                                 </button>
                                                                                 <button v-show="productoReventa.Cantidad == 0" class="item" v-on:click="eliminarProductoReventa(productoReventa.Stock_id)">
@@ -1089,7 +1379,7 @@ include "menusidebar.php";
                                                                     <tr v-for="productosRev in listaProductosReventaLote">
                                                                         <td>{{productosRev.Nombre_item}}</td>
 
-                                                                        <td align="center">{{productosRev.Cantidad}}</td>
+                                                                        <td align="right">{{productosRev.Cantidad}}</td>
                                                                         <td align="right">${{productosRev.Precio_venta_producto | Moneda}}</td>
                                                                         <td align="right">${{productosRev.Precio_venta_producto * productosRev.Cantidad | Moneda}}</td>
                                                                         <!-- <td>{{productosRev.Subtotal}}</td> -->
@@ -1591,7 +1881,7 @@ include "menusidebar.php";
                             <label class="control-label">Seleccionar producto</label>
                             <input list="productosReventa" class="form-control" v-model="egresoDato.Producto_id" v-on:change="actualizarPrecioProductoReventa(egresoDato.Producto_id)" :disabled="egresoDato.Id > 0" required>
                             <datalist id="productosReventa">
-                                <option v-for="prod in listaProductosReventa" v-bind:value="prod.Id">{{prod.Nombre_item}}</option>
+                                <option v-for="prod in listaProductosReventa" v-bind:value="prod.Id">{{prod.Nombre_item}} <b>({{prod.Cant_actual}})</b></option>
                             </datalist>
                         </div>
 

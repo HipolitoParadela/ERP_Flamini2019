@@ -94,9 +94,9 @@ include "menusidebar.php";
                                         <td>{{stock.Nombre_categoria}}</td>
 
                                         <td>
-                                            <h2 v-bind:class="classAlertaStock(stock.Cant_actual, stock.Cant_ideal)" align="center">{{stock.Cant_actual}}</h2>
+                                            <h2 v-bind:class="classAlertaStock(stock.Cant_actual, stock.Cant_ideal)" align="center">{{stock.Cant_actual | Decimales}}</h2>
                                         </td>
-                                        <td align="center">{{stock.Cant_ideal}}</td>
+                                        <td align="center">{{stock.Cant_ideal | Decimales}}</td>
                                         <td>{{stock.Unidad_medida}}</td>
                                         <!--<td width= "500" bgcolor="#F2F2F2">
                                                     <div class="input-group">
@@ -178,7 +178,8 @@ include "menusidebar.php";
                                     <option value="Un.">Unidad</option>
                                     <option value="Packs">Pack</option>
                                     <option value="Cajas">Cajas</option>
-                                    <option value="Mtrs">Metros</option>
+                                    <option value="mtrs">Metros</option>
+                                    <option value="m2">m2</option>
                                     <option value="Cms">Centimetros</option>
                                     <option value="Litro">Litro</option>
                                     <option value="Grs">Gramos</option>
@@ -188,11 +189,11 @@ include "menusidebar.php";
                             </div>
                             <div class="form-group">
                                 <label class=" form-control-label">Cantidad inicial</em></label>
-                                <input type="number" class="form-control" placeholder="" v-model="stockDato.Cant_actual"> <!-- :disabled="stockDato.Id" -->
+                                <input type="number" step="0.01" class="form-control" placeholder="" v-model="stockDato.Cant_actual"> <!-- :disabled="stockDato.Id" -->
                             </div>
                             <div class="form-group">
                                 <label class=" form-control-label">Cantidad ideal</label>
-                                <input type="number" class="form-control" placeholder="" v-model="stockDato.Cant_ideal">
+                                <input type="number" step="0.01" class="form-control" placeholder="" v-model="stockDato.Cant_ideal">
                             </div>
                             <div class="form-group">
                                 <label class=" form-control-label">Descripción</label>

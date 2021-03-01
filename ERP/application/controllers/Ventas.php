@@ -111,7 +111,10 @@ class ventas extends CI_Controller
         $Empresa_id         = $_GET["Empresa_id"];
         $Vendedor_id        = $_GET["Vendedor_id"];
         $Cliente_id         = $_GET["Cliente_id"];
-        $Planificacion_id   = $_GET["Planificacion_id"]; 
+        $Planificacion_id   = $_GET["Planificacion_id"];
+
+        /// PERMITIR VER VENTAS ANULADAS O ELIMINADAS
+        $Visible = 1; if($_GET["Estado"] == 0) {  $Visible = 0; }
 
         $this->db->select(' tbl_ventas.*,
                             tbl_usuarios.Nombre as Nombre_vendedor,
@@ -131,14 +134,18 @@ class ventas extends CI_Controller
         if($Empresa_id > 0)     { $this->db->where('tbl_ventas.Empresa_id', $Empresa_id); }
         if($Planificacion_id > 0)     { $this->db->where('tbl_ventas.Planificacion_id', $Planificacion_id); }
 
-        $this->db->where('tbl_ventas.Visible', 1);
+        $this->db->where('tbl_ventas.Visible', $Visible);
         
-        if($_GET["Estado"] == 10) /// esto es porque si necesito la lista completa sin discriminar por estado, Mando un valor 4 al estado
+        if($_GET["Estado"] == 9) /// muestra ventas en estado de cobranza
         {
-            $this->db->where('tbl_ventas.Estado', 10);
+            $this->db->where('tbl_ventas.Estado', '9');
+        }
+        else if($_GET["Estado"] == 10) /// muestra ventas cobradas
+        {
+            $this->db->where('tbl_ventas.Estado', '10');
         }
         else {
-            $this->db->where('tbl_ventas.Estado <', 10);
+            $this->db->where('tbl_ventas.Estado <', 9); /// Muestra ventas en estados anterior a entregados... o sea en estado de cobranza
         }
         
 		$this->db->order_by('tbl_ventas.Fecha_venta', 'desc');
@@ -345,6 +352,7 @@ class ventas extends CI_Controller
                             tbl_clientes.Telefono,
                             tbl_clientes.Email,
                             tbl_clientes.Nombre_persona_contacto,
+                            tbl_planificaciones.Nombre_planificacion,
                             tbl_vendedor.Nombre as Nombre_vendedor,
                             tbl_resp_1.Nombre as Nombre_resp_1,
                             tbl_resp_2.Nombre as Nombre_resp_2,
@@ -356,6 +364,7 @@ class ventas extends CI_Controller
 
         $this->db->join('tbl_clientes',  'tbl_clientes.Id   = tbl_ventas.Cliente_id', 'left');
         $this->db->join('tbl_empresas',  'tbl_empresas.Id   = tbl_ventas.Empresa_id', 'left');
+        $this->db->join('tbl_planificaciones',  'tbl_planificaciones.Id   = tbl_ventas.Planificacion_id', 'left');
         $this->db->join('tbl_usuarios as tbl_vendedor',  'tbl_vendedor.Id   = tbl_ventas.Vendedor_id', 'left');
         $this->db->join('tbl_usuarios as tbl_resp_1',  'tbl_resp_1.Id   = tbl_ventas.Responsable_id_planif_inicial', 'left');
         $this->db->join('tbl_usuarios as tbl_resp_2', 'tbl_resp_2.Id   = tbl_ventas.Responsable_id_planif_final', 'left');
@@ -941,7 +950,26 @@ class ventas extends CI_Controller
                     'S_7_Observaciones' =>      $this->datosObtenidos->Datos->Comentarios,
                     'Estado' =>                 $this->datosObtenidos->Datos->Estado,
                 );
-            }         
+            }
+            
+            elseif($this->datosObtenidos->Datos->Estado == 9)
+            {
+                $data = array(
+                    'S_8_Fecha_finalizado' =>   $this->datosObtenidos->Datos->Fecha,
+                    'S_8_Observaciones' =>      $this->datosObtenidos->Datos->Comentarios,
+                    'Estado' =>                 $this->datosObtenidos->Datos->Estado,
+                );
+            }    
+
+
+            elseif($this->datosObtenidos->Datos->Estado == 10)
+            {
+                $data = array(
+                    'S_9_Fecha_finalizado' =>   $this->datosObtenidos->Datos->Fecha,
+                    'S_9_Observaciones' =>      $this->datosObtenidos->Datos->Comentarios,
+                    'Estado' =>                 $this->datosObtenidos->Datos->Estado,
+                );
+            }    
         
 
         $this->load->model('App_model');
@@ -1057,6 +1085,7 @@ class ventas extends CI_Controller
         }
 
         $Estado = $this->datosObtenidos->Estado;
+        $Planificacion_id   = $_GET["Planificacion_id"];
 
         $this->db->select(' tbl_ventas_productos.*,
                             tbl_fabricacion.Nombre_producto,
@@ -1068,17 +1097,20 @@ class ventas extends CI_Controller
                             tbl_ventas.Fecha_estimada_entrega,
                             tbl_clientes.Nombre_cliente'); 
         
-        $this->db->from('tbl_ventas_productos');  
+        $this->db->from('tbl_ventas_productos');
 
         $this->db->join('tbl_fabricacion',  'tbl_fabricacion.Id   = tbl_ventas_productos.Producto_id', 'left');
         $this->db->join('tbl_ventas',  'tbl_ventas.Id   = tbl_ventas_productos.Venta_id', 'left');
         $this->db->join('tbl_clientes',  'tbl_clientes.Id   = tbl_ventas.Cliente_id', 'left');
+        
+        // Filtrar por Planificación
+        if($Planificacion_id > 0)     { $this->db->where('tbl_ventas.Planificacion_id', $Planificacion_id); }
 
         $this->db->where('tbl_ventas_productos.Estado <', $Estado);
         $this->db->where('tbl_ventas_productos.Visible', 1);
         
         /// ACA VIENE EL FILTRO, SOLO VA A BUSCAR EN LAS VENTAS DONDE EL USUARIO LOGUEADO HAYA SIDO ELEGIDO.
-        if ($this->session->userdata('Rol_acceso') < 4)
+        /* if ($this->session->userdata('Rol_acceso') < 4)
         {
             if($this->session->userdata('Id') == 3) /// ROL 3 es Franco
             {
@@ -1090,14 +1122,14 @@ class ventas extends CI_Controller
                 $this->db->where('tbl_fabricacion.Empresa_id', 3); // Empresa 3 es smart
             }
             else
-            {
+            { 
                 $this->db->group_start(); // Open bracket
                 $this->db->where('tbl_ventas.Responsable_id_planif_final',      $this->session->userdata('Id'));
                 $this->db->or_where('tbl_ventas.Responsable_id_planif_inicial', $this->session->userdata('Id'));
                 $this->db->group_end(); // Close bracket  
-            }
+             }
               
-        }
+        } */
 
         $this->db->order_by('tbl_ventas.Fecha_estimada_entrega', 'asc');
         
