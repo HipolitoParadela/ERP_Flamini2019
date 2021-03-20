@@ -92,7 +92,10 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_1 in listaEtapa_1">
+                                                            <tr 
+                                                                v-for="producto_1 in listaEtapa_1"
+                                                                v-bind:class="{ 'prioritario alert alert-danger' : producto_1.Prioritario == 1}"
+                                                            >
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
@@ -175,7 +178,7 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_2 in listaEtapa_2">
+                                                            <tr v-for="producto_2 in listaEtapa_2" v-bind:class="{ 'prioritario alert alert-danger' : producto_2.Prioritario == 1}">
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
@@ -259,13 +262,21 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_3 in listaEtapa_3">
+                                                            <tr v-for="producto_3 in listaEtapa_3" v-bind:class="{ 'prioritario alert alert-danger' : producto_3.Prioritario == 1}">
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
                                                                     <div v-if="producto_3.Responsable_id_planif_inicial == Usuario_id || Rol_acceso > 1 || Usuario_id == '3'">
-                                                                        <a v-if="producto_3.Estado == 3" href="#modalPasoapaso" data-toggle="modal" class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" v-on:click="editarPasoProducto(producto_3.Id, 4)" v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 7}]">
-                                                                            <i class="ti-plus"></i> LISTO >>
+                                                                        <a 
+                                                                            v-if="producto_3.Estado == 3" 
+                                                                            href="#modalPasoapaso" 
+                                                                            data-toggle="modal" 
+                                                                            class="btn btn-primary btn-flat btn-addon m-b-10 m-l-5 btn-sm" 
+                                                                            v-on:click="editarPasoProducto(producto_3.Id, 4)" 
+                                                                            v-bind:class="[{ 'btn-danger' : diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 0}, {'btn-warning' : diferenciasEntre_fechas(null, producto_3.Fecha_estimada_entrega) < 7}]"
+                                                                        >
+                                                                            <i class="ti-plus"></i> 
+                                                                            LISTO >>
                                                                         </a>
                                                                     </div>
                                                                     <span v-if="producto_3.Estado > 3"> {{producto_3.S_3_Fecha_finalizado | Fecha}}</span>
@@ -344,7 +355,7 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_4 in listaEtapa_4">
+                                                            <tr v-for="producto_4 in listaEtapa_4" v-bind:class="{ 'prioritario alert alert-danger' : producto_4.Prioritario == 1}">
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
@@ -429,7 +440,7 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_5 in listaEtapa_5">
+                                                            <tr v-for="producto_5 in listaEtapa_5" v-bind:class="{ 'prioritario alert alert-danger' : producto_5.Prioritario == 1}">
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
@@ -513,7 +524,7 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_6 in listaEtapa_6">
+                                                            <tr v-for="producto_6 in listaEtapa_6" v-bind:class="{ 'prioritario alert alert-danger' : producto_6.Prioritario == 1}">
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
@@ -597,7 +608,7 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_7 in listaEtapa_7">
+                                                            <tr v-for="producto_7 in listaEtapa_7" v-bind:class="{ 'prioritario alert alert-danger' : producto_7.Prioritario == 1}">
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
@@ -682,7 +693,7 @@ include "menusidebar.php";
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="producto_8 in listaEtapa_8">
+                                                            <tr v-for="producto_8 in listaEtapa_8" v-bind:class="{ 'prioritario alert alert-danger' : producto_8.Prioritario == 1}">
 
                                                                 <!-- ESTO NO DEBERIA IR, CREO -->
                                                                 <td>
@@ -701,7 +712,7 @@ include "menusidebar.php";
                                                                 <td>
                                                                     <h4 align="center">{{producto_8.Cantidad}}</h4>
                                                                 </td>
-                                                                <td v-if="diferenciasEntre_fechas(null, producto_8.Fecha_estimada_entrega) < 0">
+                                                                <td v-if="diferenciasEntre_fechas(null, producto_8.Fecha_estimada_entrega) < 0" >
                                                                     {{ diferenciasEntre_fechas(null, producto_8.Fecha_estimada_entrega) * (-1) }} días de atrazo
                                                                 </td>
                                                                 <td v-else> {{ diferenciasEntre_fechas(null, producto_8.Fecha_estimada_entrega) }} días</td>
@@ -774,7 +785,7 @@ include "menusidebar.php";
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" :disabled="boton_habilitado == 0">Cerrar</button>
                 </div>
             </div>
         </div>

@@ -10,8 +10,9 @@ class ventas extends CI_Controller
         if ($this->session->userdata('Login') != true) {
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
-
-            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 5 || $this->session->userdata('Id') == 6) {
+            
+            /// Visible para roles administradores y acceso especial a Yohana, Dayana, Jaqui, Belen
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 5 || $this->session->userdata('Id') == 6 || $this->session->userdata('Id') == 33 || $this->session->userdata('Id') == 7 ) {
                 $this->load->view('ventas_listado');
             } else {
                 header("Location: " . base_url() . "login"); /// enviar a pagina de error
@@ -28,8 +29,15 @@ class ventas extends CI_Controller
         } else {
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
             //if (plan_contratado() > 1) {}
-
-            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 5 || $this->session->userdata('Id') == 6) 
+            
+            /// Visible para roles administradores y acceso especial a Yohana, Dayana, Jaqui, Belen
+            if (    
+                $this->session->userdata('Rol_acceso') > 3 
+                || $this->session->userdata('Id') == 5 
+                || $this->session->userdata('Id') == 6 
+                || $this->session->userdata('Id') == 33 
+                || $this->session->userdata('Id') == 7
+            ) 
             {
                 //Esto siempre va es para instanciar la base de datos
                     $CI = &get_instance();
@@ -81,7 +89,7 @@ class ventas extends CI_Controller
         } 
         else 
         {
-            if ($this->session->userdata('Rol_acceso') > 1 || $this->session->userdata('Id') == 3) //USUARIO 3, FRANCO DÍAZ 
+            if ($this->session->userdata('Rol_acceso') > 1 || $this->session->userdata('Id') == 3 || $this->session->userdata('Id') == 5 || $this->session->userdata('Id') == 6 || $this->session->userdata('Id') == 33 || $this->session->userdata('Id') == 7) //USUARIO 3, FRANCO DÍAZ 
             {
                 $this->load->view('ventas_produccion');
             } 
@@ -995,19 +1003,93 @@ class ventas extends CI_Controller
             exit("No coinciden los token");
         }
 
-        $Id = null;
-        if (isset($this->datosObtenidos->Datos->Id)) {
-            $Id = $this->datosObtenidos->Datos->Id;
+        $Id = null; if (isset($this->datosObtenidos->Datos->Id)) { $Id = $this->datosObtenidos->Datos->Id; }
+        
+        
+        
+
+        /* CONTROLAR QUE LA CANTIDAD A ANULAR SEA LA QUE SE ESTA ANULANDO */ 
+
+        
+        //// si la cantidad es la misma, sigue la reasigna derecho
+        if($this->datosObtenidos->Datos->Cantidad_anulada === $this->datosObtenidos->Datos->Cantidad)
+        {
+            $data = array(
+                'Venta_id' =>   1,
+            );
+
+            $this->load->model('App_model');
+            $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
+        }
+        else 
+        {
+            /// si la cantidad es menos, resta la cantidad original, con la nueva
+            // la que coloca en el campo de texto es para la venta original, el restante es para la venta nueva
+                $data = array(
+                    'Venta_id' =>   1,
+                    'Cantidad' =>   $this->datosObtenidos->Datos->Cantidad_anulada,
+                );
+
+                $this->load->model('App_model');
+                $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
+
+            /// Ahora el producto restante, lo paso a la venta de reserva
+                /// genero un clon de los datos originales
+                $cantidad_restante = $this->datosObtenidos->Datos->Cantidad - $this->datosObtenidos->Datos->Cantidad_anulada;
+
+                $data = array(                    
+
+                    'Cantidad' =>                   $cantidad_restante,  
+                    'Estado' =>                     $this->datosObtenidos->Datos->Estado, 
+                    'Observaciones' =>              $this->datosObtenidos->Datos->Observaciones,   
+                    'Precio_venta_producto' =>      $this->datosObtenidos->Datos->Precio_venta_producto,   // controlar esta fila si esta funcionando bien
+                    'Producto_id' =>                $this->datosObtenidos->Datos->Producto_id, 
+                    'S_1_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_1_Fecha_finalizado,    
+                    'S_1_Observaciones' =>          $this->datosObtenidos->Datos->S_1_Observaciones,   
+                    'S_1_Requerimientos' =>         $this->datosObtenidos->Datos->S_1_Requerimientos,  
+                    'S_2_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_2_Fecha_finalizado,    
+                    'S_2_Observaciones' =>          $this->datosObtenidos->Datos->S_2_Observaciones,   
+                    'S_2_Requerimientos' =>         $this->datosObtenidos->Datos->S_2_Requerimientos,  
+                    'S_3_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_3_Fecha_finalizado,    
+                    'S_3_Observaciones' =>          $this->datosObtenidos->Datos->S_3_Observaciones,   
+                    'S_3_Requerimientos' =>         $this->datosObtenidos->Datos->S_3_Requerimientos,  
+                    'S_4_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_4_Fecha_finalizado,    
+                    'S_4_Observaciones' =>          $this->datosObtenidos->Datos->S_4_Observaciones,   
+                    'S_4_Requerimientos' =>         $this->datosObtenidos->Datos->S_4_Requerimientos,  
+                    'S_5_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_5_Fecha_finalizado,    
+                    'S_5_Observaciones' =>          $this->datosObtenidos->Datos->S_5_Observaciones,   
+                    'S_5_Requerimientos' =>         $this->datosObtenidos->Datos->S_5_Requerimientos,  
+                    'S_6_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_6_Fecha_finalizado,    
+                    'S_6_Observaciones' =>          $this->datosObtenidos->Datos->S_6_Observaciones,   
+                    'S_6_Requerimientos' =>         $this->datosObtenidos->Datos->S_6_Requerimientos,  
+                    'S_7_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_7_Fecha_finalizado,    
+                    'S_7_Observaciones' =>          $this->datosObtenidos->Datos->S_7_Observaciones,   
+                    'S_7_Requerimientos' =>         $this->datosObtenidos->Datos->S_7_Requerimientos,  
+                    'S_8_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_8_Fecha_finalizado,    
+                    'S_8_Observaciones' =>          $this->datosObtenidos->Datos->S_8_Observaciones,   
+                    'S_8_Requerimientos' =>         $this->datosObtenidos->Datos->S_8_Requerimientos,  
+                    'S_9_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_9_Fecha_finalizado,    
+                    'S_9_Observaciones' =>          $this->datosObtenidos->Datos->S_9_Observaciones,   
+                    'S_9_Requerimientos' =>         $this->datosObtenidos->Datos->S_9_Requerimientos,  
+                    'Tipo_produccion' =>            $this->datosObtenidos->Datos->Tipo_produccion, 
+                    'Venta_id' =>                   $this->datosObtenidos->Datos->Venta_id,
+                    'Usuario_id' =>                 $this->session->userdata('Id'),
+                );
+        
+                $this->load->model('App_model');
+                $insert_id_nuevo = $this->App_model->insertar($data, null, 'tbl_ventas_productos');
+
         }
         
-        $data = array(
-            'Venta_id' =>   1,
-        );
         
-
-        $this->load->model('App_model');
-        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
-
+        
+        
+        
+        
+        
+        
+        
+        
         if ($insert_id >= 0) 
         {
            //// si cargo bien esto, toma el id de la orden y la carga en la tbl_ordentrabajo_seguimietno
@@ -1094,6 +1176,7 @@ class ventas extends CI_Controller
                             tbl_ventas.Fecha_venta,
                             tbl_ventas.Responsable_id_planif_inicial,
                             tbl_ventas.Responsable_id_planif_final,
+                            tbl_ventas.Prioritario,
                             tbl_ventas.Fecha_estimada_entrega,
                             tbl_clientes.Nombre_cliente'); 
         
@@ -1176,13 +1259,13 @@ class ventas extends CI_Controller
             $query = $this->db->get();
             $array_productos = $query->result_array();
         
-        /// RECORRO EL ARRAY CONTANDO CUANTOS SON DE CADA UNO
+        /// RECORRO EL ARRAY AGRUPANDOLOS, SUMO LAS CANTIDADES y al total lo multiplico por el valor de venta
             $Datos = array();
             
             foreach ($array_productos as $productos) 
             {
                 
-                $this->db->select('Id');
+                $this->db->select('Id, Cantidad, Precio_venta_producto');
                 $this->db->from('tbl_ventas_productos');
                 $this->db->where('Producto_id', $productos["Producto_id"]);
                 $this->db->where('Venta_id', $Id);
@@ -1191,17 +1274,27 @@ class ventas extends CI_Controller
                 /// con un poco mas de laburo puedo incluso traer un promedio de por donde van en su construcción
         
                 $query = $this->db->get();
-                $Cantidad_metodo_uno_por_uno = $query->num_rows();
+                //$Cantidad_metodo_uno_por_uno = $query->num_rows();
+                $result_productos = $query->result_array();
+
+                $cantidad = 0;
+                $subtotal = 0;
+
+                /// SUMANDO CANTIDADES ENCONTRADAS DEL MISMO PRODUCTO
+                foreach ($result_productos as $producto_individual) {
+                    
+                    $cantidad =  $cantidad + $producto_individual["Cantidad"];
+                    $subtotal =  $subtotal + $producto_individual["Precio_venta_producto"];
+                }
                 
-                $subtotal = $Cantidad_metodo_uno_por_uno * $productos["Precio_venta_producto"];
-                
+                //$subtotal = $cantidad * $productos["Precio_venta_producto"]; 
                 
                 $datos_producto = array(
                                             'Codigo_interno' =>     $productos["Codigo_interno"],
                                             'Nombre_producto' =>    $productos["Nombre_producto"], 
                                             'Precio_venta' =>       $productos["Precio_venta_producto"],
-                                            'Cantidad' =>           $productos["Cantidad"],
-                                            'Cantidad_metodo_uno_por_uno' =>           $Cantidad_metodo_uno_por_uno,
+                                            'Cantidad' =>           $cantidad,
+                                            //'Cantidad_metodo_uno_por_uno' =>           $Cantidad_metodo_uno_por_uno,
                                             'Subtotal' =>           $subtotal,
                                         );
 

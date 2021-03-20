@@ -55,7 +55,7 @@
                         </li>
                         <li>
                             <a href="<?= base_url(); ?>stock">
-                                <i class="fas fa-list-alt"></i>Materias Primas
+                                <i class="fas fa-list-alt"></i>Stock de materiales
                             </a>
                         </li>
                         <li>
@@ -132,7 +132,7 @@
 
                             <li>
                                 <a href="<?= base_url(); ?>stock">
-                                    <i class="fas fa-list-alt"></i>Materias Primas
+                                    <i class="fas fa-list-alt"></i>Stock de materiales
                                 </a>
                             </li>
                             <li>

@@ -18,7 +18,7 @@ include "menusidebar.php";
                 <div class="row">
                     <div class="col-md-12">
                         <!-- DATA TABLE -->
-                        <h3 class="title-5 m-b-35">Stock materias primas</h3>
+                        <h3 class="title-5 m-b-35">Stock de materiales</h3>
 
                         <div class="table-data__tool">
                             <div class="table-data__tool-left">
@@ -62,11 +62,12 @@ include "menusidebar.php";
                                         <th>Categoría</th>
                                         
                                         <th>Cant. Actual</th>
-                                        <th>Cant. Ideal</th>
+                                        
                                         <th>Un. Medida</th>
                                         <th>Comercial</th>
                                         <!--<th width="200">Ingreso/Egreso stock</th>-->
                                         <th>Reportar egreso</th>
+                                        <th>Cant. Ideal</th>
                                         <th>Última Modificación</th>
                                         <th>
                                             <form class="form-horizontal" action="<?php echo base_url(); ?>exportar" method="post" name="f1" id="f1">
@@ -98,7 +99,7 @@ include "menusidebar.php";
                                         <td>
                                             <h2 v-bind:class="classAlertaStock(stock.Cant_actual, stock.Cant_ideal)" align="center">{{stock.Cant_actual | Decimales}}</h2>
                                         </td>
-                                        <td align="center">{{stock.Cant_ideal | Decimales}}</td>
+                                        
                                         <td>{{stock.Unidad_medida}}</td>
                                         <td>{{stock.Cant_comercial}} {{stock.Unidad_medida}}</td>
                                         <!--<td width= "500" bgcolor="#F2F2F2">
@@ -115,6 +116,7 @@ include "menusidebar.php";
                                                 <i class="fa fa-chevron-circle-down"></i>
                                             </button>
                                         </td>
+                                        <td align="center">{{stock.Cant_ideal | Decimales}}</td>
                                         <td>{{stock.Fecha_hora}}</td>
                                         <td>
                                             <div class="table-data-feature">

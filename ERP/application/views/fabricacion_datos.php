@@ -16,14 +16,14 @@ include "menusidebar.php";
         <div class="section__content section__content--p30">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-lg-2">
+                    <div class="col-lg-2  d-print-none">
                         <div class="card">
                             <div class="card-header">
                                 <h4>Info</h4>
                             </div>
                             <div class="card-body">
                                 <div class="user-photo m-b-30">
-                                    <img v-if="productoDatos.Imagen != null" width="420px" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+productoDatos.Imagen" alt="">
+                                    <img v-if="productoDatos.Imagen != null" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+productoDatos.Imagen" alt="">
                                     <img v-else src="<?php echo base_url(); ?>uploads/imagenes/addimagen.jpg" alt="">
                                 </div>
                                 <h5 class="text-sm-center mt-2 mb-1">{{productoDatos.Nombre_producto}}</h5>
@@ -39,7 +39,7 @@ include "menusidebar.php";
 
                     <!-- SECCION FICHA cliente -->
                     <div class="col-lg-10">
-                        <ul class="nav nav-tabs">
+                        <ul class="nav nav-tabs  d-print-none">
                             <li class="nav-item">
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 1 }" href="#" v-on:click="mostrar = 1">Ficha</a>
                             </li>
@@ -48,6 +48,9 @@ include "menusidebar.php";
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" v-bind:class="{ active: mostrar == 4 }" href="#" v-on:click="mostrar = 4">Despiece</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" v-bind:class="{ active: mostrar == 2 }" href="#" v-on:click="mostrar = 2">Planillas</a>
                             </li>
                         </ul>
 
@@ -100,7 +103,7 @@ include "menusidebar.php";
                                                     <textarea class="form-control" rows="5" placeholder="" v-model="productoDatos.Descripcion_tecnica_privada"></textarea>
                                                 </div>
                                                 <hr>
-                                                <button type="submit" class="btn btn-success">Actualizar datos</button>
+                                                <button type="submit" class="btn btn-success   d-print-none" :disabled="boton_habilitado == 0">Actualizar datos</button>
                                             </form>
                                         </div>
                                     </div>
@@ -113,7 +116,7 @@ include "menusidebar.php";
                                     </div>
                                     <div class="card-body">
                                         <p align="right">
-                                            <a href="#modalArchivos" data-toggle="modal" title="Nuevo item" class="btn btn-success" v-on:click="limpiarFormularioArchivo()">
+                                            <a href="#modalArchivos" data-toggle="modal" title="Nuevo item" class="btn btn-success   d-print-none" v-on:click="limpiarFormularioArchivo()">
                                                 <i class="ti-plus"></i> Añadir Reporte/Archivo
                                             </a>
                                         </p>
@@ -151,6 +154,159 @@ include "menusidebar.php";
                                 </div>
                             </div>
                         </div>
+
+                        <!-- SECCION PLANILLAS DE ESTE PRODUCTO -->
+                        <div class="row" v-show="mostrar == '2'">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <!-- Zona no imprimible -->
+                                    <div class="card-header d-print-none">
+                                        <strong>Planillas de {{productoDatos.Nombre_producto}}</strong>
+                                    </div>
+                                    <!-- Zona imprimible pero oculta-->
+                                    <div class="d-none d-print-inline">
+
+                                        <table BORDER="1"  width="100%">
+                                            <tr>
+                                                <td style="padding: 20px;" ROWSPAN="3" width="300px">
+                                                    <img src="<?php echo base_url(); ?>uploads/imagenes/Logo_imu.jpg" width="300px">
+                                                </td>
+                                                <td style="padding: 20px;">
+                                                    <h3>Planilla de {{nombrePlanillaElegida}}</h3>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 20px;">
+                                                    <h4>{{productoDatos.Nombre_producto}}</h4>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 20px;">
+                                                    <p>{{nombrePlanificacion}}</p>
+                                                    <p>Operario: {{nombreOperario}}</p>
+                                                    <p>Fecha: {{fechaPlanilla | Fecha}}</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-data__tool">
+                                            <div class="table-data__tool-left d-print-none">
+                                                <div class="rs-select2--light">
+                                                    <select class="form-control form-control-xl" v-model="filtro_planilla" v-on:change="getListadoItemsPlanillas(filtro_planilla)" style="font-size:25px; text-align:center; height: 60px">
+                                                        <option selected="selected" value="0">Seleccionar Planilla</option>
+                                                        <option v-for="planilla in listaPlanillas" v-bind:value="planilla.Id">Planilla de {{planilla.Nombre_planilla}}</option>
+                                                    </select>
+                                                    <div class="dropDownSelect2"></div>
+                                                </div>
+                                                <div class="rs-select2--light">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" placeholder="" v-model="multiplicadorProducto" style="font-size:30px; text-align:center; max-width:100px">
+                                                    </div>
+                                                    <div class="dropDownSelect2"></div>
+                                                </div>
+                                                <div class="rs-select2--light">
+                                                    <select class="form-control form-control-xl" v-model="nombreOperario">
+                                                        <option selected="selected" value="No se selecciono ningún operario">Seleccionar Operario</option>
+                                                        <option v-for="usuario in listaUsuarios" v-bind:value="usuario.Nombre">{{usuario.Nombre}}</option>
+                                                    </select>
+                                                    <div class="dropDownSelect2"></div>
+                                                </div>
+                                                <div class="rs-select2--light">
+                                                    <select class="form-control form-control-xl" v-model="nombrePlanificacion">
+                                                        <option selected="selected" value="No se selecciono ninguna planificación">Seleccionar Planificación</option>
+                                                        <option v-for="planificacion in listaPlanificaciones" v-bind:value="planificacion.Nombre_planificacion">{{planificacion.Nombre_planificacion}}</option>
+                                                    </select>
+                                                    <div class="dropDownSelect2"></div>
+                                                </div>
+                                                <div class="rs-select2--light">
+                                                    <div class="form-group">
+                                                        <input type="date" class="form-control" placeholder="" v-model="fechaPlanilla" style="font-size:20px; text-align:center;">
+                                                    </div>
+                                                    <div class="dropDownSelect2"></div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="table-data__tool-right  d-print-none">
+                                                <button class="au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" data-target="#vinculoModal" v-on:click="limpiarFormularioPlanillaVinculo()" v-show="filtro_planilla > 0">
+                                                    <i class="zmdi zmdi-plus"></i>Asignar insumo
+                                                </button>
+
+                                                <button class="au-btn au-btn-icon au-btn--blue au-btn--small" data-toggle="modal" data-target="#planillaModal" v-on:click="limpiarFormularioPlanilla()">
+                                                    <!--<i class="zmdi zmdi-plus"></i>-->Gestionar Planillas
+                                                </button>
+
+                                                <!--<div class="rs-select2--dark rs-select2--sm rs-select2--dark2">
+                                            <select class="js-select2" name="type">
+                                                <option selected="selected">Más</option>
+                                                <option value="">Option 1</option>
+                                                <option value="">Option 2</option>
+                                            </select>
+                                            <div class="dropDownSelect2"></div>
+                                        </div>-->
+                                            </div>
+                                        </div>
+                                        <div class="bootstrap-data-table-panel col-lg-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Producto</th>
+                                                            <th>Subproducto</th>
+                                                            <th>Cantidad</th>
+                                                            <th>Método</th>
+
+                                                            <th style="border:lightgray solid thin">Hora Inicio</th>
+                                                            <th style="border:lightgray solid thin">Hora Fin</th>
+                                                            <th class=" d-print-none">
+
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr class="tr-shadow" v-for="item in listaItemsPlanillas">
+
+                                                            <td style="vertical-align: middle;">
+                                                                <p align="center">
+
+                                                                    <img v-if="item.Ubicacion_pieza_url != null" width="300px" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+item.Ubicacion_pieza_url" alt="">
+                                                                    <br>{{item.Posicion}}
+                                                                </p>
+                                                            </td>
+                                                            <td style="vertical-align: middle;">
+                                                                <p align="center">
+                                                                    <img v-if="item.Subproducto_url != null" width="300px" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+item.Subproducto_url" alt="">
+                                                                    <br><b>{{item.Nombre_item}}</b>
+                                                                </p>
+                                                            </td>
+                                                            <td style="vertical-align: middle;">
+                                                                <h1 align="center">{{item.Cantidad * multiplicadorProducto}}
+                                                            </td>
+                                                            <td style="vertical-align: middle;">{{item.Metodo}}</h1>
+                                                            </td>
+                                                            <td width="140px" style="border:lightgray solid thin"></td>
+                                                            <td width="140px" style="border:lightgray solid thin"></td>
+                                                            <td style="vertical-align: middle;" class=" d-print-none">
+                                                                <a href="#vinculoModal" data-toggle="modal" v-on:click="editarFormularioPlanillaVinculo(item)">
+                                                                    <i class="fa fa-edit"></i>
+                                                                </a>
+                                                                <button v-on:click="desactivarAlgo(item.Id, 'tbl_fabricacion_planillas_vinculo')" class="item" title="Eliminar">
+                                                                    <i class="zmdi zmdi-delete"></i>
+                                                                </button>
+                                                            </td>
+                                                        <tr class="spacer"></tr>
+                                                        </tr>
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </DIV>
+                            </DIV>
+                        </div><!-- -->
 
                         <!-- SECCION VENTAS DE ESTE PRODUCTO -->
                         <div class="row" v-show="mostrar == '3'">
@@ -214,7 +370,7 @@ include "menusidebar.php";
                                     <div class="card-body">
                                         <div class="bootstrap-data-table-panel col-lg-12">
                                             <div class="table-responsive">
-                                                <table id="table2excel" class="table table-striped" style="overflow-x: scroll;">
+                                                <table id="table2excel" class="table table-striped d-print-table" style="overflow-x: scroll;">
                                                     <thead>
                                                         <tr>
                                                             <th colspan="3">Pieza</th>
@@ -222,7 +378,7 @@ include "menusidebar.php";
                                                             <th colspan="4">Medidas / Cantidades de piezas por producto</th>
                                                             <th colspan="4" style="background-color:skyblue;">Medidas / Cantidades de piezas para <b>{{multiplicadorProducto}}</b> productos</th>
                                                             <th style="background-color:skyblue;">
-                                                                <a href="#modalInsumos" data-toggle="modal" title="Nuevo item" class="btn btn-success" v-on:click="limpiarFormularioInsumo()">
+                                                                <a href="#modalInsumos" data-toggle="modal" title="Nuevo item" class="btn btn-success   d-print-none" v-on:click="limpiarFormularioInsumo()">
                                                                     <i class="ti-plus"></i> Añadir insumo
                                                                 </a>
 
@@ -255,8 +411,18 @@ include "menusidebar.php";
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="insumo in listaInsumos">
-                                                            <td>{{insumo.Posicion}}</td>
-                                                            <td>{{insumo.Subconjunto}}</td>
+                                                            <td>
+                                                                <a href="#modalproductosFoto" data-toggle="modal" v-on:click="editarFormularioProductoFoto(insumo, 'Posicion')">
+                                                                    <i class="fa fa-picture-o"></i>
+                                                                </a>
+                                                                {{insumo.Posicion}}
+                                                            </td>
+                                                            <td>
+                                                                <a href="#modalproductosFoto" data-toggle="modal" v-on:click="editarFormularioProductoFoto(insumo, 'Subconjunto')">
+                                                                    <i class="fa fa-picture-o"></i>
+                                                                </a>
+                                                                {{insumo.Subconjunto}}
+                                                            </td>
                                                             <td>{{insumo.Observaciones}}</td>
 
                                                             <td> <b>{{insumo.Nombre_item}}</b> </td>
@@ -312,23 +478,23 @@ include "menusidebar.php";
                                     <div class="card-body">
                                         <div class="bootstrap-data-table-panel col-lg-12">
                                             <div class="table-responsive">
-                                                <table id="table2excel" class="table table-striped" style="overflow-x: scroll;">
+                                                <table id="table2excel" class="table table-striped  d-print-table" style="overflow-x: scroll;">
                                                     <thead>
-                                                    
+
                                                         <tr>
-                                                    
+
                                                             <th>Material</th>
                                                             <th>Med. Comercial</th>
 
                                                             <th>Total para 1 producto</th>
-                                                            <th>Total para <b>{{multiplicadorProducto}}</b> productos </th>    
+                                                            <th>Total para <b>{{multiplicadorProducto}}</b> productos </th>
                                                             <th style="background-color:skyblue;">Cant. a comprar</th>
-                                                            
+
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="insumo in listaMateriaTotal">
-                                                        
+
                                                             <td> <b>{{insumo.Nombre_item}}</b> </td>
                                                             <td>{{insumo.Cant_comercial}} {{insumo.Unidad_medida}}</td>
 
@@ -341,7 +507,7 @@ include "menusidebar.php";
                                                             <td align="center" style="background-color:skyblue;">
                                                                 <h1>{{(insumo.Total_cantidad * multiplicadorProducto / insumo.Cant_comercial) | Decimales}} </h1>
                                                             </td>
-                                                            
+
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -460,7 +626,7 @@ include "menusidebar.php";
                                 <textarea class="form-control" rows="5" placeholder="" v-model="insumoDatos.Observaciones"></textarea>
                             </div>
                             <div class="form-group">
-                                <button type="submit" class="btn btn-success">{{texto_boton}}</button>
+                                <button type="submit" class="btn btn-success" :disabled="boton_habilitado == 0">{{texto_boton}}</button>
                             </div>
                         </form>
                         <!-- <pre>{{insumoDatos}}</pre> -->
@@ -473,7 +639,155 @@ include "menusidebar.php";
         </div>
     </div>
     <!-- /.modal -->
+    <!-- Modal Producto Fotos-->
+    <div class="modal fade" id="modalproductosFoto" tabindex="-1" role="dialog" aria-labelledby="modalCategoriasCartaTitle" aria-hidden="true">
+        <div class="modal-dialog  modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalItemsFoto">
+                        <span v-if="productoFoto.Campo === 'Subconjunto'">
+                            Imagen del subconjunto de <b>{{productoFoto.Nombre_item}}</b>
+                        </span>
+                        <span v-if="productoFoto.Campo === 'Posicion'">
+                            Imagen de la posición de <b>{{productoFoto.Nombre_item}}</b>
+                        </span>
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p align="center" v-if="productoFoto.Campo === 'Posicion'">
+                        <img v-if="productoFoto.Ubicacion_pieza_url != null" class="avatar_grande" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+productoFoto.Ubicacion_pieza_url" alt="">
+                        <img v-else class="avatar_grande" src="<?php echo base_url(); ?>uploads/imagenes/addimagen.jpg" alt="">
+                    </p>
+                    <p align="center" v-if="productoFoto.Campo === 'Subconjunto'">
+                        <img v-if="productoFoto.Subproducto_url != null" class="avatar_grande" v-bind:src="'<?php echo base_url(); ?>uploads/imagenes/'+productoFoto.Subproducto_url" alt="">
+                        <img v-else class="avatar_grande" src="<?php echo base_url(); ?>uploads/imagenes/addimagen.jpg" alt="">
+                    </p>
+                    <hr>
+                    <div class="horizontal-form">
+                        <!-- <form class="form-horizontal" action="post" enctype="multipart/form-data" v-on:submit.prevent="crearproveedors()">  -->
+                        <form class="form-horizontal" action="post" enctype="multipart/form-data" v-on:submit.prevent="uploadFotoProducto(productoFoto.Id, productoFoto.Campo)">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <input @change="archivoSeleccionado" type="file" class="form-control" name="Imagen">
+                                </div>
+                            </div>
+                            <p v-show="preloader == 1">
+                                <img src="http://grupopignatta.com.ar/images/preloader.gif" alt="">
+                            </p>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-12">
+                                    <button type="submit" class="btn btn-success">{{texto_boton}} imagen</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal -->
+    <!-- modal PLANILLA -->
+    <div class="modal fade" id="planillaModal" tabindex="-1" role="dialog" aria-labelledby="scrollmodalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
 
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scrollmodalLabel">Listado de planillas</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <table class="table table-borderless table-striped table-earning">
+                        <thead>
+                            <tr>
+                                <th>Nombre planilla</th>
+                                <th>Descripción</th>
+                                <th> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="planilla in listaPlanillas">
+                                <td>{{planilla.Nombre_planilla}}</td>
+                                <td>{{planilla.Descripcion}}</td>
+                                <td>
+                                    <button class="item" v-on:click="editarFormularioPlanilla(planilla)" title="Editar">
+                                        <i class="zmdi zmdi-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <form class="form-horizontal" action="post" v-on:submit.prevent="crearPlanilla()">
+                    <div class="modal-body">
+                        <div class="horizontal-form">
+                            <div class="form-group">
+                                <label class=" form-control-label">Nombre de la planilla</label>
+                                <input type="text" class="form-control" v-model="planillaDato.Nombre_planilla">
+                            </div>
+                            <div class="form-group">
+                                <label class=" form-control-label">Descripción</label>
+                                <textarea class="form-control" rows="5" v-model="planillaDato.Descripcion"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" :disabled="boton_habilitado == 0">{{texto_boton}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- end modal PLANILLA -->
+    <!-- modal ITEM VINCULO PLANILLA -->
+    <div class="modal fade" id="vinculoModal" tabindex="-1" role="dialog" aria-labelledby="scrollmodalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scrollmodalLabel">Añadir insumo a planilla</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form class="form-horizontal" action="post" v-on:submit.prevent="vincularItemPlanilla()">
+                    <div class="modal-body">
+                        <div class="horizontal-form">
+                            <div class="form-group">
+                                <label class=" form-control-label">Insumos</label>
+                                <select class="form-control" v-model="planillaItemDato.Insumo_fabricacion_id" :disabled="planillaItemDato.Id > 0">
+                                    <option selected="selected" value="0">Seleccionar</option>
+                                    <option v-for="insumo in listaInsumos" v-bind:value="insumo.Id">{{insumo.Nombre_item}} | {{insumo.Posicion}} | {{insumo.Subconjunto}}</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class=" form-control-label">Método / Finalidad / Procedimiento</label>
+                                <textarea class="form-control" rows="5" v-model="planillaItemDato.Metodo"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class=" form-control-label">Observacion adicional</label>
+                                <textarea class="form-control" rows="5" v-model="planillaItemDato.Observaciones"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" :disabled="boton_habilitado == 0">{{texto_boton}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- end modal PLANILLA -->
     <!-- end modal movimientos -->
     <!-- END MAIN CONTENT-->
     <!-- END PAGE CONTAINER-->

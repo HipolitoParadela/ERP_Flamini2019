@@ -11,7 +11,7 @@ class Stock extends CI_Controller
             header("Location: " . base_url() . "login"); /// enviar a pagina de error
         } else {
 
-            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7) {
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7 || $this->session->userdata('Id') == 33 || $this->session->userdata('Id') == 32) {
                 $this->load->view('stock_listado');
             } else {
                 header("Location: " . base_url() . "login"); /// enviar a pagina de error
@@ -29,7 +29,7 @@ class Stock extends CI_Controller
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
             //if (plan_contratado() > 3) {}
 
-            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7) 
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7 || $this->session->userdata('Id') == 3 || $this->session->userdata('Id') == 33 || $this->session->userdata('Id') == 32) 
             {
                 $this->load->view('stock_movimientos');
                 
@@ -49,7 +49,7 @@ class Stock extends CI_Controller
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
             //if (plan_contratado() > 3) {}
 
-            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7 || $this->session->userdata('Id') == 3) 
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7 || $this->session->userdata('Id') == 3 || $this->session->userdata('Id') == 33) 
             {
                 $this->load->view('stock_productos_reventa');
                 
@@ -70,7 +70,7 @@ class Stock extends CI_Controller
             ////COMENZAR A FILTRAR Y REDIRECCIONAR SEGUN ROL Y PLAN CONTRATADO
             //if (plan_contratado() > 3) {}
 
-            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7 || $this->session->userdata('Id') == 3) 
+            if ($this->session->userdata('Rol_acceso') > 3 || $this->session->userdata('Id') == 7 || $this->session->userdata('Id') == 33) 
             {
                 $this->load->view('stock_panol');
                 
@@ -108,6 +108,7 @@ class Stock extends CI_Controller
         if( $tipo > 0 )    { $this->db->where('tbl_stock.Tipo', $tipo); }
 
 		$this->db->order_by("tbl_stock_movimientos.Fecha_hora", "desc");
+        $this->db->order_by("tbl_stock.Nombre_item", "asc");
         $query = $this->db->get();
 		$array_stock = $query->result_array();
 
@@ -613,11 +614,10 @@ class Stock extends CI_Controller
 		$this->db->select('*');
         $this->db->from('tbl_stock_categorias');
         
-        if($_GET["categoria_tipo"] > 0 ){
+        if($_GET["categoria_tipo"] == 3){
             $this->db->where('Tipo', $_GET["categoria_tipo"]);
         }
         
-
 		$this->db->order_by("Nombre_categoria", "asc");
         $query = $this->db->get();
 		$result = $query->result_array();

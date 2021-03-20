@@ -20,17 +20,24 @@ include "menusidebar.php";
                         <!-- SECCION PRODUCCIÒN -->
                         <div class="row">
                             <div class="col-lg-12">
+                                <h3 class="title-5 m-b-35">Productos en Stock de Reserva</h3>
+                                <div class="table-data__tool">
+                                    <div class="table-data__tool-left">
+                                        <a href="#modalProductos" data-toggle="modal" class="btn btn-success btn-flat btn-addon" v-on:click="limpiarFormularioProductos()">
+                                            <i class="ti-plus"></i> Añadir producto
+                                        </a>
+                                        <div class="rs-select2--light ">
+                                            <input type="text" class="form-control-xl form-control" placeholder="Buscar producto" v-model="buscar">
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="card">
                                             <div class="card-header">
-                                                <strong>Productos en stock de reserva</strong>
+                                                <strong>Listado</strong>
                                             </div>
-                                            <div class="card-body">
-                                                <a href="#modalProductos" data-toggle="modal" class="btn btn-success btn-flat btn-addon" v-on:click="limpiarFormularioProductos()">
-                                                    <i class="ti-plus"></i> Añadir producto
-                                                </a>
-                                            </div>
+
                                             <div class="card-body">
                                                 <div class="bootstrap-data-table-panel col-lg-12">
                                                     <div class="table-responsive">
@@ -47,11 +54,13 @@ include "menusidebar.php";
                                                                         <th>Pintura</th>
                                                                         <th>Rotulación</th>
                                                                         <th>Empaque</th>
-                                                                        <th></th>
+                                                                        <th>
+
+                                                                        </th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    <tr v-for="productoFabricado in listaProductosVendidos">
+                                                                    <tr v-for="productoFabricado in buscarProducto">
                                                                         <td>
                                                                             <h4> {{productoFabricado.Nombre_producto}}</h4>
                                                                         </td>
@@ -130,7 +139,7 @@ include "menusidebar.php";
                                                                         </td>
                                                                         <td>
                                                                             <div class="table-data-feature">
-                                                                                <button class="item" v-on:click="editAsignarProductoVenta(productoFabricado)" data-toggle="modal" data-target="#modalAsignacion" data-placement="top" title="Editar">
+                                                                                <button class="item" v-on:click="editAsignarProductoVenta(productoFabricado)" data-toggle="modal" data-target="#modalAsignacion" data-placement="top" title="Asignar a una venta">
                                                                                     <i class="zmdi zmdi-mail-send"></i>
                                                                                 </button>
                                                                                 <button class="item" v-on:click="editarFormularioProductos(productoFabricado)" data-toggle="modal" data-target="#modalProductos" data-placement="top" title="Editar">
@@ -139,9 +148,9 @@ include "menusidebar.php";
                                                                                 <?php
                                                                                 if ($this->session->userdata('Rol_acceso') > 2) {
                                                                                     echo '
-                                                                                                <button v-on:click="desactivarProductoVenta(productoFabricado.Id)" class="item" data-toggle="tooltip" data-placement="top" title="Eliminar">
-                                                                                                    <i class="zmdi zmdi-delete"></i>
-                                                                                                </button>';
+                                                                                        <button v-on:click="desactivarProductoVenta(productoFabricado.Id)" class="item" data-toggle="tooltip" data-placement="top" title="Eliminar">
+                                                                                            <i class="zmdi zmdi-delete"></i>
+                                                                                        </button>';
                                                                                 }
                                                                                 ?>
                                                                             </div>
@@ -174,7 +183,7 @@ include "menusidebar.php";
         <div class="modal-dialog  modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Añadir producto a esta venta</h5>
+                    <h5 class="modal-title">Añadir producto a stock de reserva</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -248,7 +257,7 @@ include "menusidebar.php";
                             </div>
 
                             <div class="form-group">
-                                <button type="submit" class="btn btn-success" :disabled="preloader == 1">{{texto_boton}}</button>
+                                <button type="submit" class="btn btn-success" :disabled="preloader == 1" :disabled="boton_habilitado == 0">{{texto_boton}}</button>
                             </div>
                         </form>
                     </div>
@@ -286,7 +295,7 @@ include "menusidebar.php";
                             </div>
 
                             <div class="form-group">
-                                <button type="submit" class="btn btn-success">Avanzar a siguiente etapa</button>
+                                <button type="submit" class="btn btn-success" :disabled="boton_habilitado == 0">Avanzar a siguiente etapa</button>
                             </div>
                         </form>
                     </div>
@@ -327,7 +336,7 @@ include "menusidebar.php";
         <div class="modal-dialog  modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Asignar producto a una venta</h5>
+                    <h5 class="modal-title">Asignar <b>{{productoAsignado.Nombre_producto}}</b> a una venta</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -336,14 +345,26 @@ include "menusidebar.php";
                     <div class="horizontal-form">
                         <form class="form-horizontal" action="post" v-on:submit.prevent="reasignar_producto()">
                             <!--   -->
-                            <div class="form-group">
-                                <label class="control-label">Seleccionar venta </label>
-                                <select class="form-control" v-model="productoAsignado.Venta_id" required>
-                                    <option v-for="venta in listaVentas" v-bind:value="venta.Id">{{venta.Identificador_venta}}</option>
-                                </select>
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <div class="form-group">
+                                        <label class="control-label">Seleccionar venta </label>
+                                        <select class="form-control" v-model="productoAsignado.Venta_id" required>
+                                            <option v-for="venta in listaVentas" v-bind:value="venta.Id">{{venta.Identificador_venta}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class=" form-control-label">Cantidad a mover</label>
+                                        <input type="number" class="form-control" v-model="productoAsignado.Cantidad_nueva" :max='productoAsignado.Cantidad' min="1" required>
+                                    </div>
+                                </div>
                             </div>
+
+
                             <div class="form-group">
-                                <button type="submit" class="btn btn-success">Avanzar a siguiente etapa</button>
+                                <button type="submit" class="btn btn-success" :disabled="boton_habilitado == 0">Asignar a la venta</button>
                             </div>
                         </form>
                     </div>

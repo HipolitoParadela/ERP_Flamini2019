@@ -425,6 +425,7 @@ class Fabricacion extends CI_Controller
 			{
 				$status = 'error';
 				$msg = $this->upload->display_errors('', '');
+                echo json_encode(array('status' => $status, 'Msg' => $msg));
 			}
 			else
 			{
@@ -435,13 +436,39 @@ class Fabricacion extends CI_Controller
 					
 					$file_info = $this->upload->data();
 					$nombre_imagen = $file_info['file_name'];
-					
-					$data = array(    
-						'Imagen' =>		$nombre_imagen,
-					);
+                    
+                    /// DEPENDE EL CAMPO QUE TRAIGA, SERA DONDE GUARDE EL URL DE LA IMAGEN
+					if (isset($_GET["Campo"])) 
+                    {
+                        if($_GET["Campo"] == 'Posicion')
+                        {
+                            $data = array(    
+                                'Ubicacion_pieza_url' =>		$nombre_imagen,
+                            ); 
+                        }
 
-					$this->load->model('App_model');
-					$insert_id = $this->App_model->insertar($data, $Id, 'tbl_fabricacion');
+                        else if($_GET["Campo"] == 'Subconjunto')
+                        {
+                            $data = array(    
+                                'Subproducto_url' =>		$nombre_imagen,
+                            ); 
+                        }
+
+                        $this->load->model('App_model');
+					    $insert_id = $this->App_model->insertar($data, $Id, 'tbl_fabricacion_insumos_producto');
+                    }
+                    else
+                    {
+                        $data = array(    
+                            'Imagen' =>		$nombre_imagen,
+                        );
+
+                        $this->load->model('App_model');
+					    $insert_id = $this->App_model->insertar($data, $Id, 'tbl_fabricacion');
+                    }
+					
+
+					 
 					
 					// $file_id = $this->files_model->insert_file($data['file_name'], $_POST['title']);
 					if($insert_id > 0)
@@ -828,19 +855,80 @@ class Fabricacion extends CI_Controller
             exit("No coinciden los token");
         }
 
-        $Id = null;
-        if (isset($this->datosObtenidos->Datos->Id)) {
-            $Id = $this->datosObtenidos->Datos->Id;
+        $Id = null; if (isset($this->datosObtenidos->Datos->Id)) { $Id = $this->datosObtenidos->Datos->Id; }
+
+
+        //// si la cantidad es la misma, sigue la reasigna derecho
+        if($this->datosObtenidos->Datos->Cantidad_nueva === $this->datosObtenidos->Datos->Cantidad)
+        {
+            $data = array(
+                'Venta_id' =>   $this->datosObtenidos->Datos->Venta_id,
+            );
+
+            $this->load->model('App_model');
+            $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
         }
-        
-        $data = array(
-            'Venta_id' =>   $this->datosObtenidos->Datos->Venta_id,
-        );
-        
+        else 
+        {
+            /// si la cantidad es menos, resta la cantidad original, con la nueva
+            // la que coloca en el campo de texto es para la venta original, el restante es para la venta nueva
+                $data = array(
+                    'Venta_id' =>   $this->datosObtenidos->Datos->Venta_id,
+                    'Cantidad' =>   $this->datosObtenidos->Datos->Cantidad_nueva,
+                );
 
-        $this->load->model('App_model');
-        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
+                $this->load->model('App_model');
+                $insert_id = $this->App_model->insertar($data, $Id, 'tbl_ventas_productos');
 
+            /// Ahora el producto restante, lo paso a la venta de reserva
+                /// genero un clon de los datos originales
+                $cantidad_restante = $this->datosObtenidos->Datos->Cantidad - $this->datosObtenidos->Datos->Cantidad_nueva;
+
+                $data = array(                    
+
+                    'Cantidad' =>                   $cantidad_restante,  
+                    'Estado' =>                     $this->datosObtenidos->Datos->Estado, 
+                    'Observaciones' =>              $this->datosObtenidos->Datos->Observaciones,   
+                    'Precio_venta_producto' =>      $this->datosObtenidos->Datos->Precio_venta_producto,   // controlar esta fila si esta funcionando bien
+                    'Producto_id' =>                $this->datosObtenidos->Datos->Producto_id, 
+                    'S_1_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_1_Fecha_finalizado,    
+                    'S_1_Observaciones' =>          $this->datosObtenidos->Datos->S_1_Observaciones,   
+                    'S_1_Requerimientos' =>         $this->datosObtenidos->Datos->S_1_Requerimientos,  
+                    'S_2_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_2_Fecha_finalizado,    
+                    'S_2_Observaciones' =>          $this->datosObtenidos->Datos->S_2_Observaciones,   
+                    'S_2_Requerimientos' =>         $this->datosObtenidos->Datos->S_2_Requerimientos,  
+                    'S_3_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_3_Fecha_finalizado,    
+                    'S_3_Observaciones' =>          $this->datosObtenidos->Datos->S_3_Observaciones,   
+                    'S_3_Requerimientos' =>         $this->datosObtenidos->Datos->S_3_Requerimientos,  
+                    'S_4_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_4_Fecha_finalizado,    
+                    'S_4_Observaciones' =>          $this->datosObtenidos->Datos->S_4_Observaciones,   
+                    'S_4_Requerimientos' =>         $this->datosObtenidos->Datos->S_4_Requerimientos,  
+                    'S_5_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_5_Fecha_finalizado,    
+                    'S_5_Observaciones' =>          $this->datosObtenidos->Datos->S_5_Observaciones,   
+                    'S_5_Requerimientos' =>         $this->datosObtenidos->Datos->S_5_Requerimientos,  
+                    'S_6_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_6_Fecha_finalizado,    
+                    'S_6_Observaciones' =>          $this->datosObtenidos->Datos->S_6_Observaciones,   
+                    'S_6_Requerimientos' =>         $this->datosObtenidos->Datos->S_6_Requerimientos,  
+                    'S_7_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_7_Fecha_finalizado,    
+                    'S_7_Observaciones' =>          $this->datosObtenidos->Datos->S_7_Observaciones,   
+                    'S_7_Requerimientos' =>         $this->datosObtenidos->Datos->S_7_Requerimientos,  
+                    'S_8_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_8_Fecha_finalizado,    
+                    'S_8_Observaciones' =>          $this->datosObtenidos->Datos->S_8_Observaciones,   
+                    'S_8_Requerimientos' =>         $this->datosObtenidos->Datos->S_8_Requerimientos,  
+                    'S_9_Fecha_finalizado' =>       $this->datosObtenidos->Datos->S_9_Fecha_finalizado,    
+                    'S_9_Observaciones' =>          $this->datosObtenidos->Datos->S_9_Observaciones,   
+                    'S_9_Requerimientos' =>         $this->datosObtenidos->Datos->S_9_Requerimientos,  
+                    'Tipo_produccion' =>            $this->datosObtenidos->Datos->Tipo_produccion, 
+                    'Venta_id' =>                   1,
+                    'Usuario_id' =>                 $this->session->userdata('Id'),
+                );
+        
+                $this->load->model('App_model');
+                $insert_id_nuevo = $this->App_model->insertar($data, null, 'tbl_ventas_productos');
+
+        }
+
+        
         if ($insert_id >= 0) 
         {
         //// si cargo bien esto, toma el id de la orden y la carga en la tbl_ordentrabajo_seguimietno
@@ -851,7 +939,7 @@ class Fabricacion extends CI_Controller
 
                     'Venta_id' =>      $this->datosObtenidos->Datos->Venta_id,
                     'Categoria_seguimiento' =>  2,
-                    'Descripcion' =>   'Producto añadido desde stock de reserva: '.$this->datosObtenidos->Datos->Nombre_producto,
+                    'Descripcion' =>   $this->datosObtenidos->Datos->Cantidad_nueva . ' '.$this->datosObtenidos->Datos->Nombre_producto. 'añadidos desde stock de reserva: ',
                     'Usuario_id' =>    $this->session->userdata('Id'),
                     'Visible' =>       1
                 );
@@ -859,11 +947,161 @@ class Fabricacion extends CI_Controller
                 $this->load->model('App_model');
                 $insert_id_seguimiento = $this->App_model->insertar($data, null, 'tbl_ventas_seguimiento');
                     
-                echo json_encode(array("Id" => $insert_id, "Seguimiento_id" => $insert_id_seguimiento));
+                echo json_encode(array( "Id" => $insert_id, "Seguimiento_id" => $insert_id_seguimiento));
             }
         } 
         else 
         {
+            echo json_encode(array("Id" => 0));
+        }
+    }
+
+//// PLANILLAS	    | OBTENER 
+    public function obtener_planillas()
+    {
+            
+        //Esto siempre va es para instanciar la base de datos
+        $CI =& get_instance();
+        $CI->load->database();
+        
+        //Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+
+        $this->db->select('*');
+        $this->db->from('tbl_fabricacion_planillas');
+        $this->db->where('Visible', 1);
+        $this->db->order_by("Nombre_planilla", "asc");
+        $query = $this->db->get();
+        $result = $query->result_array();
+
+        echo json_encode($result);
+        
+    }
+
+//// PLANILLAS	    | CARGAR O EDITAR
+    public function cargar_planilla()
+    {
+        $CI = &get_instance();
+        $CI->load->database();
+        
+        
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
+        
+
+        $Id = null; if (isset($this->datosObtenidos->Data->Id))  { $Id = $this->datosObtenidos->Data->Id; }
+        $Descripcion = 'Sin descripción'; if (isset($this->datosObtenidos->Data->Descripcion))  { $Descripcion = $this->datosObtenidos->Data->Descripcion; }
+
+        $data = array(
+
+            'Nombre_planilla'   => $this->datosObtenidos->Data->Nombre_planilla,
+            'Descripcion'       => $Descripcion,
+
+        );
+
+        $this->load->model('App_model');
+        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_fabricacion_planillas');
+
+        if ($insert_id >= 0) {
+            echo json_encode(array("Id" => $insert_id));
+        } else {
+            echo json_encode(array("Id" => 0));
+        }
+    }
+
+
+//// PLANILLAS	    | OBTENER 
+    public function obtener_items_planillas()
+    {
+            
+        //Esto siempre va es para instanciar la base de datos
+        $CI =& get_instance();
+        $CI->load->database();
+        
+        //Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+
+        $this->db->select(' tbl_fabricacion_planillas_vinculo.Id,
+                            tbl_fabricacion_planillas_vinculo.Metodo,
+                            tbl_fabricacion_planillas_vinculo.Observaciones,
+                            tbl_stock.Nombre_item,
+                            tbl_fabricacion_insumos_producto.Id as Insumo_fabricacion_id,
+                            tbl_fabricacion_insumos_producto.Posicion,
+                            tbl_fabricacion_insumos_producto.Subconjunto,
+                            tbl_fabricacion_insumos_producto.Ubicacion_pieza_url,
+                            tbl_fabricacion_insumos_producto.Subproducto_url,
+                            tbl_fabricacion_insumos_producto.Cantidad,
+                            tbl_fabricacion_planillas.Nombre_planilla');
+
+        $this->db->from('tbl_fabricacion_planillas_vinculo'); 
+        $this->db->join('tbl_fabricacion_insumos_producto', 'tbl_fabricacion_insumos_producto.Id = tbl_fabricacion_planillas_vinculo.Insumo_fabricacion_id','left');
+        $this->db->join('tbl_stock', 'tbl_stock.Id = tbl_fabricacion_insumos_producto.Stock_id','left');
+        $this->db->join('tbl_fabricacion_planillas', 'tbl_fabricacion_planillas.Id = tbl_fabricacion_planillas_vinculo.Planilla_id','left');
+        
+        $this->db->where('tbl_fabricacion_planillas_vinculo.Producto_id', $_GET["Producto_id"]);
+        $this->db->where('tbl_fabricacion_planillas_vinculo.Planilla_id', $_GET["Planilla_id"]);
+
+        $this->db->where('tbl_fabricacion_planillas_vinculo.Visible', 1);
+
+        $this->db->order_by("tbl_fabricacion_insumos_producto.Posicion", "asc");
+
+        $query = $this->db->get();
+        $result = $query->result_array();
+
+        echo json_encode($result);
+        
+    }
+
+//// PLANILLAS	    | CARGAR O EDITAR
+    public function cargar_vinculo_planilla()
+    {
+        $CI = &get_instance();
+        $CI->load->database();
+        
+
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        { 
+            exit("No coinciden los token");
+        }
+        
+
+        $Id = null; if (isset($this->datosObtenidos->Data->Id))  { $Id = $this->datosObtenidos->Data->Id; }
+        $Metodo = 'Sin descripción'; if (isset($this->datosObtenidos->Data->Metodo))  { $Metodo = $this->datosObtenidos->Data->Metodo; }
+        $Observaciones = 'Sin observaciones'; if (isset($this->datosObtenidos->Data->Observaciones))  { $Observaciones = $this->datosObtenidos->Data->Observaciones; }
+
+        $data = array(
+
+            'Producto_id'       => $this->datosObtenidos->Producto_id,
+            'Planilla_id'       => $this->datosObtenidos->Planilla_id,
+            'Insumo_fabricacion_id'          => $this->datosObtenidos->Data->Insumo_fabricacion_id,
+            'Metodo'            => $Metodo,
+            'Observaciones'     => $Observaciones,
+            'Usuario_id'        => $this->session->userdata('Id'),
+
+        );
+
+        $this->load->model('App_model');
+        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_fabricacion_planillas_vinculo');
+
+        if ($insert_id >= 0) {
+            echo json_encode(array("Id" => $insert_id));
+        } else {
             echo json_encode(array("Id" => 0));
         }
     }

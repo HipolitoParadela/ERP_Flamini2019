@@ -96,9 +96,13 @@ include "menusidebar.php";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="tr-shadow" v-for="venta in listaVentas">
+                                    <tr v-for="venta in listaVentas" class="tr-shadow " > <!--  -->
                                         <td>
-                                            <a v-bind:href="'ventas/datos/?Id='+venta.Id" class="btn btn-dark btn-outline m-b-10 m-l-5">
+                                            <a 
+                                                v-bind:href="'ventas/datos/?Id='+venta.Id" 
+                                                class="btn btn-outline m-b-10 m-l-5"
+                                                v-bind:class="{ 'btn-danger' : venta.Prioritario == 1, 'btn-dark' : venta.Prioritario == 0}"
+                                            >
                                                 {{venta.Identificador_venta}}
                                             </a>
                                         </td>
@@ -136,7 +140,7 @@ include "menusidebar.php";
                                                     <i class="zmdi zmdi-edit"></i>
                                                 </button>
                                                 <?php
-                                                if ($this->session->userdata('Rol_acceso') > 4) {
+                                                if ($this->session->userdata('Rol_acceso') > 4 || $this->session->userdata('Id') == 6) {
                                                     echo '
                                                                 <button v-show="filtro_estado < 10" v-on:click="desactivarVenta(venta.Id)" class="item" data-toggle="tooltip" data-placement="top" title="Eliminar">
                                                                     <i class="zmdi zmdi-delete"></i>

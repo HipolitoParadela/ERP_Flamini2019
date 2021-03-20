@@ -61,10 +61,11 @@ include "menusidebar.php";
                                         <th>Nombre</th>
                                         <th>Categoría</th>
                                         <th>Cant. Actual</th>
-                                        <th>Cant. Ideal</th>
+                                        
                                         <th>Medida</th>
                                         <!--<th width="200">Ingreso/Egreso stock</th>-->
                                         <th>Reportar egreso</th>
+                                        <th>Cant. Ideal</th>
                                         <th>Última Modificación</th>
                                         <th>
                                             <form class="form-horizontal" action="<?php echo base_url(); ?>exportar" method="post" name="f1" id="f1">
@@ -96,7 +97,7 @@ include "menusidebar.php";
                                         <td>
                                             <h2 v-bind:class="classAlertaStock(stock.Cant_actual, stock.Cant_ideal)" align="center">{{stock.Cant_actual | Decimales}}</h2>
                                         </td>
-                                        <td align="center">{{stock.Cant_ideal | Decimales}}</td>
+                                        
                                         <td>{{stock.Unidad_medida}}</td>
                                         <!--<td width= "500" bgcolor="#F2F2F2">
                                                     <div class="input-group">
@@ -112,6 +113,7 @@ include "menusidebar.php";
                                                 <i class="fa fa-chevron-circle-down"></i>
                                             </button>
                                         </td>
+                                        <td align="center">{{stock.Cant_ideal | Decimales}}</td>
                                         <td>{{stock.Fecha_hora}}</td>
                                         <td>
                                             <div class="table-data-feature">

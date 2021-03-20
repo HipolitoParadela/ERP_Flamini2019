@@ -53,11 +53,11 @@ include "menusidebar.php";
                                         <th>Pedidos</th>
                                         <th>Cant. Teórica</th>
                                         <th>Cant. Física</th>
-                                        <th>Cant. Ideal</th>
                                         
                                         <th>Medida</th>
                                         <th>Precio Costo</th>
                                         <th>Precio Venta</th>
+                                        <th>Cant. Ideal</th>
                                         <!-- <th>Añadir a una venta</th> -->
                                         <th>Última Modificación</th>
                                         <th>
@@ -99,7 +99,7 @@ include "menusidebar.php";
                                             {{ sumarStock(stock.Cant_actual, stock.Cant_pedido)}}
                                             </h3>
                                         </td>
-                                        <td align="center">{{stock.Cant_ideal | Decimales}}</td>
+                                        
                                         <td>{{stock.Unidad_medida}}</td>
                                         <td>${{stock.Precio_costo | Moneda}}</td>
                                         <td>${{stock.Precio_venta | Moneda}}</td>
@@ -117,6 +117,7 @@ include "menusidebar.php";
                                                 <i class="fa fa-chevron-circle-down"></i>
                                             </button>
                                         </td> -->
+                                        <td align="center">{{stock.Cant_ideal | Decimales}}</td>
                                         <td>{{stock.Fecha_hora | FechaTimeBD}}</td>
                                         <td>
                                             <div class="table-data-feature">

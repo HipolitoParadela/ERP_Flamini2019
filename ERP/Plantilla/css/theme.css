@@ -4554,6 +4554,13 @@ section {
     box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.03);
 }
 
+.tr-shadow-prioritario{
+    -webkit-box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.03);
+    -moz-box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.03);
+    box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.03);
+    background-color:lightpink;
+}
+
 .table-data__tool {
     display: -webkit-box;
     display: -webkit-flex;
@@ -14850,4 +14857,12 @@ button.toast-close-button {
     .modal-lg {
         max-width: 1000px;
     }
+}
+
+
+/* .,,,, */
+
+.prioritario {
+    border-left: red solid 10px;
+    
 }

@@ -19,7 +19,7 @@ include "menusidebar.php";
 
                     <div class="col-md-12">
                         <!-- DATA TABLE -->
-                        <h3 class="title-5 m-b-35">Máquinas y productos de fabricació propia</h3>
+                        <h3 class="title-5 m-b-35">Departamento Técnico</h3>
 
 
 
@@ -173,7 +173,7 @@ include "menusidebar.php";
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">{{texto_boton}}</button>
+                        <button type="submit" class="btn btn-primary"  :disabled="boton_habilitado == 0">{{texto_boton}}</button>
                     </div>
                 </form>
             </div>
