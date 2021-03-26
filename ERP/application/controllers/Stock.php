@@ -102,7 +102,7 @@ class Stock extends CI_Controller
         $this->db->join('tbl_stock_categorias', 'tbl_stock_categorias.Id = tbl_stock.Categoria_id','left');
         $this->db->join('tbl_stock_movimientos', 'tbl_stock_movimientos.Id = tbl_stock.Ult_modificacion_id', 'left');
 
-        $this->db->where('tbl_stock.Visible', 1);
+        //$this->db->where('tbl_stock.Visible', 1);
 
         if($categoria > 0) { $this->db->where('tbl_stock.Categoria_id', $categoria); }
         if( $tipo > 0 )    { $this->db->where('tbl_stock.Tipo', $tipo); }
@@ -183,7 +183,7 @@ class Stock extends CI_Controller
         $this->db->join('tbl_stock_categorias', 'tbl_stock_categorias.Id = tbl_stock.Categoria_id', 'left');
         $this->db->order_by("Nombre_item", "asc");
         $this->db->where('tbl_stock.Id', $Id);
-        $this->db->where('tbl_stock.Visible', 1);
+        //$this->db->where('tbl_stock.Visible', 1);
 
         $query = $this->db->get();
         $result = $query->result_array();
@@ -284,7 +284,8 @@ class Stock extends CI_Controller
         if($Tipo_movimiento > 0) {    /// consulta desde ORDENES DE TRABAJO
 
             $this->db->select(' tbl_stock_movimientos.*,
-                                tbl_stock.Nombre_item');
+                                tbl_stock.Nombre_item,
+                                tbl_stock.Precio_costo');
         
             $this->db->from('tbl_stock_movimientos');
             
@@ -318,48 +319,40 @@ class Stock extends CI_Controller
     }
 
 //// MOVIMIENTOS 	| CARGAR NUEVO MOVIMIENTO V2
-    public function cargar_movimiento_stock()
+    public function cargar_movimiento()
     {
         $CI = &get_instance();
         $CI->load->database();
 
         $token = @$CI->db->token;
         $this->datosObtenidos = json_decode(file_get_contents('php://input'));
-        if ($this->datosObtenidos->token != $token)
-        { 
-            exit("No coinciden los token");
-        }
+        if ($this->datosObtenidos->token != $token) {  exit("No coinciden los token"); }
 
         $Stock_id = $this->datosObtenidos->Id;
-        $Modulo = $this->datosObtenidos->Modulo;
         $Cantidad = $this->datosObtenidos->Cantidad;
-        $Precio_venta_producto = $this->datosObtenidos->Precio_venta_producto;
-        $Descripcion = null;   if( isset($this->datosObtenidos->Descripcion)) {  $Descripcion = $this->datosObtenidos->Descripcion; }
+        $Precio_costo = $this->datosObtenidos->Precio_costo;
+        $Descripcion = $this->datosObtenidos->Descripcion;
 
         $Proceso_id = $this->datosObtenidos->Proceso_id;                // Se refiere al Id, de la orden de trabajo, o de la Compra
         $Tipo_movimiento = $this->datosObtenidos->Tipo_movimiento;      // Recibe un Número: 1 Equivale a compras, 2 a Ordenes de trabajo
         
         $data = array(
 
-            'Modulo'                => $Modulo,
-            'Stock_id'              => $Stock_id,
-            'Cantidad'              => $Cantidad,
-            'Precio_venta_producto' => $Precio_venta_producto,
-            'Descripcion'           => $Descripcion,
-            'Usuario_id'            => $this->session->userdata('Id'),
-            'Proceso_id'            => $Proceso_id,
-            'Tipo_movimiento'       => $Tipo_movimiento,
+            'Stock_id'          => $Stock_id,
+            'Cantidad'          => $Cantidad,
+            'Descripcion'       => $Descripcion,
+            'Usuario_id'        => $this->session->userdata('Id'),
+            'Proceso_id'        => $Proceso_id,
+            'Tipo_movimiento'   => $Tipo_movimiento,
         );
 
         $this->load->model('App_model');
-        $insert_id_stock_movimientos = $this->App_model->insertar($data, Null, 'tbl_stock_movimientos');
+        $insert_id = $this->App_model->insertar($data, Null, 'tbl_stock_movimientos');
 
-        if ($insert_id_stock_movimientos >= 0) // SI SE CARGO BIEN DEBE ACTUALIZAR LA TABLA tbl_stock, con el calculod de stock actual y el Id de la última actualización
+        if ($insert_id >= 0) // SI SE CARGO BIEN DEBE ACTUALIZAR LA TABLA tbl_stock, con el calculo de stock actual y el Id de la última actualización
         {
             /// consultar stock en cuestión y obtener la cantidad hasta ese momento
-                $this->db->select(' Cant_actual, 
-                                    Precio_costo, 
-                                    Precio_venta');
+                $this->db->select('Cant_actual');
                 $this->db->from('tbl_stock');
                 $this->db->where('Id', $Stock_id);
                 $query = $this->db->get();
@@ -368,16 +361,10 @@ class Stock extends CI_Controller
                 if ($query->num_rows() > 0) // si encontro alguna fila previa, hace el calculo
                 {
                     /// SEGUN EL TIPO DE MOVIMIENTO VA A SUMAR O RESTAR LA CANTIDAD INDICADA
-                    if      ($Tipo_movimiento == 1)     {$cant_actual = $result[0]["Cant_actual"] + $Cantidad;} // suma cantidad7
-                    else if ($Tipo_movimiento == null)  {$cant_actual = $result[0]["Cant_actual"] + $Cantidad;} // SI VIENE NULO, TOMA EL SIGNO QUE TRAE LA VARIABLE
-                    else                                { $cant_actual = $result[0]["Cant_actual"] - $Cantidad;} // resta cantidad
+                    if      ($Tipo_movimiento == 1)    {$cant_actual = $result[0]["Cant_actual"] + $Cantidad;} // suma cantidad7
+                    else if ($Tipo_movimiento == null) {$cant_actual = $result[0]["Cant_actual"] + $Cantidad;} // SI VIENE NULO, TOMA EL SIGNO QUE TRAE LA VARIABLE
 
-                    /// CONTROLO SI CAMBIO EL PRECIO DE COSTO O DE VENTA
-                    if( isset( $this->datosObtenidos->Precio_venta_producto)){
-                        $Precio_venta = $this->datosObtenidos->Precio_venta_producto;
-                    } else {
-                        $Precio_venta = $result[0]["Precio_venta"];
-                    }
+                    else                                { $cant_actual = $result[0]["Cant_actual"] - $Cantidad;} // resta cantidad
                 }
                 else // de lo contrario la cantidad actual será la primera reportada
                 {
@@ -391,22 +378,17 @@ class Stock extends CI_Controller
 
             /// Actualizo tbl_stock con los datos nuevos
                 $data = array(
-                    'Ult_modificacion_id' => $insert_id_stock_movimientos,
+                    'Ult_modificacion_id' => $insert_id,
                     'Cant_actual' => $cant_actual,
-                    'Precio_venta' => $Precio_venta,
+                    'Precio_costo' => $Precio_costo,
                 );
 
                 $this->load->model('App_model');
-                $insert_id_actualizacion_stock = $this->App_model->insertar($data, $Stock_id, 'tbl_stock');
+                $insert_id_2 = $this->App_model->insertar($data, $Stock_id, 'tbl_stock');
 
-                if ($insert_id_actualizacion_stock >= 0) {
-                    echo json_encode(array( 
-                                            "Id" => $insert_id_stock_movimientos,
-                                            "Stock_modificado_id" => $insert_id_actualizacion_stock,
-                                            "Stock_id" => $Stock_id));
-                } 
-                else 
-                {
+                if ($insert_id_2 >= 0) {
+                    echo json_encode(array("Id" => $insert_id));
+                } else {
                     echo json_encode(array("Id" => 0));
                 }
         } 

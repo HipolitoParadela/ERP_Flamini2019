@@ -283,13 +283,13 @@ include "menusidebar.php";
                                                     <tbody>
                                                         <!-- <tr v-for="producto in listaProductos"> -->
                                                         <tr v-for="compra in listaComprasProveedor">
-                                                            <td>{{compra.Factura_identificador}}</td>
-                                                            <td>{{formatoFecha(compra.Fecha_compra)}}</td>
-                                                            <td>{{compra.Nombre}}</td>
-                                                            <td>${{compra.Valor}}</td>
-                                                            <td>{{compra.Descripcion}}</td>
+                                                            <td>{{compra.Datos.Factura_identificador}}</td>
+                                                            <td>{{formatoFecha(compra.Datos.Fecha_compra)}}</td>
+                                                            <td>{{compra.Datos.Nombre}}</td>
+                                                            <td>${{compra.Total}}</td>
+                                                            <td>{{compra.Datos.Descripcion}}</td>
                                                             <td>
-                                                                <a class="item" v-bind:href="'../../compras/datos/?Id='+compra.Id" title="Ver todos los datos">
+                                                                <a class="item" v-bind:href="'../../compras/datos/?Id='+compra.Datos.Id" title="Ver todos los datos">
                                                                     <i class="zmdi zmdi-mail-send"></i>
                                                                 </a>
                                                             </td>

@@ -89,7 +89,7 @@ class Fabricacion extends CI_Controller
         $this->db->join('tbl_fabricacion_categorias', 'tbl_fabricacion_categorias.Id = tbl_fabricacion.Categoria_fabricacion_id','left');
         $this->db->join('tbl_empresas', 'tbl_empresas.Id = tbl_fabricacion.Empresa_id','left');
 
-        $this->db->where('tbl_fabricacion.Visible', 1);
+        //$this->db->where('tbl_fabricacion.Visible', 1);
 
         if($categoria > 0)
         {
@@ -143,7 +143,7 @@ class Fabricacion extends CI_Controller
         $this->db->join('tbl_fabricacion_categorias', 'tbl_fabricacion_categorias.Id = tbl_fabricacion.Categoria_fabricacion_id','left');
         $this->db->join('tbl_empresas', 'tbl_empresas.Id = tbl_fabricacion.Empresa_id','left'); */
 
-        $this->db->where('tbl_fabricacion.Visible', 1);
+        //$this->db->where('tbl_fabricacion.Visible', 1);
 
         /* if($categoria > 0)
         {
@@ -179,7 +179,7 @@ class Fabricacion extends CI_Controller
 
         $this->db->join('tbl_fabricacion_categorias', 'tbl_fabricacion_categorias.Id = tbl_fabricacion.Categoria_fabricacion_id', 'left');
 
-        $this->db->where('tbl_fabricacion.Visible', 1);
+        //$this->db->where('tbl_fabricacion.Visible', 1);
 
         $this->db->where('tbl_fabricacion.Id', $Id);
 
@@ -655,7 +655,7 @@ class Fabricacion extends CI_Controller
             $this->db->join('tbl_clientes', 'tbl_clientes.Id = tbl_ventas.Cliente_id','left');
             $this->db->join('tbl_usuarios', 'tbl_usuarios.Id = tbl_ventas.Vendedor_id','left');
 
-            $this->db->where('tbl_ventas.Visible', 1);
+            //$this->db->where('tbl_ventas.Visible', 1);
             $this->db->where('tbl_ventas_productos.Producto_id', $Producto_id);
 
             $this->db->group_by('tbl_ventas_productos.Venta_id');

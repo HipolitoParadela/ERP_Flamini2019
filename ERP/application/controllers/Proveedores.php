@@ -47,21 +47,118 @@ class proveedores extends CI_Controller
         //Esto siempre va es para instanciar la base de datos
         $CI =& get_instance();
         $CI->load->database();
-		$token = @$CI->db->token;
+        
+        ///Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        {  exit("No coinciden los token");  }
+        
+        $Rubro_id = $_GET["Rubro_id"];
 
-		$this->db->select('*');
-		$this->db->from('tbl_proveedores');
-        $this->db->where('Visible',1);
-        $this->db->order_by("Destacado", "desc");
-		$this->db->order_by("Nombre_proveedor", "asc");
+		$this->db->select(' tbl_proveedores.*,
+                            tbl_proveedores_rubros.Nombre_rubro');
+        $this->db->from('tbl_proveedores');
+        $this->db->join('tbl_proveedores_rubros', 'tbl_proveedores_rubros.Id = tbl_proveedores.Rubro_id', 'left');
+        //$this->db->where('tbl_proveedores.Visible', 1);
+        if($Rubro_id > 0)
+        {
+            $this->db->where('tbl_proveedores.Rubro_id', $Rubro_id);
+        }
+        $this->db->order_by('tbl_proveedores.Nombre_proveedor', 'asc');
         $query = $this->db->get();
-		$result = $query->result_array();
+        $array_proveedores = $query->result_array();
+        
+        
+        $Datos_listado = array();
 
-		echo json_encode($result);
+        /// BUSCANDO COMPRAS DE CADA PROVEEDOR
+        foreach ($array_proveedores as $proveedor) 
+        {
+            // COMPRAS
+            $this->db->select(' Id,
+                                No_gravado,
+                                IVA,
+                                Neto');
+            $this->db->from('tbl_compras');
+
+            $this->db->where('Visible',1);
+            $this->db->where('Proveedor_id', $proveedor["Id"]);
+
+            $query = $this->db->get();
+            $array_compras_proveedor = $query->result_array();
+
+            $Total_pagado = 0;
+            $Total_compras = 0;
+
+            
+            /// BUSCANDO PAGOS EN CADA COMPRA
+            foreach ($array_compras_proveedor as $compra) 
+            {
+                //// CALCULANDO COMPRAS TOTALES
+                $Total_compras = $Total_compras + $compra["Neto"] + $compra["No_gravado"] + $compra["IVA"];
+                
+                
+                ///// MONTOS EFECTIVO
+                    $this->db->select('Monto');
+                    $this->db->from('tbl_cobros');
+                    $this->db->where('Origen_movimiento', 'Compras');
+                    $this->db->where('Fila_movimiento', $compra["Id"]);
+                    $this->db->where('Visible', 1);
+
+                    $query = $this->db->get();
+                    $result_efectivo = $query->result_array();
+                    $cant_efectivo = $query->num_rows();
+                    
+                    //// BUSCANDO PAGOS
+                    if($cant_efectivo > 0)
+                    {
+                        foreach ($result_efectivo as $monto) 
+                        {
+                            $Total_pagado = $Total_pagado + $monto["Monto"];
+                        }
+                    }
+            }
+
+            $Saldo_proveedor = $Total_pagado - $Total_compras;
+            
+            $datos_proveedor = array('Datos_proveedor' => $proveedor, 'Saldo' => $Saldo_proveedor, 'Total_compras' => $Total_compras, 'Total_pagos' => $Total_pagado);
+            
+            array_push($Datos_listado, $datos_proveedor);
+        }
+            
+
+		echo json_encode($Datos_listado);
+		
+    }
+
+//// PROVEEDORES 	| OBTENER PARA USAR EN SELECT
+	public function obtener_proveedores_select()
+    {
+			
+        //Esto siempre va es para instanciar la base de datos
+        $CI =& get_instance();
+        $CI->load->database();
+        
+        ///Seguridad
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token)
+        {  exit("No coinciden los token");  }
+
+		$this->db->select('Id, Nombre_proveedor');
+        $this->db->from('tbl_proveedores');
+        
+        $this->db->order_by('Nombre_proveedor', 'asc');
+        $query = $this->db->get();
+        $array_proveedores = $query->result_array();
+            
+
+		echo json_encode($array_proveedores);
 		
     }
     
-//// PROVEEDORES 	| OBTENER Datos de un proveedor
+//// PROVEEDORES 	| OBTENER 
     public function obtener_datos_proveedor()
     {
 
@@ -165,10 +262,10 @@ class proveedores extends CI_Controller
 
 		$data = array(
                         
-                    'Nombre_proveedor' => 			$this->datosObtenidos->Datos->Nombre_proveedor, 
-                    'Destacado' => 			        $this->datosObtenidos->Datos->Destacado,
+					'Nombre_proveedor' => 			$this->datosObtenidos->Datos->Nombre_proveedor,
 					'Producto_servicio' => 			$this->datosObtenidos->Datos->Producto_servicio,
                     'Direccion' => 				    $this->datosObtenidos->Datos->Direccion,
+                    'Rubro_id' => 				    $this->datosObtenidos->Datos->Rubro_id,
                     'CUIT_CUIL' => 			        $this->datosObtenidos->Datos->CUIT_CUIL,
                     'Localidad' => 			        $this->datosObtenidos->Datos->Localidad,
                     'Provincia' => 		            $this->datosObtenidos->Datos->Provincia,
@@ -267,7 +364,7 @@ class proveedores extends CI_Controller
 
     }
 
-//// SEGUIMIENTOS 	| CARGAR O EDITAR FORMACION
+//// SEGUIMIENTOS 	| CARGAR O EDITAR
     public function cargar_seguimiento()
     {
         $CI = &get_instance();
@@ -394,6 +491,65 @@ class proveedores extends CI_Controller
 		
     }
 
+////// ----------------------------------- RUBRO
+
+//// RUBROS 	| OBTENER 
+	public function obtener_rubros()
+    {
+			
+        //Esto siempre va es para instanciar la base de datos
+        $CI =& get_instance();
+        $CI->load->database();
+		$token = @$CI->db->token;
+
+		$this->db->select('*');
+        $this->db->from('tbl_proveedores_rubros');
+        
+		$this->db->order_by("Nombre_rubro", "asc");
+        $query = $this->db->get();
+		$result = $query->result_array();
+
+		echo json_encode($result);
+		
+    }
+
+//// RUBROS 	| CARGAR O EDITAR
+    public function cargar_rubro()
+    {
+        $CI =& get_instance();
+        $CI->load->database();
+        
+        $token = @$CI->db->token;
+        $this->datosObtenidos = json_decode(file_get_contents('php://input'));
+        if ($this->datosObtenidos->token != $token) {
+            exit("No coinciden los token");
+        }
+
+        $Id = null;
+        if(isset($this->datosObtenidos->Datos->Id))
+        {
+            $Id = $this->datosObtenidos->Datos->Id;
+        }
+
+        $data = array(
+                        
+                    'Nombre_rubro' => 			$this->datosObtenidos->Datos->Nombre_rubro,
+                    'Descripcion' => 			$this->datosObtenidos->Datos->Descripcion,
+                    
+                );
+
+        $this->load->model('App_model');
+        $insert_id = $this->App_model->insertar($data, $Id, 'tbl_proveedores_rubros');
+                
+        if ($insert_id >=0 ) 
+        {   
+            echo json_encode(array("Id" => $insert_id));         
+        } 
+        else 
+        {
+            echo json_encode(array("Id" => 0));
+        }
+    }
 
 ////// ----------------------------------- FUNCIONES PARA ASIGNAR PROVEEDOR
     
@@ -592,7 +748,7 @@ class proveedores extends CI_Controller
         }
     }
 
-    //// PRODUCTOS | lista de productos que ofrece este proveedor
+//// PRODUCTOS | lista de productos que ofrece este proveedor
     public function obtener_productos_proveedor()
     {
 			
@@ -648,5 +804,6 @@ class proveedores extends CI_Controller
         echo json_encode($Datos);
 		
     }
-    ///// fin documento
+    
+///// fin documento
 }

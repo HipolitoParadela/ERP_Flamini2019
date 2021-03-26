@@ -142,7 +142,7 @@ class ventas extends CI_Controller
         if($Empresa_id > 0)     { $this->db->where('tbl_ventas.Empresa_id', $Empresa_id); }
         if($Planificacion_id > 0)     { $this->db->where('tbl_ventas.Planificacion_id', $Planificacion_id); }
 
-        $this->db->where('tbl_ventas.Visible', $Visible);
+        //$this->db->where('tbl_ventas.Visible', $Visible);
         
         if($_GET["Estado"] == 9) /// muestra ventas en estado de cobranza
         {
@@ -382,7 +382,7 @@ class ventas extends CI_Controller
 
 
         $this->db->where('tbl_ventas.Id', $Id);
-        $this->db->where('tbl_ventas.Visible', 1);
+        //$this->db->where('tbl_ventas.Visible', 1);
         
         $query = $this->db->get();
 		$result = $query->result_array();
@@ -657,7 +657,7 @@ class ventas extends CI_Controller
         $this->db->join('tbl_usuarios',   'tbl_usuarios.Id    = tbl_ventas.Vendedor_id', 'left');
         $this->db->join('tbl_empresas',   'tbl_empresas.Id    = tbl_ventas.Empresa_id', 'left');
         
-        $this->db->where('tbl_ventas.Visible', 1);
+        //$this->db->where('tbl_ventas.Visible', 1);
         
         $this->db->where('tbl_ventas.Estado <', 10); /// EL ESTADO 10 ES LA VENTA QUE YA ESTA COBRADA Y FINALIZADA
         
@@ -741,7 +741,7 @@ class ventas extends CI_Controller
 
 
         $this->db->where('tbl_ventas.Id', $Id);
-        $this->db->where('tbl_ventas.Visible', 1);
+        //$this->db->where('tbl_ventas.Visible', 1);
         
         $query = $this->db->get();
 		$result = $query->result_array();
@@ -1344,7 +1344,7 @@ class ventas extends CI_Controller
         if($Empresa_id > 0)     { $this->db->where('tbl_ventas.Empresa_id', $Empresa_id); }
         if($Planificacion_id > 0)     { $this->db->where('tbl_ventas.Planificacion_id', $Planificacion_id); }
 
-        $this->db->where('tbl_ventas.Visible', 1);
+        //$this->db->where('tbl_ventas.Visible', 1);
         
         if($Estado == 10) /// esto es porque si necesito la lista completa sin discriminar por estado, Mando un valor 4 al estado
         {
@@ -1555,7 +1555,6 @@ class ventas extends CI_Controller
 		{ 
 			$Hasta = date('Y-m-d');
 		}
-
 
         //// 
         $this->db->select(' tbl_cobros.*, 

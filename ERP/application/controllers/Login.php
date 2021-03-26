@@ -44,7 +44,9 @@ class Login extends CI_Controller
                 } 
                 else /// si no es admin
                 {
-                    
+                    /// me fijo si esta o no activo
+                    if($fila->Activo == 1)
+                    {
                         $data = array(
                             'Nombre' => $fila->Nombre,
                             'Id' => $fila->Id,
@@ -56,6 +58,8 @@ class Login extends CI_Controller
                         $this->session->set_userdata($data);
 
                         header("Location: " . base_url() . "dashboard");
+                    }
+                        
                     
                 }
             } 
